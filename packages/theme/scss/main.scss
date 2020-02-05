@@ -1,0 +1,42 @@
+header {
+  background: #000;
+
+  nav {
+    li {
+      a.headerBtn {
+        span {
+          &:nth-child(1) {
+            border: 0;
+            transform: none;
+            background-color: #000;
+            border-radius: 2px;
+          }
+          &:nth-child(2) {
+            transform: none;
+            display: none;
+          }
+        }
+        &:hover {
+          span {
+            &:nth-child(1) {
+              background-color: rgba(255 255 255 / 0.2);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+footer {
+  .footerInfo,
+  .copyright {
+    display: none;
+  }
+  .sitemap {
+    a {
+      text-decoration: none;
+      color: #666;
+    }
+  }
+}
