@@ -1,0 +1,12 @@
+{
+  "name": "@dhu/cli",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "go": "ts-node index.ts"
+  },
+  "dependencies": {
+    "@dhu/core": "1.0.0"
+  }
+}

@@ -1,7 +1,18 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "test": "lerna run test",
+    "new-version": "lerna version --conventional-commits --yes"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "lerna": "^3.20.2"
+  },
+  "dependencies": {
+    "ts-node": "^8.8.1",
+    "typescript": "^3.8.3"
   }
 }
