@@ -2,5 +2,8 @@
   "name": "@dhu/core",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^0.12.1"
+  }
 }
