@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import cac from "cac";
 import { login, getAttendance } from "@dhu/core";
 import { renderAttendance } from "./view";

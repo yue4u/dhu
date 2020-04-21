@@ -80,13 +80,12 @@ export async function getAttendance(page: Page): Promise<Attendance[]> {
     } as const;
 
     return es.map((e) => {
-      const tds = [...e.querySelectorAll("td")];
+      const tds = Array.from(e.querySelectorAll("td"));
       const records = tds
         .filter((_, i) => i > 2)
         .map((e) => {
-          const statusMark: AttendanceRecordMark =
-            e.querySelector("span")?.textContent?.trim() ?? "";
-          const status = m[statusMark];
+          const statusMark = e.querySelector("span")?.textContent?.trim() ?? "";
+          const status = m[statusMark as AttendanceRecordMark];
           const date = e.querySelector("p")?.textContent?.trim() ?? "";
           return { status, date };
         });

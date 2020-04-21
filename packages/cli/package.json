@@ -1,13 +1,24 @@
 {
   "name": "@dhu/cli",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.0.1",
+  "main": "bin/index.js",
   "license": "MIT",
+  "bin": {
+    "dhu": "./bin/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
+    "build": "tsc",
     "attendance": "ts-node --files --transpile-only index.ts"
   },
   "dependencies": {
-    "@dhu/core": "1.0.0",
+    "@dhu/core": "0.0.1",
     "cac": "^6.5.8"
-  }
+  },
+  "files": [
+    "bin",
+    "package.json"
+  ]
 }
