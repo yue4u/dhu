@@ -1,12 +1,17 @@
-import { URL, LOGIN, NAV } from "./selectors";
+import os from "os";
+import path from "path";
+import readline from "readline";
+import { promises as fs } from "fs";
 import { chromium, Page } from "playwright";
+import { URL, LOGIN, NAV } from "./selectors";
 
 type LoginOptions = {
   id: string;
   password: string;
 };
 
-export async function login({ id, password }: LoginOptions) {
+export async function login() {
+  const { id, password } = await getUserInfo();
   const browser = await chromium.launch({ headless: true });
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
@@ -91,4 +96,49 @@ export async function getAttendance(page: Page): Promise<Attendance[]> {
   });
 
   return subjects.map((subject, i) => ({ ...subject, ...attendanceRows[i] }));
+}
+
+function getUserDataPath() {
+  let dataPath =
+    process.env.APPDATA ||
+    os.homedir() +
+      (process.platform == "darwin" ? "/Library/Preferences" : "/.local/share");
+  return path.join(dataPath, "dhu", "config.json");
+}
+
+async function saveUserInfo(info: LoginOptions) {
+  const userDataPath = getUserDataPath();
+  const userDataPathDir = path.dirname(userDataPath);
+  const stat = await fs.stat(userDataPathDir).catch(() => false);
+
+  if (!stat) {
+    await fs.mkdir(userDataPathDir, { recursive: true });
+  }
+
+  return await fs.writeFile(userDataPath, JSON.stringify(info), {
+    encoding: "utf8",
+  });
+}
+
+async function getUserInfo(): Promise<LoginOptions> {
+  try {
+    const content = await fs.readFile(getUserDataPath(), { encoding: "utf8" });
+    return JSON.parse(content) as LoginOptions;
+  } catch {
+    return new Promise((resolve) => {
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+
+      rl.question("digicam id? ", (id) => {
+        rl.question("password ? ", async (password) => {
+          const info = { id, password };
+          await saveUserInfo(info);
+          resolve(info);
+          rl.close();
+        });
+      });
+    });
+  }
 }
