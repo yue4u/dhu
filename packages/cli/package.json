@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "go": "ts-node index.ts"
+    "attendance": "ts-node --files --transpile-only index.ts"
   },
   "dependencies": {
     "@dhu/core": "1.0.0"
