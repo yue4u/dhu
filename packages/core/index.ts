@@ -2,25 +2,55 @@ import os from "os";
 import path from "path";
 import readline from "readline";
 import { promises as fs } from "fs";
-import { chromium, Page } from "playwright";
+import { chromium, Page, BrowserTypeLaunchOptions } from "playwright";
 import { URL, LOGIN, NAV } from "./selectors";
 
-type LoginOptions = {
+export type LoginOption = {
+  headless?: boolean;
+};
+
+export type LoginInfo = {
   id: string;
   password: string;
 };
 
-export async function login() {
+const sleep = (timeout: number) => {
+  return new Promise((done) => setTimeout(done, timeout));
+};
+
+const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
+
+export async function login(option?: BrowserTypeLaunchOptions) {
   const { id, password } = await getUserInfo();
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch(option);
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
   await page.goto(URL.TOP);
 
+  // if(maintenance){
+  //   // TODO
+  // }
+
   await page.type(LOGIN.ID, id);
   await page.type(LOGIN.PASSWORD, password);
-  await page.click(LOGIN.SUBMIT_BUTTON);
+  await Promise.all([
+    page.waitForNavigation(),
+    page.click(LOGIN.SUBMIT_BUTTON),
+  ]);
+  const err = await page.evaluate(() => {
+    const e = document.querySelector(".ui-messages-error-detail");
+    if (e == null) {
+      return e;
+    }
+    const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
+    return textContentOf(e);
+  });
 
+  if (err) {
+    console.error(err);
+    await removeUserInfo();
+    process.exit();
+  }
   return { page, browser };
 }
 
@@ -54,19 +84,22 @@ export async function getAttendance(page: Page): Promise<Attendance[]> {
   await page.click(NAV.ATTENDANCE);
   const subjectSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr > td:nth-child(2)`;
   const attendanceRowSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr`;
-  const subjects = await page.$$eval(subjectSelector, (es) =>
-    es.map((e) => {
-      const codeAndTitle = e.textContent ?? "";
+  const subjects = await page.$$eval(subjectSelector, (es) => {
+    const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
+    return es.map((e) => {
+      const codeAndTitle = textContentOf(e);
       const code = codeAndTitle.substring(0, 8);
       const title = codeAndTitle.substring(8);
       return {
         code,
         title,
       };
-    })
-  );
-
+    });
+  });
+  // different context
   const attendanceRows = await page.$$eval(attendanceRowSelector, (es) => {
+    const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
+
     const m = {
       〇: "出席",
       "▽": "早退",
@@ -84,12 +117,12 @@ export async function getAttendance(page: Page): Promise<Attendance[]> {
       const records = tds
         .filter((_, i) => i > 2)
         .map((e) => {
-          const statusMark = e.querySelector("span")?.textContent?.trim() ?? "";
+          const statusMark = textContentOf(e.querySelector("span"));
           const status = m[statusMark as AttendanceRecordMark];
-          const date = e.querySelector("p")?.textContent?.trim() ?? "";
+          const date = textContentOf(e.querySelector("p"));
           return { status, date };
         });
-      const rate = tds[2].textContent?.trim() ?? "";
+      const rate = textContentOf(tds[2]);
       return { rate, records };
     });
   });
@@ -105,7 +138,7 @@ function getUserDataPath() {
   return path.join(dataPath, "dhu", "config.json");
 }
 
-async function saveUserInfo(info: LoginOptions) {
+export async function saveUserInfo(info: LoginInfo) {
   const userDataPath = getUserDataPath();
   const userDataPathDir = path.dirname(userDataPath);
   const stat = await fs.stat(userDataPathDir).catch(() => false);
@@ -119,25 +152,40 @@ async function saveUserInfo(info: LoginOptions) {
   });
 }
 
-async function getUserInfo(): Promise<LoginOptions> {
+export async function getUserInfo(): Promise<LoginInfo> {
   try {
-    const content = await fs.readFile(getUserDataPath(), { encoding: "utf8" });
-    return JSON.parse(content) as LoginOptions;
+    return await readUserInfo();
   } catch {
-    return new Promise((resolve) => {
-      const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-      });
-
-      rl.question("digicam id? ", (id) => {
-        rl.question("password? ", async (password) => {
-          const info = { id, password };
-          await saveUserInfo(info);
-          resolve(info);
-          rl.close();
-        });
-      });
-    });
+    return await askUserInfo();
   }
+}
+
+export async function readUserInfo(): Promise<LoginInfo> {
+  const content = await fs.readFile(getUserDataPath(), { encoding: "utf8" });
+  return JSON.parse(content) as LoginInfo;
+}
+
+export async function removeUserInfo(): Promise<void> {
+  return fs.unlink(getUserDataPath());
+}
+
+export async function askUserInfo(): Promise<LoginInfo> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const ask = (question: string): Promise<string> => {
+    return new Promise((resolve) =>
+      rl.question(`${question} `, (answer) => resolve(answer))
+    );
+  };
+  const id = await ask("digicam id?");
+  const password = await ask("password?");
+
+  rl.close();
+
+  const info = { id, password };
+  await saveUserInfo(info);
+  return info;
 }
