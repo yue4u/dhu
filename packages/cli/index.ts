@@ -2,7 +2,6 @@
 import cac from "cac";
 import { login, getAttendance } from "@dhu/core";
 import { renderAttendance } from "./view";
-import pkg from "./package.json";
 const cli = cac();
 
 cli.command("atte", "get attendance").action(async () => {
@@ -13,5 +12,5 @@ cli.command("atte", "get attendance").action(async () => {
 });
 
 cli.help();
-cli.version(pkg.version);
+cli.version("0.0.3");
 cli.parse();
