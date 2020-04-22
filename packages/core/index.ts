@@ -131,7 +131,7 @@ async function getUserInfo(): Promise<LoginOptions> {
       });
 
       rl.question("digicam id? ", (id) => {
-        rl.question("password ? ", async (password) => {
+        rl.question("password? ", async (password) => {
           const info = { id, password };
           await saveUserInfo(info);
           resolve(info);
