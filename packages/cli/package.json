@@ -1,6 +1,6 @@
 {
   "name": "@dhu/cli",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "main": "bin/index.js",
   "license": "MIT",
   "bin": {
@@ -14,7 +14,7 @@
     "attendance": "ts-node --files --transpile-only index.ts"
   },
   "dependencies": {
-    "@dhu/core": "0.0.3",
+    "@dhu/core": "0.0.4",
     "cac": "^6.5.8",
     "chalk": "^4.0.0"
   },
