@@ -2,7 +2,12 @@ import os from "os";
 import path from "path";
 import readline from "readline";
 import { promises as fs } from "fs";
-import { chromium, Page, BrowserTypeLaunchOptions } from "playwright";
+import {
+  chromium,
+  ChromiumBrowserContext,
+  Page,
+  BrowserTypeLaunchOptions,
+} from "playwright";
 import { URL, LOGIN, NAV } from "./selectors";
 
 export type LoginOption = {
@@ -26,6 +31,7 @@ export async function login(option?: BrowserTypeLaunchOptions) {
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
   await page.goto(URL.TOP);
+  await exposeHelper(ctx);
 
   // if(maintenance){
   //   // TODO
@@ -39,11 +45,7 @@ export async function login(option?: BrowserTypeLaunchOptions) {
   ]);
   const err = await page.evaluate(() => {
     const e = document.querySelector(".ui-messages-error-detail");
-    if (e == null) {
-      return e;
-    }
-    const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
-    return textContentOf(e);
+    return e === null ? e : textContentOf(e);
   });
 
   if (err) {
@@ -52,6 +54,11 @@ export async function login(option?: BrowserTypeLaunchOptions) {
     process.exit();
   }
   return { page, browser };
+}
+
+export async function exposeHelper(ctx: ChromiumBrowserContext) {
+  await ctx.exposeFunction("getAttendanceStatusMap", getAttendanceStatusMap);
+  await ctx.exposeFunction("textContentOf", textContentOf);
 }
 
 export type Attendance = {
@@ -73,6 +80,8 @@ export const AttendanceStatusMap = {
   "": "期試験/追試験/再試験",
 } as const;
 
+const getAttendanceStatusMap = () => AttendanceStatusMap;
+
 export type AttendanceRecordMark = keyof typeof AttendanceStatusMap;
 export type AttendanceRecord = {
   status: typeof AttendanceStatusMap[AttendanceRecordMark];
@@ -85,7 +94,6 @@ export async function getAttendance(page: Page): Promise<Attendance[]> {
   const subjectSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr > td:nth-child(2)`;
   const attendanceRowSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr`;
   const subjects = await page.$$eval(subjectSelector, (es) => {
-    const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
     return es.map((e) => {
       const codeAndTitle = textContentOf(e);
       const code = codeAndTitle.substring(0, 8);
@@ -96,29 +104,16 @@ export async function getAttendance(page: Page): Promise<Attendance[]> {
       };
     });
   });
-  // different context
   const attendanceRows = await page.$$eval(attendanceRowSelector, (es) => {
-    const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
-
-    const m = {
-      〇: "出席",
-      "▽": "早退",
-      "△": "遅刻",
-      "×": "欠席",
-      公: "公欠",
-      休: "休講",
-      "－": "授業対象外",
-      外: "試験対象外",
-      "": "期試験/追試験/再試験",
-    } as const;
-
     return es.map((e) => {
       const tds = Array.from(e.querySelectorAll("td"));
       const records = tds
         .filter((_, i) => i > 2)
         .map((e) => {
           const statusMark = textContentOf(e.querySelector("span"));
-          const status = m[statusMark as AttendanceRecordMark];
+          const status = getAttendanceStatusMap()[
+            statusMark as AttendanceRecordMark
+          ];
           const date = textContentOf(e.querySelector("p"));
           return { status, date };
         });
