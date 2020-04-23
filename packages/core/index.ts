@@ -1,13 +1,17 @@
 export { login } from "./login";
+
 export {
   Attendance,
   AttendanceRecord,
   AttendanceRecordMark,
   getAttendance,
 } from "./attendance";
+
 export {
-  getUserInfo,
   askUserInfo,
+  getUserInfo,
   readUserInfo,
   removeUserInfo,
 } from "./userInfo";
+
+export { getGPA, GPA } from "./grade";

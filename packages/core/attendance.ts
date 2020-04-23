@@ -1,5 +1,5 @@
 import { Page } from "playwright";
-import { NAV_TAB, NAV_ATTENDANCE } from "./selectors";
+import { NAV_ATTENDANCE, NAV_ATTENDANCE_LINK } from "./selectors";
 
 export type Attendance = {
   code: string;
@@ -27,8 +27,8 @@ export type AttendanceRecord = {
 };
 
 export async function getAttendance(page: Page): Promise<Attendance[]> {
-  await page.click(NAV_TAB);
   await page.click(NAV_ATTENDANCE);
+  await page.click(NAV_ATTENDANCE_LINK);
   const subjectSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr > td:nth-child(2)`;
   const attendanceRowSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr`;
   const subjects = await page.$$eval(subjectSelector, (es) => {
