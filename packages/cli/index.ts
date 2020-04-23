@@ -6,9 +6,9 @@ const cli = cac();
 
 cli
   .command("atte", "Get attendance")
-  .option("-h --head", "lunch headfully")
+  .option("--head", "lunch headfully")
   .action(async (option) => {
-    const { page, browser } = await login({ headless: !option.h });
+    const { page, browser } = await login({ headless: !option.head });
     const data = await getAttendance(page);
     renderAttendance(data);
     await browser.close();
