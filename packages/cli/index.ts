@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import cac from "cac";
 import {
-  login,
   getAttendance,
   askUserInfo,
   removeUserInfo,
   getGPA,
+  withPage,
 } from "@dhu/core";
 import { renderAttendance, renderGPA } from "./view";
 const cli = cac();
@@ -16,30 +16,26 @@ cli // keep format
     await askUserInfo();
   });
 
-cli // keep format
+cli
   .command("logout", "Remove login info from local data path")
   .action(async () => {
     await removeUserInfo();
   });
 
-cli // keep format
+cli
   .command("gpa", "Get GPA")
   .option("--head", "lunch headfully")
   .action(async (option) => {
-    const { page, browser } = await login({ headless: !option.head });
-    const data = await getGPA(page);
+    const data = await withPage(getGPA, { headless: !option.head });
     renderGPA(data);
-    await browser.close();
   });
 
 cli
   .command("atte", "Get attendance")
   .option("--head", "lunch headfully")
   .action(async (option) => {
-    const { page, browser } = await login({ headless: !option.head });
-    const data = await getAttendance(page);
+    const data = await withPage(getAttendance, { headless: !option.head });
     renderAttendance(data);
-    await browser.close();
   });
 
 cli.help();

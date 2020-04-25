@@ -1,7 +1,9 @@
 import {
   chromium,
   BrowserTypeLaunchOptions,
-  ChromiumBrowserContext,
+  BrowserContext,
+  Page,
+  Browser,
 } from "playwright";
 import {
   LOGIN_ID,
@@ -10,6 +12,11 @@ import {
   URL_TOP,
 } from "./selectors";
 import { getUserInfo, removeUserInfo } from "./userInfo";
+
+export type LoginResult = {
+  page: Page;
+  browser: Browser;
+};
 
 export async function login(option?: BrowserTypeLaunchOptions) {
   const { id, password } = await getUserInfo();
@@ -43,4 +50,28 @@ export async function login(option?: BrowserTypeLaunchOptions) {
   return { page, browser };
 }
 
-export async function exposeGlobalHelper(ctx: ChromiumBrowserContext) {}
+export async function exposeGlobalHelper(ctx: BrowserContext) {}
+
+export async function withLogin<T>(
+  fn: (ctx: LoginResult) => Promise<T>,
+  option?: BrowserTypeLaunchOptions
+) {
+  const loginCtx = await login(option);
+  const result = await fn(loginCtx);
+  await loginCtx.browser.close();
+  return result;
+}
+
+export async function withPage<T>(
+  fn: (page: Page) => T,
+  option?: BrowserTypeLaunchOptions
+) {
+  return await withLogin(async ({ page }) => fn(page), option);
+}
+
+export async function withBrowser<T>(
+  fn: (browser: Browser) => T,
+  option?: BrowserTypeLaunchOptions
+) {
+  return await withLogin(async ({ browser }) => fn(browser), option);
+}

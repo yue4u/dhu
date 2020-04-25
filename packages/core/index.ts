@@ -1,4 +1,4 @@
-export { login } from "./login";
+export { login, withLogin, withBrowser, withPage } from "./login";
 
 export {
   Attendance,
