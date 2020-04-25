@@ -24,7 +24,7 @@ cli
 
 cli
   .command("gpa", "Get GPA")
-  .option("--head", "lunch headfully")
+  .option("--head", "launch headfully")
   .action(async (option) => {
     const data = await withPage(getGPA, { headless: !option.head });
     renderGPA(data);
@@ -32,7 +32,7 @@ cli
 
 cli
   .command("atte", "Get attendance")
-  .option("--head", "lunch headfully")
+  .option("--head", "launch headfully")
   .action(async (option) => {
     const data = await withPage(getAttendance, { headless: !option.head });
     renderAttendance(data);
