@@ -5,6 +5,8 @@ import {
   askUserInfo,
   removeUserInfo,
   getGPA,
+  // getInfo,
+  saveGoogleCalendarCSV,
   withPage,
 } from "@dhu/core";
 import { renderAttendance, renderGPA } from "./view";
@@ -38,6 +40,29 @@ cli
     renderAttendance(data);
   });
 
+// cli
+//   .command("info", "Get info")
+//   .option("--head", "launch headfully")
+//   .action(async (option) => {
+//     const data = await withPage(getInfo, { headless: !option.head });
+//     console.log(data);
+//   });
+
+cli
+  .command("timetable", "Download timetable csv")
+  .option("--head", "launch headfully")
+  .option("-q <q>", "quarter 1/2/3/4?")
+  .option("-s, --start <start>", "first monday when quarter start")
+  .action(async (option) => {
+    /*const data = */ await withPage(
+      (page) => saveGoogleCalendarCSV(page, option.q, option.start),
+      {
+        headless: !option.head,
+      }
+    );
+    console.log("✨done");
+  });
+
 cli.help();
-cli.version("0.0.7");
+cli.version("0.0.10");
 cli.parse();
