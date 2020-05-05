@@ -1,10 +1,10 @@
 import {
   chromium,
-  BrowserTypeLaunchOptions,
+  LaunchOptions,
   BrowserContext,
   Page,
   Browser,
-} from "playwright";
+} from "playwright-chromium";
 import {
   LOGIN_ID,
   LOGIN_PASSWORD,
@@ -12,30 +12,23 @@ import {
   URL_TOP,
 } from "./selectors";
 import { getUserInfo, removeUserInfo } from "./userInfo";
-
+import { waitForNavigation } from "./utils";
 export type LoginResult = {
   page: Page;
   browser: Browser;
 };
 
-export async function login(option?: BrowserTypeLaunchOptions) {
+export async function login(option?: LaunchOptions) {
   const { id, password } = await getUserInfo();
   const browser = await chromium.launch(option);
-  const ctx = await browser.newContext();
+  // @ts-ignore
+  const ctx = await browser.newContext({ acceptDownloads: true });
   const page = await ctx.newPage();
   await page.goto(URL_TOP);
-  //await exposeGlobalHelper(ctx);
-
-  // if(maintenance){
-  //   // TODO
-  // }
 
   await page.type(LOGIN_ID, id);
   await page.type(LOGIN_PASSWORD, password);
-  await Promise.all([
-    page.waitForNavigation(),
-    page.click(LOGIN_SUBMIT_BUTTON),
-  ]);
+  await waitForNavigation(page, () => page.click(LOGIN_SUBMIT_BUTTON));
   const err = await page.evaluate(() => {
     const e = document.querySelector(".ui-messages-error-detail");
     const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
@@ -54,7 +47,7 @@ export async function exposeGlobalHelper(ctx: BrowserContext) {}
 
 export async function withLogin<T>(
   fn: (ctx: LoginResult) => Promise<T>,
-  option?: BrowserTypeLaunchOptions
+  option?: LaunchOptions
 ) {
   const loginCtx = await login(option);
   const result = await fn(loginCtx);
@@ -63,15 +56,15 @@ export async function withLogin<T>(
 }
 
 export async function withPage<T>(
-  fn: (page: Page) => T,
-  option?: BrowserTypeLaunchOptions
+  fn: (page: Page) => Promise<T>,
+  option?: LaunchOptions
 ) {
-  return await withLogin(async ({ page }) => fn(page), option);
+  return await withLogin(async ({ page }) => await fn(page), option);
 }
 
 export async function withBrowser<T>(
   fn: (browser: Browser) => T,
-  option?: BrowserTypeLaunchOptions
+  option?: LaunchOptions
 ) {
   return await withLogin(async ({ browser }) => fn(browser), option);
 }
