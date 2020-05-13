@@ -1,6 +1,6 @@
 import { Page } from "playwright-chromium";
 import { NAV_ATTENDANCE, NAV_ATTENDANCE_LINK } from "./selectors";
-import { waitForNavigation } from "./utils";
+import { waitForClickNavigation } from "./utils";
 export type Attendance = {
   code: string;
   title: string;
@@ -28,7 +28,7 @@ export type AttendanceRecord = {
 
 export async function getAttendance(page: Page): Promise<Attendance[]> {
   await page.click(NAV_ATTENDANCE);
-  await waitForNavigation(page, () => page.click(NAV_ATTENDANCE_LINK));
+  await waitForClickNavigation(page, NAV_ATTENDANCE_LINK);
   const subjectSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr > td:nth-child(2)`;
   const attendanceRowSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr`;
   const subjects = await page.$$eval(subjectSelector, (es) => {

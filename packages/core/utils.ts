@@ -13,3 +13,7 @@ export const waitForNavigation = async <T>(
 ) => {
   return await Promise.all([page.waitForNavigation(), fn()]);
 };
+
+export const waitForClickNavigation = async (page: Page, selector: string) => {
+  return await Promise.all([page.waitForNavigation(), page.click(selector)]);
+};

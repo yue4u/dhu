@@ -5,6 +5,7 @@ import {
   askUserInfo,
   removeUserInfo,
   getGPA,
+  getInfo,
   // getInfo,
   saveGoogleCalendarCSV,
   withPage,
@@ -40,13 +41,13 @@ cli
     renderAttendance(data);
   });
 
-// cli
-//   .command("info", "Get info")
-//   .option("--head", "launch headfully")
-//   .action(async (option) => {
-//     const data = await withPage(getInfo, { headless: !option.head });
-//     console.log(data);
-//   });
+cli
+  .command("info", "Get info")
+  .option("--head", "launch headfully")
+  .action(async (option) => {
+    const data = await withPage(getInfo, { headless: !option.head });
+    console.log(data);
+  });
 
 cli
   .command("timetable", "Download timetable csv")

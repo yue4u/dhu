@@ -2,7 +2,7 @@ import { Page } from "playwright-chromium";
 import { NAV_ATTENDANCE, NAV_SCHEDULE_LINK } from "./selectors";
 import { parseAsync } from "json2csv";
 import { promises as fs } from "fs";
-import { waitForNavigation } from "./utils";
+import { waitForClickNavigation } from "./utils";
 
 const timeMap = {
   1: ["08:40 AM", "10:10 AM"],
@@ -42,7 +42,7 @@ type CalendarEvent = {
 
 export async function getSchedule(page: Page, q = 1): Promise<Lecture[]> {
   await page.click(NAV_ATTENDANCE);
-  await waitForNavigation(page, () => page.click(NAV_SCHEDULE_LINK));
+  await waitForClickNavigation(page, NAV_SCHEDULE_LINK);
   const schedule = await page.$eval(
     `(//table[contains(@class,"classTable")])[${q}]`,
     (table) => {

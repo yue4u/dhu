@@ -14,6 +14,6 @@ export {
   removeUserInfo,
 } from "./userInfo";
 
-// export { getInfo } from "./info";
+export { getInfo } from "./info";
 export { getGPA, GPA } from "./grade";
 export { saveGoogleCalendarCSV, getSchedule } from "./schedule";

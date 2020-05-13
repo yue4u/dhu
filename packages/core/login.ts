@@ -12,7 +12,7 @@ import {
   URL_TOP,
 } from "./selectors";
 import { getUserInfo, removeUserInfo } from "./userInfo";
-import { waitForNavigation } from "./utils";
+import { waitForClickNavigation } from "./utils";
 export type LoginResult = {
   page: Page;
   browser: Browser;
@@ -28,7 +28,7 @@ export async function login(option?: LaunchOptions) {
 
   await page.type(LOGIN_ID, id);
   await page.type(LOGIN_PASSWORD, password);
-  await waitForNavigation(page, () => page.click(LOGIN_SUBMIT_BUTTON));
+  await waitForClickNavigation(page, LOGIN_SUBMIT_BUTTON);
   const err = await page.evaluate(() => {
     const e = document.querySelector(".ui-messages-error-detail");
     const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
