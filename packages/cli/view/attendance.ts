@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { Attendance } from "@dhu/core";
 
-export function render(data: Attendance[]) {
+export function renderAttendance(data: Attendance[]) {
   data.map((row) => renderRow(row));
 }
 

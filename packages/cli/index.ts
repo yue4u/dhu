@@ -7,10 +7,11 @@ import {
   getGPA,
   getInfo,
   // getInfo,
+  getTasks,
   saveGoogleCalendarCSV,
   withPage,
 } from "@dhu/core";
-import { renderAttendance, renderGPA } from "./view";
+import { renderAttendance, renderGPA, renderTask } from "./view";
 const cli = cac();
 
 cli // keep format
@@ -50,6 +51,16 @@ cli
   });
 
 cli
+  .command("task", "Get tasks")
+  .option("--head", "launch headfully")
+  .option("--end", "show end tasks")
+  .option("--empty", "show empty tasks")
+  .action(async (option) => {
+    const data = await withPage(getTasks, { headless: !option.head });
+    renderTask(data, { showEmpty: option.empty, showEnd: option.end });
+  });
+
+cli
   .command("timetable", "Download timetable csv")
   .option("--head", "launch headfully")
   .option("-q <q>", "quarter 1/2/3/4?")
@@ -65,5 +76,5 @@ cli
   });
 
 cli.help();
-cli.version("0.0.10");
+cli.version("0.0.12");
 cli.parse();

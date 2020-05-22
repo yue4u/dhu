@@ -5,7 +5,8 @@
     "test": "lerna test",
     "build": "lerna build",
     "release": "lerna publish --no-verify-access",
-    "version": "lerna version"
+    "version": "lerna version",
+    "dev:cli": "yarn workspace @dhu/cli dev"
   },
   "workspaces": [
     "packages/*"

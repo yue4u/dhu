@@ -123,7 +123,7 @@ export async function handleInfoItemLink(
       }
       console.log({ title, url });
       console.log("await attachment close");
-      attachments.push({ title, url });
+      // sattachments.push({ title, url });
     }
     await page.click(INFO_ITEM_ATTACHMENT_CLOSE);
   }

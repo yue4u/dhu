@@ -25,3 +25,7 @@ export const INFO_CLASS_ITEM = `#funcForm\\:tabArea\\:0\\:j_idt229\\:1\\:j_idt28
 export const INFO_ITEM_ATTACHMENT_OPEN = `#bsd00702\\:ch\\:j_idt503`;
 export const INFO_ITEM_ATTACHMENT_CLOSE = `#pkx02201\\:dialog > div.ui-dialog-titlebar.ui-widget-header.ui-helper-clearfix.ui-corner-top.ui-draggable-handle > a.ui-dialog-titlebar-icon.ui-dialog-titlebar-close.ui-corner-all`;
 export const INFO_ITEM_CLOSE = `#bsd00702\\:dialog > div.ui-dialog-titlebar.ui-widget-header.ui-helper-clearfix.ui-corner-top.ui-draggable-handle > a.ui-dialog-titlebar-icon.ui-dialog-titlebar-close.ui-corner-all`;
+
+export const CLASS_PROFILE = `#funcForm\\:j_idt359\\:j_idt2239\\:j_idt2245`;
+
+export const CLASS_PROFILE_TASK = `#functionHeaderForm\\:j_idt159\\:0\\:j_idt161`;

@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { GPA } from "@dhu/core";
 
-export function render(data: GPA[]) {
+export function renderGPA(data: GPA[]) {
   data.forEach((row) => {
     // HACK: fix whitespace in terminal
     console.log(

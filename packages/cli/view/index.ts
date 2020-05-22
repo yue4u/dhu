@@ -1,2 +1,3 @@
-export { render as renderAttendance } from "./attendance";
-export { render as renderGPA } from "./gpa";
+export { renderAttendance } from "./attendance";
+export { renderGPA } from "./gpa";
+export { renderTask } from "./task";
