@@ -49,12 +49,9 @@ export async function getTasks(page: Page): Promise<TaskMap> {
     await handle.click();
     await sleep(600);
 
-    handles = await page.$$(".classList a");
-    handle = handles[i];
-
     const title = await handle.textContent();
     // console.log(`start ${title}`);
-    const tasks = await getClassTasks(handle, page);
+    const tasks = await getClassTasks(page);
     tasksMap[title ?? ""] = tasks;
     i++;
     // console.log(`end ${title}`);
@@ -62,10 +59,7 @@ export async function getTasks(page: Page): Promise<TaskMap> {
   return tasksMap;
 }
 
-async function getClassTasks(
-  handle: ElementHandle,
-  page: Page
-): Promise<Task[]> {
+async function getClassTasks(page: Page): Promise<Task[]> {
   // console.log(`goto page`);
   const taskRows = await page.$$(`#funcForm\\:gakKdiTstList_data > tr`);
   let tasks: Task[] = [];
