@@ -1,7 +1,7 @@
 import chalk from "chalk";
-import { TaskMap } from "@dhu/core";
+import { Task, TaskMap } from "@dhu/core";
 
-type RenderTaskOptions = {
+type RenderTaskMapOptions = {
   showEmpty?: boolean;
   showEnd?: boolean;
 };
@@ -14,9 +14,9 @@ const statusColorMap: Record<string, Function> = {
   "*": chalk.white,
 };
 
-export const renderTask = (
+export const renderTaskMap = (
   data: TaskMap,
-  { showEmpty, showEnd }: RenderTaskOptions
+  { showEmpty, showEnd }: RenderTaskMapOptions
 ) => {
   Object.entries(data).forEach(([subject, tasks]) => {
     if (!tasks.length && !showEmpty) {
@@ -27,14 +27,20 @@ export const renderTask = (
       if (t.status === "受付終了" && !showEnd) {
         return;
       }
-      let row: Array<string | undefined> = [chalk.yellow(`  ${i + 1})`)];
-      const color = statusColorMap[t.status ?? "*"];
-      row.push(`${color(t.status)}`.padEnd(10));
-      row.push(chalk.magenta(t.deadline));
-      row.push(chalk.gray(t.name));
-
-      console.log(row.join(" "));
+      renderTask(t, i);
     });
     console.log(" ");
   });
+};
+
+const renderTask = (t: Task, i: number) => {
+  const color = statusColorMap[t.status ?? "*"];
+  let row = [
+    chalk.yellow(`  ${i + 1})`),
+    `${color(t.status)}`.padEnd(10),
+    chalk.magenta(t.deadline),
+    chalk.gray(t.name),
+  ].join(" ");
+
+  console.log(row);
 };

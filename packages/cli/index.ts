@@ -11,7 +11,7 @@ import {
   saveGoogleCalendarCSV,
   withPage,
 } from "@dhu/core";
-import { renderAttendance, renderGPA, renderTask } from "./view";
+import { renderAttendance, renderGPA, renderTaskMap } from "./view";
 const cli = cac();
 
 cli // keep format
@@ -57,7 +57,7 @@ cli
   .option("--empty", "show empty tasks")
   .action(async (option) => {
     const data = await withPage(getTasks, { headless: !option.head });
-    renderTask(data, { showEmpty: option.empty, showEnd: option.end });
+    renderTaskMap(data, { showEmpty: option.empty, showEnd: option.end });
   });
 
 cli
