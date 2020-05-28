@@ -10,8 +10,9 @@ import {
   getTasks,
   saveGoogleCalendarCSV,
   withPage,
+  getFS,
 } from "@dhu/core";
-import { renderAttendance, renderGPA, renderTaskMap } from "./view";
+import { renderAttendance, renderGPA, renderTaskMap, renderFS } from "./view";
 const cli = cac();
 
 cli // keep format
@@ -48,6 +49,14 @@ cli
   .action(async (option) => {
     const data = await withPage(getInfo, { headless: !option.head });
     console.log(data);
+  });
+
+cli
+  .command("fs", "Get fs")
+  .option("--head", "launch headfully")
+  .action(async (option) => {
+    const data = await withPage(getFS, { headless: !option.head });
+    renderFS(data);
   });
 
 cli
