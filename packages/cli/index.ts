@@ -12,8 +12,22 @@ import {
   withPage,
   getFS,
 } from "@dhu/core";
-import { renderAttendance, renderGPA, renderTaskMap, renderFS } from "./view";
+import {
+  renderLogo,
+  renderAttendance,
+  renderGPA,
+  renderTaskMap,
+  renderFS,
+} from "./view";
 const cli = cac();
+
+cli
+  // Simply omit the command name, just brackets
+  .command("", "Log logo")
+  .option("--color", "render with color")
+  .action((option) => {
+    renderLogo({ color: option.color });
+  });
 
 cli // keep format
   .command("login", "Save login info to local data path")
