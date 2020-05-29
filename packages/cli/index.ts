@@ -24,9 +24,8 @@ const cli = cac();
 cli
   // Simply omit the command name, just brackets
   .command("", "Log logo")
-  .option("--color", "render with color")
-  .action((option) => {
-    renderLogo({ color: option.color });
+  .action(() => {
+    renderLogo();
   });
 
 cli // keep format
