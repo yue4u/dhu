@@ -46,10 +46,11 @@ export async function getTasks(page: Page): Promise<TaskMap> {
   for (const _ of classes) {
     let handles = await page.$$(".classList a");
     let handle = handles[i];
+
+    const title = await handle.textContent();
     await handle.click();
     await sleep(600);
 
-    const title = await handle.textContent();
     // console.log(`start ${title}`);
     const tasks = await getClassTasks(page);
     tasksMap[title ?? ""] = tasks;
