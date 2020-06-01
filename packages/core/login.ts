@@ -12,7 +12,7 @@ import {
   URL_TOP,
 } from "./selectors";
 import { getUserInfo, removeUserInfo } from "./userInfo";
-import { waitForClickNavigation } from "./utils";
+import { waitForClickNavigation, waitForNavigation } from "./utils";
 export type LoginResult = {
   page: Page;
   browser: Browser;
@@ -24,7 +24,18 @@ export async function login(option?: LaunchOptions) {
   // @ts-ignore
   const ctx = await browser.newContext({ acceptDownloads: true });
   const page = await ctx.newPage();
-  await page.goto(URL_TOP);
+  await waitForNavigation(page, () => page.goto(URL_TOP));
+
+  const maintenanceMessage = await page.evaluate(() => {
+    const e = document.querySelector("#funcContent > div > p");
+    const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
+    return e === null ? e : textContentOf(e);
+  });
+
+  if (maintenanceMessage) {
+    console.log(maintenanceMessage);
+    process.exit();
+  }
 
   await page.type(LOGIN_ID, id);
   await page.type(LOGIN_PASSWORD, password);
@@ -40,6 +51,7 @@ export async function login(option?: LaunchOptions) {
     await removeUserInfo();
     process.exit();
   }
+
   return { page, browser };
 }
 
