@@ -1,5 +1,4 @@
 import chalk from "chalk";
-import pkg from "../package.json";
 
 const w = chalk.white;
 const y = chalk.yellow;
@@ -14,7 +13,7 @@ const logo = orange(`
                   ;n*#h},                  
       ,i10#aOcYLJqhaO-                     
      IrQb#dx{<:                            ${y.bold(`dhu`)}
-          :;l-jCkadJt_:                    ${w(`version: ${pkg.version}`)}
+          :;l-jCkadJt_:                    ${w(`version: 0.0.14`)}
              ,>JMMMM#m_                    
            ,}Z#MMMMMU:                     ${w(`Have a nice day!`)}
          :tkMMMMM#ZuLaokpJ/~,              
