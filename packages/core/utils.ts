@@ -1,5 +1,9 @@
 import { Page } from "playwright-chromium";
 
+export const theWorld = () => {
+  return new Promise(() => {});
+};
+
 export const sleep = (timeout: number) => {
   return new Promise((done) => setTimeout(done, timeout));
 };

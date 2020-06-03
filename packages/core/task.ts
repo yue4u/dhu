@@ -1,4 +1,4 @@
-import { Page, ElementHandle } from "playwright-chromium";
+import { Page } from "playwright-chromium";
 import { sleep, waitForClickNavigation } from "./utils";
 import { CLASS_PROFILE, CLASS_PROFILE_TASK } from "./selectors";
 
