@@ -52,7 +52,6 @@ export async function getSyllabus(page: Page): Promise<Course[]> {
   let courses: Course[] = [];
   let pageIndex = 1;
   while (true) {
-    console.log(`page ${pageIndex}`);
     let i = 0;
     let links = await page.$$("tr.ui-widget-content  a");
     if (links?.length === i) {
@@ -62,7 +61,7 @@ export async function getSyllabus(page: Page): Promise<Course[]> {
       break;
     }
     for (let _ in links) {
-      console.log(`course ${i + 1}`);
+      console.log(`page ${pageIndex} course ${i + 1}`);
       const link = links[i];
       const course = await handleCourseLink(page, link);
       //console.log(course);
@@ -144,7 +143,7 @@ const handleCourseLink = async (
       const textContentOf = (e?: Element | null) =>
         e?.textContent?.trim() ?? "";
 
-      for (const e of els.reverse()) {
+      for (const e of els.reverse().slice(5)) {
         const details = Array.from(e.querySelectorAll("div"));
         if (details?.length !== 5) {
           break;
@@ -161,9 +160,11 @@ const handleCourseLink = async (
           note,
         });
       }
+      textbooksData.pop()
       return textbooksData;
     }
   );
+  console.log({textbooks})
 
   await page.click(COURSE_ITEM_CLOSE);
   await sleep(500);
