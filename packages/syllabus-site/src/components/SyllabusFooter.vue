@@ -11,8 +11,9 @@
         href="https://github.com/rainy-me/dhu"
         rel="noopener"
         target="_blank"
-        >github</a
       >
+        github
+      </a>
     </span>
   </footer>
 </template>
