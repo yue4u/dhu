@@ -29,9 +29,9 @@ export type AttendanceRecord = {
 export async function getAttendance(page: Page): Promise<Attendance[]> {
   await page.click(NAV_ATTENDANCE);
   await waitForClickNavigation(page, NAV_ATTENDANCE_LINK);
-  const subjectSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr > td:nth-child(2)`;
+  const courseSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr > td:nth-child(2)`;
   const attendanceRowSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr`;
-  const subjects = await page.$$eval(subjectSelector, (es) => {
+  const courses = await page.$$eval(subjectSelector, (es) => {
     const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
 
     return es.map((e) => {
@@ -75,5 +75,5 @@ export async function getAttendance(page: Page): Promise<Attendance[]> {
     });
   });
 
-  return subjects.map((subject, i) => ({ ...subject, ...attendanceRows[i] }));
+  return courses.map((subject, i) => ({ ...course, ...attendanceRows[i] }));
 }

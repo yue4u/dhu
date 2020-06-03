@@ -29,7 +29,7 @@ type Lecture = {
 };
 
 type CalendarEvent = {
-  Subject: string;
+  Course: string;
   "Start Date": string;
   "Start Time"?: string;
   "End Date"?: string;
@@ -105,7 +105,7 @@ export async function saveGoogleCalendarCSV(
     const date = getDate(l.day).toISOString().split("T")[0];
 
     return {
-      Subject: l.title,
+      Course: l.title,
       "Start Time": time[0],
       "End Time": time[1],
       "Start Date": date,

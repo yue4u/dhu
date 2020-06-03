@@ -5,7 +5,7 @@ import { CLASS_PROFILE, CLASS_PROFILE_TASK } from "./selectors";
 export type Task = {
   groupName?: string; //課題グループ名;
   name?: string; //課題名;
-  subject?: string; //コース;
+  course?: string; //コース;
   when?: string; //目次;
   start?: string; //課題提出開始日時;
   deadline?: string; //課題提出終了日時;
@@ -76,7 +76,7 @@ async function getClassTasks(page: Page): Promise<Task[]> {
       const [
         groupName,
         name,
-        subject,
+        course,
         when,
         start,
         deadline,
@@ -97,7 +97,7 @@ async function getClassTasks(page: Page): Promise<Task[]> {
       return {
         groupName,
         name,
-        subject,
+        course,
         when,
         start,
         deadline,
