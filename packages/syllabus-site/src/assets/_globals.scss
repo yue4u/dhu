@@ -1,0 +1,114 @@
+$theme-grey: #63707e;
+$theme-green: #93b5b3;
+$theme-light-green: #c8dad3;
+$theme-pale-green: #f2f6f5;
+
+.syllabus {
+  &-txt {
+    margin: 0;
+    white-space: pre-line;
+    word-break: break-word;
+    line-height: 1.5;
+    &-link {
+      color: inherit;
+      text-decoration: underline;
+      word-break: break-all;
+    }
+  }
+  &-page {
+    &-statistics {
+      &-wrapper {
+        padding: 0 2rem;
+
+        //&:hover {
+        //  .syllabus-page-statistics-title::before {
+        //    transform: rotate(1turn);
+        //  }
+        //}
+      }
+      &-title {
+        color: slategrey;
+        text-transform: capitalize;
+        &::before {
+          //transition: 0.3s all ease-in-out;
+          content: "❖";
+          margin-right: 1rem;
+          display: inline-block;
+        }
+      }
+    }
+    &-title {
+      margin-top: 2rem;
+      font-size: 2rem;
+      color: slategrey;
+      text-align: center;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      &-count {
+        background-color: slategrey;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin: 0 0.5rem;
+      }
+      &-sub {
+        font-size: 1rem;
+        color: #93b5b3;
+        margin: 0 1rem;
+      }
+    }
+  }
+  &-input {
+    font-size: 1.4rem;
+    text-align: center;
+    border: 0;
+    border-bottom: 1px solid #c8dad3;
+    margin: 2rem auto;
+    display: block;
+    &::placeholder {
+      color: #ccc;
+    }
+    &:focus {
+      outline: none;
+      border-bottom: 1px solid $theme-green;
+    }
+  }
+
+  &-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  &-tags {
+    &-complete-item {
+      transition: all 0.3s;
+      display: inline-block;
+    }
+    &-complete-enter,
+    &-complete-leave-to {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    &-complete-leave-active {
+      position: absolute;
+    }
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .syllabus {
+    &-page {
+      &-statistics {
+        &-wrapper {
+          padding: 0;
+        }
+      }
+    }
+  }
+  &-list {
+    &-wrapper {
+      padding: 0;
+    }
+  }
+}
