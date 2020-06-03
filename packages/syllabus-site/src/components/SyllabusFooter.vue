@@ -8,7 +8,7 @@
       edit on
       <a
         class="syllabus-footer-link-github"
-        href="https://github.com/rainy-me/digicam-syllabus"
+        href="https://github.com/rainy-me/dhu"
         rel="noopener"
         target="_blank"
         >github</a
