@@ -4,9 +4,8 @@
     <ul class="syllabus-list">
       <li class="syllabus-list-item" v-for="item in items" :key="item.id">
         <g-link class="syllabus-button-link" :to="item.url">
-          {{
-          item.name
-          }}
+          {{ item.name }}
+          <span class="syllabus-list-item-code">{{ item.id }}</span>
         </g-link>
       </li>
     </ul>
@@ -15,7 +14,7 @@
 
 <script>
 export default {
-  props: ["items"]
+  props: ["items"],
 };
 </script>
 
@@ -34,6 +33,16 @@ export default {
       display: block;
       padding: 1rem;
       width: 100%;
+    }
+    &-code {
+      background-color: #f2f6f5;
+      padding: 2px 5px;
+      font-size: 1rem;
+      border-radius: 5px;
+      float: right;
+      &:before {
+        content: "#";
+      }
     }
     &:hover {
       background-color: $theme-pale-green;

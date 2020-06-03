@@ -1,6 +1,10 @@
 <template>
   <syllabus-layout class="course">
-    <h1 class="syllabus-page-title">{{ $page.course.title }}</h1>
+    <h1 class="syllabus-page-title">
+      {{ $page.course.title }}
+      <span class="course-title-code">{{ $page.course.id }}</span>
+    </h1>
+
     <p class="course-teacher">
       <g-link :to="`/teacher/${$page.course.teacher.id}`">
         {{ $page.course.teacher.name }}
@@ -33,6 +37,7 @@
 <page-query>
 query Course($id: ID!) {
   course: course(id: $id) {
+    id
     title
     time
     purpose
@@ -113,6 +118,20 @@ export default {
       text-align: center;
       color: $theme-green;
       font-size: 1.4rem;
+    }
+    &-code {
+      background-color: #f2f6f5;
+      padding: 2px 5px;
+      font-size: 1rem;
+      display: inline-block;
+      border-radius: 5px;
+      width: fit-content;
+      font-size: 0.9rem;
+      margin-left: 15px;
+      font-weight: normal;
+      &:before {
+        content: "#";
+      }
     }
   }
 
