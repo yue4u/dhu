@@ -1,4 +1,11 @@
-export { login, withLogin, withBrowser, withPage } from "./login";
+export {
+  login,
+  withBrowser,
+  withPage,
+  withLogin,
+  withLoginedBrowser,
+  withLoginedPage,
+} from "./login";
 
 export {
   Attendance,
@@ -20,4 +27,4 @@ export { getGPA, GPA } from "./grade";
 export { saveGoogleCalendarCSV, getSchedule } from "./schedule";
 export { getTasks, Task, TaskMap } from "./task";
 
-export { getSyllabus, Course, Textbook } from "./syllabus";
+export { getOpenSyllabus, getSyllabus, Course, Textbook } from "./syllabus";

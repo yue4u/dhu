@@ -1,5 +1,5 @@
 import { Page, ElementHandle } from "playwright-chromium";
-import { sleep, waitForClickNavigation } from "../utils";
+import { sleep, waitForClickNavigation, waitForNavigation } from "../utils";
 import { NAV_COURSE, NAV_SYLLABUS_LINK, COURSE_ITEM_CLOSE } from "../selectors";
 
 export type Course = {
@@ -39,6 +39,15 @@ export type Textbook = {
   note: string;
 };
 
+export async function getOpenSyllabus(page:Page):Promise<Course[]>{
+  const SYLLABUS_OPEN_URL = `https://portal.dhw.ac.jp/uprx/up/pk/pky001/Pky00101.xhtml?guestlogin=Kmh006`
+  await waitForNavigation(page,()=>  page.goto(SYLLABUS_OPEN_URL))
+  await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
+  await page.click(`#funcForm\\:search`);
+  await sleep(2000);
+  return gatherCourseFromPage(page)
+}
+
 export async function getSyllabus(page: Page): Promise<Course[]> {
   await page.click(NAV_COURSE);
   await waitForClickNavigation(page, NAV_SYLLABUS_LINK);
@@ -48,6 +57,10 @@ export async function getSyllabus(page: Page): Promise<Course[]> {
   await page.click(`#funcForm\\:search`);
   await page.selectOption(`#funcForm\\:table_rppDD`, "100");
   await sleep(2000);
+  return gatherCourseFromPage(page);
+}
+
+async function gatherCourseFromPage(page:Page){
 
   let courses: Course[] = [];
   let pageIndex = 1;
@@ -164,7 +177,7 @@ const handleCourseLink = async (
       return textbooksData;
     }
   );
-  console.log({textbooks})
+  // console.log({textbooks})
 
   await page.click(COURSE_ITEM_CLOSE);
   await sleep(500);

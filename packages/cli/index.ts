@@ -9,7 +9,7 @@ import {
   // getInfo,
   getTasks,
   saveGoogleCalendarCSV,
-  withPage,
+  withLoginedPage,
   getFS,
 } from "@dhu/core";
 import {
@@ -44,7 +44,7 @@ cli
   .command("gpa", "Get GPA")
   .option("--head", "launch headfully")
   .action(async (option) => {
-    const data = await withPage(getGPA, { headless: !option.head });
+    const data = await withLoginedPage(getGPA, { headless: !option.head });
     renderGPA(data);
   });
 
@@ -52,7 +52,9 @@ cli
   .command("atte", "Get attendance")
   .option("--head", "launch headfully")
   .action(async (option) => {
-    const data = await withPage(getAttendance, { headless: !option.head });
+    const data = await withLoginedPage(getAttendance, {
+      headless: !option.head,
+    });
     renderAttendance(data);
   });
 
@@ -60,7 +62,7 @@ cli
   .command("info", "Get info")
   .option("--head", "launch headfully")
   .action(async (option) => {
-    const data = await withPage(getInfo, { headless: !option.head });
+    const data = await withLoginedPage(getInfo, { headless: !option.head });
     console.log(data);
   });
 
@@ -68,7 +70,7 @@ cli
   .command("fs", "Get fs")
   .option("--head", "launch headfully")
   .action(async (option) => {
-    const data = await withPage(getFS, { headless: !option.head });
+    const data = await withLoginedPage(getFS, { headless: !option.head });
     renderFS(data);
   });
 
@@ -78,7 +80,7 @@ cli
   .option("--end", "show end tasks")
   .option("--empty", "show empty tasks")
   .action(async (option) => {
-    const data = await withPage(getTasks, { headless: !option.head });
+    const data = await withLoginedPage(getTasks, { headless: !option.head });
     renderTaskMap(data, { showEmpty: option.empty, showEnd: option.end });
   });
 
@@ -88,7 +90,7 @@ cli
   .option("-q <q>", "quarter 1/2/3/4?")
   .option("-s, --start <start>", "first monday when quarter start")
   .action(async (option) => {
-    /*const data = */ await withPage(
+    /*const data = */ await withLoginedPage(
       (page) => saveGoogleCalendarCSV(page, option.q, option.start),
       {
         headless: !option.head,

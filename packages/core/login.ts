@@ -67,16 +67,35 @@ export async function withLogin<T>(
   return result;
 }
 
-export async function withPage<T>(
+export async function withLoginedPage<T>(
   fn: (page: Page) => Promise<T>,
   option?: LaunchOptions
 ) {
   return await withLogin(async ({ page }) => await fn(page), option);
 }
 
-export async function withBrowser<T>(
+export async function withLoginedBrowser<T>(
   fn: (browser: Browser) => T,
   option?: LaunchOptions
 ) {
   return await withLogin(async ({ browser }) => fn(browser), option);
 }
+
+export async function withBrowser<T>(
+  fn: (browser: Browser) => Promise<T>,
+  option?: LaunchOptions
+) {
+  const browser = await chromium.launch(option);
+  return fn(browser)
+ }
+
+ export async function withPage<T>(
+  fn: (page: Page) => Promise<T>,
+  option?: LaunchOptions
+) {
+  return await withBrowser(async (browser)=>{
+  const ctx = await browser.newContext({ acceptDownloads: true });
+  const page = await ctx.newPage();
+  return fn(page)
+  },option)
+ }
