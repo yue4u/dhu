@@ -39,8 +39,20 @@ export type Textbook = {
   note: string;
 };
 
+const SYLLABUS_OPEN_URL = `https://portal.dhw.ac.jp/uprx/up/pk/pky001/Pky00101.xhtml?guestlogin=Kmh006`
+
+export async function getTotalCourseNumber(page:Page){
+  await waitForNavigation(page,()=>  page.goto(SYLLABUS_OPEN_URL))
+  await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
+  await page.click(`#funcForm\\:search`);
+  await sleep(2000);
+  const totalEl = await page.$('.ui-paginator-current')
+  const totalText = await totalEl?.textContent()
+  const [count] = totalText?.match(/([0-9]+)/) ?? [];
+  return count
+}
+
 export async function getOpenSyllabus(page:Page):Promise<Course[]>{
-  const SYLLABUS_OPEN_URL = `https://portal.dhw.ac.jp/uprx/up/pk/pky001/Pky00101.xhtml?guestlogin=Kmh006`
   await waitForNavigation(page,()=>  page.goto(SYLLABUS_OPEN_URL))
   await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
   await page.click(`#funcForm\\:search`);

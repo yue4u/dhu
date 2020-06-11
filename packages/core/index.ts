@@ -27,4 +27,10 @@ export { getGPA, GPA } from "./grade";
 export { saveGoogleCalendarCSV, getSchedule } from "./schedule";
 export { getTasks, Task, TaskMap } from "./task";
 
-export { getOpenSyllabus, getSyllabus, Course, Textbook } from "./syllabus";
+export {
+  getOpenSyllabus,
+  getSyllabus,
+  getTotalCourseNumber,
+  Course,
+  Textbook,
+} from "./syllabus";

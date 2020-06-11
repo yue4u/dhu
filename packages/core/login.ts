@@ -86,7 +86,9 @@ export async function withBrowser<T>(
   option?: LaunchOptions
 ) {
   const browser = await chromium.launch(option);
-  return fn(browser)
+  const ret = await fn(browser);
+  await browser.close()
+  return ret
  }
 
  export async function withPage<T>(
