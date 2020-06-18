@@ -1,6 +1,6 @@
 import { Page } from "playwright-chromium";
 import { NAV_ATTENDANCE, NAV_ATTENDANCE_LINK } from "./selectors";
-import { waitForClickNavigation } from "./utils";
+import { waitForClickNavigation, sleep } from "./utils";
 export type Attendance = {
   code: string;
   title: string;
@@ -26,9 +26,15 @@ export type AttendanceRecord = {
   date: string;
 };
 
-export async function getAttendance(page: Page): Promise<Attendance[]> {
+export async function getAttendance(page: Page, q:number = 1): Promise<Attendance[]> {
   await page.click(NAV_ATTENDANCE);
   await waitForClickNavigation(page, NAV_ATTENDANCE_LINK);
+  if (q != 1) {
+    await page.selectOption(`#funcForm\\:kaikoNendoGakki_input`,`${new Date().getFullYear()}|0${q}`);
+    await page.click(`#funcForm\\:btnHyoji`);
+    await sleep(500);
+  }
+  
   const courseSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr > td:nth-child(2)`;
   const attendanceRowSelector = `div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr`;
   const courses = await page.$$eval(courseSelector, (es) => {

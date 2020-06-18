@@ -51,10 +51,14 @@ cli
 cli
   .command("atte", "Get attendance")
   .option("--head", "launch headfully")
+  .option("-q <q>", "quarter 1/2/3/4")
   .action(async (option) => {
-    const data = await withLoginedPage(getAttendance, {
-      headless: !option.head,
-    });
+    const data = await withLoginedPage(
+      (page) => getAttendance(page, parseInt(option.q)),
+      {
+        headless: !option.head,
+      }
+    );
     renderAttendance(data);
   });
 
