@@ -108,5 +108,5 @@ cli
   });
 
 cli.help();
-cli.version("0.0.14");
+cli.version("0.0.15");
 cli.parse();

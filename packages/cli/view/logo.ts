@@ -13,7 +13,7 @@ const logo = orange(`
                   ;n*#h},                  
       ,i10#aOcYLJqhaO-                     
      IrQb#dx{<:                            ${y.bold(`dhu`)}
-          :;l-jCkadJt_:                    ${w(`version: 0.0.14`)}
+          :;l-jCkadJt_:                    ${w(`version: 0.0.15`)}
              ,>JMMMM#m_                    
            ,}Z#MMMMMU:                     ${w(`Have a nice day!`)}
          :tkMMMMM#ZuLaokpJ/~,              
