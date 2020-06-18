@@ -29,8 +29,14 @@ export type Attachment = {
   url?: string;
 };
 
-export async function getTasks(page: Page): Promise<TaskMap> {
+export async function getTasks(page: Page, q: number = 1): Promise<TaskMap> {
   await waitForClickNavigation(page, CLASS_PROFILE);
+  let pageIndex = 0;
+  while (pageIndex < q - 1) {
+    await page.click(`#funcLeftForm\\:j_idt196`);
+    await sleep(500);
+    pageIndex++;
+  }
   await page.evaluate(() => {
     Array.from(
       document.querySelectorAll<HTMLElement>(".ui-icon-plusthick")
@@ -39,7 +45,6 @@ export async function getTasks(page: Page): Promise<TaskMap> {
   await sleep(500);
   await page.click(CLASS_PROFILE_TASK);
   await sleep(500);
-
   const classes = await page.$$(".classList a");
   let tasksMap: Record<string, Task[]> = {};
   let i = 0;
@@ -49,7 +54,7 @@ export async function getTasks(page: Page): Promise<TaskMap> {
 
     const title = await handle.textContent();
     await handle.click();
-    await sleep(600);
+    await sleep(1000);
 
     // console.log(`start ${title}`);
     const tasks = await getClassTasks(page);

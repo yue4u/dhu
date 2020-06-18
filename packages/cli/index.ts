@@ -79,8 +79,12 @@ cli
   .option("--head", "launch headfully")
   .option("--end", "show end tasks")
   .option("--empty", "show empty tasks")
+  .option("-q <q>", "quarter 1/2/3/4")
   .action(async (option) => {
-    const data = await withLoginedPage(getTasks, { headless: !option.head });
+    const data = await withLoginedPage(
+      (page) => getTasks(page, parseInt(option.q, 10)),
+      { headless: !option.head }
+    );
     renderTaskMap(data, { showEmpty: option.empty, showEnd: option.end });
   });
 
