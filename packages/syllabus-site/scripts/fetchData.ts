@@ -4,7 +4,7 @@ import { getOpenSyllabus, withPage } from "@dhu/core";
 import { sortData } from "./sortData";
 
 (async () => {
-  const data = await withPage(getOpenSyllabus, { headless: false });
+  const data = await withPage(getOpenSyllabus, { headless: true });
   await fs.writeFile(
     path.join(__dirname, "../data/syllabus.json"),
     JSON.stringify(sortData(data), null, 4),

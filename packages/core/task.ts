@@ -1,5 +1,5 @@
 import { Page } from "playwright-chromium";
-import { sleep, waitForClickNavigation } from "./utils";
+import { sleep, waitForClickNavigation,waitForNavigation } from "./utils";
 import { CLASS_PROFILE, CLASS_PROFILE_TASK } from "./selectors";
 
 export type Task = {
@@ -30,7 +30,12 @@ export type Attachment = {
 };
 
 export async function getTasks(page: Page, q: number = 1): Promise<TaskMap> {
-  await waitForClickNavigation(page, CLASS_PROFILE);
+  await sleep(500)
+  await waitForNavigation(page, async()=>{
+    return page.evaluate(()=>{
+      document.querySelector<HTMLElement>(`#funcForm\\:j_idt359\\:j_idt2239\\:j_idt2245`)?.click()
+    })
+  });
   let pageIndex = 0;
   while (pageIndex < q - 1) {
     await page.click(`#funcLeftForm\\:j_idt196`);

@@ -8,7 +8,7 @@
     "fetch-data": "ts-node ./scripts/fetchData.ts",
     "sort-data": "ts-node ./scripts/sortData.ts",
     "build-search-data": "ts-node ./scripts/buildSearchData.ts",
-    "count-data": "ts-node ./scripts/countData.ts",
+    "check-data": "ts-node ./scripts/checkData.ts",
     "gen": "cp ./data/search.json ./functions/search.json && gridsome build"
   },
   "devDependencies": {

@@ -6,7 +6,10 @@ import { Course } from "@dhu/core";
 import syllabusData from "../data/syllabus.json";
 
 const hash = (text: string) => {
-  return createHash("md5").update(text).digest("hex").slice(0, 8);
+  return createHash("md5")
+    .update(text)
+    .digest("hex")
+    .slice(0, 8);
 };
 
 const hashStore: Record<string, string> = {};

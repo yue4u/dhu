@@ -44,6 +44,7 @@ const SYLLABUS_OPEN_URL = `https://portal.dhw.ac.jp/uprx/up/pk/pky001/Pky00101.x
 export async function getTotalCourseNumber(page:Page){
   await waitForNavigation(page,()=>  page.goto(SYLLABUS_OPEN_URL))
   await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
+  await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
   await page.click(`#funcForm\\:search`);
   await sleep(2000);
   const totalEl = await page.$('.ui-paginator-current')
@@ -53,7 +54,8 @@ export async function getTotalCourseNumber(page:Page){
 }
 
 export async function getOpenSyllabus(page:Page):Promise<Course[]>{
-  await waitForNavigation(page,()=>  page.goto(SYLLABUS_OPEN_URL))
+  await waitForNavigation(page,()=>  page.goto(SYLLABUS_OPEN_URL));
+  await sleep(200);
   await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
   await page.click(`#funcForm\\:search`);
   await sleep(2000);
