@@ -33,7 +33,7 @@ export async function getTasks(page: Page, q: number = 1): Promise<TaskMap> {
   await sleep(500)
   await waitForNavigation(page, async()=>{
     return page.evaluate(()=>{
-      document.querySelector<HTMLElement>(`#funcForm\\:j_idt359\\:j_idt2239\\:j_idt2245`)?.click()
+      document.querySelector<HTMLElement>(`#funcForm\\:j_idt361\\:j_idt2241\\:j_idt2247`)?.click()
     })
   });
   let pageIndex = 0;
