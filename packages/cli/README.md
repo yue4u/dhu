@@ -1,7 +1,7 @@
 # @dhu/cli
 
 ```
-dhu v0.0.15
+dhu v0.0.17
 
 Usage:
   $ dhu <command> [options]

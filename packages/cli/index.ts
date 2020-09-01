@@ -19,6 +19,7 @@ import {
   renderTaskMap,
   renderFS,
 } from "./view";
+// import { waitForClickNavigation, sleep } from "@dhu/core";
 const cli = cac();
 
 cli
@@ -108,5 +109,5 @@ cli
   });
 
 cli.help();
-cli.version("0.0.15");
+cli.version("0.0.17");
 cli.parse();

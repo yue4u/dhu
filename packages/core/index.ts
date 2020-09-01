@@ -34,3 +34,5 @@ export {
   Course,
   Textbook,
 } from "./syllabus";
+
+export { waitForClickNavigation, sleep } from "./utils";
