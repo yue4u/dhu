@@ -55,22 +55,25 @@ export async function getTotalCourseNumber(page:Page){
 
 export async function getOpenSyllabus(page:Page):Promise<Course[]>{
   await waitForNavigation(page,()=>  page.goto(SYLLABUS_OPEN_URL));
+  console.log('setting options...')
   await sleep(200);
   await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
   await page.click(`#funcForm\\:search`);
   await sleep(2000);
+  console.log('start gathering...')
   return gatherCourseFromPage(page)
 }
 
 export async function getSyllabus(page: Page): Promise<Course[]> {
   await page.click(NAV_COURSE);
   await waitForClickNavigation(page, NAV_SYLLABUS_LINK);
-
+  console.log('setting options...')
   await page.selectOption(`#funcForm\\:cgksSearchType0_input`, "");
   await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
   await page.click(`#funcForm\\:search`);
   await page.selectOption(`#funcForm\\:table_rppDD`, "100");
   await sleep(2000);
+  console.log('start gathering...')
   return gatherCourseFromPage(page);
 }
 
