@@ -12,7 +12,7 @@
     "gen": "cp ./data/search.json ./functions/search.json && gridsome build"
   },
   "devDependencies": {
-    "@dhu/core": "^0.0.14",
+    "@dhu/core": "^0.0.15",
     "gridsome": "^0.7.17",
     "node-sass": "^4.14.1",
     "sass-loader": "^8.0.2",
