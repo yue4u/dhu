@@ -37,3 +37,5 @@ export const INFO_ITEM_CLOSE = `#bsd00702\\:dialog > div.ui-dialog-titlebar.ui-w
 export const CLASS_PROFILE = `#funcForm\\:j_idt359\\:j_idt2239\\:j_idt2245`;
 
 export const CLASS_PROFILE_TASK = `#functionHeaderForm\\:j_idt159\\:0\\:j_idt161`;
+
+export const CONFIRM_BUTTON = `button.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-icon-left`;
