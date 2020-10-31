@@ -14,7 +14,7 @@
     "dev": "ts-node --files --transpile-only index.ts"
   },
   "dependencies": {
-    "@dhu/core": "0.0.15",
+    "@dhu/core": "0.0.16",
     "cac": "^6.5.8",
     "chalk": "^4.0.0"
   },
