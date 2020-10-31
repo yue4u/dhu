@@ -16,6 +16,7 @@ export {
 
 export {
   askUserInfo,
+  saveUserInfo,
   getUserInfo,
   readUserInfo,
   removeUserInfo,
