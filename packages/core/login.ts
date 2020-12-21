@@ -18,7 +18,12 @@ export type LoginResult = {
   browser: Browser;
 };
 
-export async function login(option?: LaunchOptions) {
+export async function login(
+  option?: LaunchOptions
+): Promise<{
+  error?: string;
+  result?: LoginResult;
+}> {
   const { id, password } = await getUserInfo();
   const browser = await chromium.launch(option);
   // @ts-ignore
@@ -33,26 +38,24 @@ export async function login(option?: LaunchOptions) {
   });
 
   if (maintenanceMessage) {
-    console.log(maintenanceMessage);
-    process.exit();
+    return { error: maintenanceMessage };
   }
 
   await page.type(LOGIN_ID, id);
   await page.type(LOGIN_PASSWORD, password);
   await waitForClickNavigation(page, LOGIN_SUBMIT_BUTTON);
-  const err = await page.evaluate(() => {
+  const error = await page.evaluate(() => {
     const e = document.querySelector(".ui-messages-error-detail");
     const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
     return e === null ? e : textContentOf(e);
   });
 
-  if (err) {
-    console.error(err);
+  if (error) {
     await removeUserInfo();
-    process.exit();
+    return { error };
   }
 
-  return { page, browser };
+  return { result: { page, browser } };
 }
 
 export async function exposeGlobalHelper(ctx: BrowserContext) {}
@@ -61,10 +64,13 @@ export async function withLogin<T>(
   fn: (ctx: LoginResult) => Promise<T>,
   option?: LaunchOptions
 ) {
-  const loginCtx = await login(option);
-  const result = await fn(loginCtx);
-  await loginCtx.browser.close();
-  return result;
+  const { error, result } = await login(option);
+  if (error || !result) {
+    throw error;
+  }
+  const ret = await fn(result);
+  await result.browser.close();
+  return ret;
 }
 
 export async function withLoginedPage<T>(
@@ -87,17 +93,17 @@ export async function withBrowser<T>(
 ) {
   const browser = await chromium.launch(option);
   const ret = await fn(browser);
-  await browser.close()
-  return ret
- }
+  await browser.close();
+  return ret;
+}
 
- export async function withPage<T>(
+export async function withPage<T>(
   fn: (page: Page) => Promise<T>,
   option?: LaunchOptions
 ) {
-  return await withBrowser(async (browser)=>{
-  const ctx = await browser.newContext({ acceptDownloads: true });
-  const page = await ctx.newPage();
-  return fn(page)
-  },option)
- }
+  return await withBrowser(async (browser) => {
+    const ctx = await browser.newContext({ acceptDownloads: true });
+    const page = await ctx.newPage();
+    return fn(page);
+  }, option);
+}
