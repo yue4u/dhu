@@ -10,7 +10,7 @@
     "access": "public"
   },
   "dependencies": {
-    "json2csv": "^5.0.1",
+    "json2csv": "^5.0.6",
     "playwright-chromium": "^1.0.2"
   },
   "files": [

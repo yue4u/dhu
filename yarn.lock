@@ -843,6 +843,14 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@dhu/core@0.0.16", "@dhu/core@^0.0.16":
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/@dhu/core/-/core-0.0.16.tgz#6d0453fc5fc06b77738c7801d1bb0b1cf3137f90"
+  integrity sha512-fNGRB4NXGUdEyTaGTpmca6d2Nho0gNNpkLhTeYQlcaahDAKe4aBb24i0Ge29EmwC4JBO6eltXY024GSjBw+/BA==
+  dependencies:
+    json2csv "^5.0.1"
+    playwright-chromium "^1.0.2"
+
 "@evocateur/libnpmaccess@^3.1.2":
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/@evocateur/libnpmaccess/-/libnpmaccess-3.1.2.tgz#ecf7f6ce6b004e9f942b098d92200be4a4b1c845"
@@ -3443,6 +3451,11 @@ commander@^5.0.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-5.1.0.tgz#46abbd1652f8e059bddaef99bbdcb2ad9cf179ae"
   integrity sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==
+
+commander@^6.1.0:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
+  integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
 
 commander@~2.19.0:
   version "2.19.0"
@@ -6829,6 +6842,15 @@ json2csv@^5.0.1:
   integrity sha512-QFMifUX1y8W2tKi2TwZpnzf2rHdZvzdmgZUMEMDF46F90f4a9mUeWfx/qg4kzXSZYJYc3cWA5O+eLXk5lj9g8g==
   dependencies:
     commander "^5.0.0"
+    jsonparse "^1.3.1"
+    lodash.get "^4.4.2"
+
+json2csv@^5.0.6:
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/json2csv/-/json2csv-5.0.6.tgz#590e0e1b9579e59baa53bda0c0d840f4d8009687"
+  integrity sha512-0/4Lv6IenJV0qj2oBdgPIAmFiKKnh8qh7bmLFJ+/ZZHLjSeiL3fKKGX3UryvKPbxFbhV+JcYo9KUC19GJ/Z/4A==
+  dependencies:
+    commander "^6.1.0"
     jsonparse "^1.3.1"
     lodash.get "^4.4.2"
 
