@@ -41,7 +41,7 @@ export default {
 
       if (this.searchText) {
         courses = courses.filter((subject) =>
-          course.name.includes(this.searchText)
+          subject.name.includes(this.searchText)
         );
       }
       return courses.reverse();
