@@ -1,6 +1,6 @@
 {
   "name": "@dhu/core",
-  "version": "0.0.17",
+  "version": "0.0.19",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -10,14 +10,14 @@
     "access": "public"
   },
   "dependencies": {
-    "json2csv": "^5.0.1",
-    "playwright-chromium": "^1.0.2"
+    "json2csv": "^5.0.6",
+    "playwright-chromium": "^1.10.0"
   },
   "files": [
     "dist",
     "package.json"
   ],
   "devDependencies": {
-    "@types/json2csv": "^5.0.0"
+    "@types/json2csv": "^5.0.1"
   }
 }
