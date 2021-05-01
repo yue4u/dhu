@@ -25,12 +25,12 @@ export const NAV_SYLLABUS_LINK = `#menuForm\\:mainMenu > ul > li.ui-widget.ui-me
 export const COURSE_ITEM_CLOSE = `#pkx02301\\:dialog > div.ui-dialog-titlebar.ui-widget-header.ui-helper-clearfix.ui-corner-top.ui-draggable-handle > a.ui-dialog-titlebar-icon.ui-dialog-titlebar-close.ui-corner-all`;
 
 export const GRADE_GPA = `#funcForm\\:Kmy001\\:gpaList_data`;
-export const INFO_GENERAL_ALL = `#funcForm\\:tabArea\\:0\\:j_idt229\\:0\\:j_idt327`;
-export const INFO_CLASS_ALL = `#funcForm\\:tabArea\\:0\\:j_idt229\\:1\\:j_idt327`;
+export const INFO_GENERAL_ALL = `#funcForm\\:tabArea > ul > li:nth-child(2) > a`;
+export const INFO_CLASS_ALL = `#funcForm\\:tabArea > ul > li:nth-child(3) > a`;
 
-export const INFO_GENERAL_ITEM = `#funcForm\\:tabArea\\:0\\:j_idt229\\:0\\:j_idt283 > div > dl > a`;
-export const INFO_CLASS_ITEM = `#funcForm\\:tabArea\\:0\\:j_idt229\\:1\\:j_idt283 > div > dl > a`;
-export const INFO_ITEM_ATTACHMENT_OPEN = `#bsd00702\\:ch\\:j_idt503`;
+export const INFO_GENERAL_ITEM = `#funcForm\\:tabArea\\:1\\:allScr > div > dl > a`;
+export const INFO_CLASS_ITEM = `#funcForm\\:tabArea\\:2\\:allScr > div > dl > a`;
+export const INFO_ITEM_ATTACHMENT_OPEN = `#bsd00702\\:ch\\:j_idt502`;
 export const INFO_ITEM_ATTACHMENT_CLOSE = `#pkx02201\\:dialog > div.ui-dialog-titlebar.ui-widget-header.ui-helper-clearfix.ui-corner-top.ui-draggable-handle > a.ui-dialog-titlebar-icon.ui-dialog-titlebar-close.ui-corner-all`;
 export const INFO_ITEM_CLOSE = `#bsd00702\\:dialog > div.ui-dialog-titlebar.ui-widget-header.ui-helper-clearfix.ui-corner-top.ui-draggable-handle > a.ui-dialog-titlebar-icon.ui-dialog-titlebar-close.ui-corner-all`;
 
