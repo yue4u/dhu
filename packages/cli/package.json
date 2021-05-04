@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@dhu/core": "^0.0.20",
-    "cac": "^6.7.2",
-    "chalk": "^4.1.0"
+    "cac": "^6.7.3",
+    "chalk": "^4.1.1"
   },
   "files": [
     "bin",
