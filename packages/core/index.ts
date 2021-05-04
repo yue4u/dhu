@@ -15,7 +15,6 @@ export {
 } from "./attendance";
 
 export {
-  askUserInfo,
   saveUserInfo,
   getUserInfo,
   readUserInfo,

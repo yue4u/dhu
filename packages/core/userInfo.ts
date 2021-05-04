@@ -1,6 +1,5 @@
 import os from "os";
 import path from "path";
-import readline from "readline";
 import { promises as fs } from "fs";
 
 export type LoginInfo = {
@@ -25,16 +24,18 @@ export async function saveUserInfo(info: LoginInfo) {
     await fs.mkdir(userDataPathDir, { recursive: true });
   }
 
-  return await fs.writeFile(userDataPath, JSON.stringify(info), {
+  await fs.writeFile(userDataPath, JSON.stringify(info), {
     encoding: "utf8",
   });
+
+  console.log(`user info saved to ${userDataPath}`);
 }
 
-export async function getUserInfo(): Promise<LoginInfo> {
+export async function getUserInfo(): Promise<LoginInfo | null> {
   try {
     return await readUserInfo();
   } catch {
-    return await askUserInfo();
+    return null;
   }
 }
 
@@ -45,25 +46,4 @@ export async function readUserInfo(): Promise<LoginInfo> {
 
 export async function removeUserInfo(): Promise<void> {
   return fs.unlink(getUserDataPath());
-}
-
-export async function askUserInfo(): Promise<LoginInfo> {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  const ask = (question: string): Promise<string> => {
-    return new Promise((resolve) =>
-      rl.question(`${question} `, (answer) => resolve(answer))
-    );
-  };
-  const id = await ask("digicam id?");
-  const password = await ask("password?");
-
-  rl.close();
-
-  const info = { id, password };
-  await saveUserInfo(info);
-  return info;
 }

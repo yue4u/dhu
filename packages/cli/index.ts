@@ -2,7 +2,6 @@
 import cac from "cac";
 import {
   getAttendance,
-  askUserInfo,
   removeUserInfo,
   getGPA,
   getInfo,
@@ -14,6 +13,7 @@ import {
 } from "@dhu/core";
 import {
   renderLogo,
+  renderLogin,
   renderAttendance,
   renderGPA,
   renderTaskMap,
@@ -31,9 +31,7 @@ cli
 
 cli // keep format
   .command("login", "Save login info to local data path")
-  .action(async () => {
-    await askUserInfo();
-  });
+  .action(renderLogin);
 
 cli
   .command("logout", "Remove login info from local data path")
