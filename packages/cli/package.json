@@ -17,6 +17,7 @@
     "@dhu/core": "^0.0.20",
     "cac": "^6.7.3",
     "chalk": "^4.1.1",
+    "immer": "^9.0.2",
     "ink": "^3.0.8",
     "react": "^17.0.2"
   },
@@ -25,7 +26,6 @@
     "package.json"
   ],
   "devDependencies": {
-    "@types/react": "^17.0.4",
-    "immer": "^9.0.2"
+    "@types/react": "^17.0.4"
   }
 }
