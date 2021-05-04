@@ -3,3 +3,4 @@ export { renderGPA } from "./gpa";
 export { renderTaskMap } from "./task";
 export { renderFS } from "./fs";
 export { renderLogo } from "./logo";
+export { renderLogin } from "./login";

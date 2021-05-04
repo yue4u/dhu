@@ -24,7 +24,12 @@ export async function login(
   error?: string;
   result?: LoginResult;
 }> {
-  const { id, password } = await getUserInfo();
+  const info = await getUserInfo();
+  if (!info){
+    console.log("please provide login info, try `dhu login`")
+    return { error: "please login" }
+  }
+  const { id, password } = info;
   const browser = await chromium.launch(option);
   // @ts-ignore
   const ctx = await browser.newContext({ acceptDownloads: true });
