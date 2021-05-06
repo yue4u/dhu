@@ -1,1 +1,3 @@
 packages/syllabus-site/**/*.js
+dist
+bin
