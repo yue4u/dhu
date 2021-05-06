@@ -5,7 +5,6 @@ import {
   removeUserInfo,
   getGPA,
   getInfo,
-  // getInfo,
   getTasks,
   saveGoogleCalendarCSV,
   withLoginedPage,
@@ -19,19 +18,13 @@ import {
   renderTaskMap,
   renderFS,
 } from "./view";
-// import { waitForClickNavigation, sleep } from "@dhu/core";
 const cli = cac();
 
-cli
-  // Simply omit the command name, just brackets
-  .command("", "Log logo")
-  .action(() => {
-    renderLogo();
-  });
+cli.command("", "Log logo").action(() => {
+  renderLogo();
+});
 
-cli // keep format
-  .command("login", "Save login info to local data path")
-  .action(renderLogin);
+cli.command("login", "Save login info to local data path").action(renderLogin);
 
 cli
   .command("logout", "Remove login info from local data path")
