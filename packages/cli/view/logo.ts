@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import pkg from "@dhu/cli/package.json";
 
 const w = chalk.white;
 const y = chalk.yellow;
@@ -13,7 +14,7 @@ const logo = orange(`
                   ;n*#h},                  
       ,i10#aOcYLJqhaO-                     
      IrQb#dx{<:                            ${y.bold("dhu")}
-          :;l-jCkadJt_:                    ${w("version: 0.1.0")}
+          :;l-jCkadJt_:                    ${w(`version: ${pkg.version}`)}
              ,>JMMMM#m_                    
            ,}Z#MMMMMU:                     ${w("Have a nice day!")}
          :tkMMMMM#ZuLaokpJ/~,              

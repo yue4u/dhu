@@ -18,6 +18,7 @@ import {
   renderTaskMap,
   renderFS,
 } from "./view";
+import pkg from "@dhu/cli/package.json";
 const cli = cac();
 
 cli.command("", "Log logo").action(() => {
@@ -67,11 +68,12 @@ cli
     const data = await withLoginedPage(
       async (page) => {
         const { attachments, downloadsPath } = option;
-        await getInfo(page, {
+        const options = {
           all: Boolean(option.all),
           attachments: Boolean(attachments),
           downloadsPath: downloadsPath ?? process.cwd(),
-        });
+        };
+        return getInfo(page, options);
       },
       {
         headless: !option.head,
@@ -118,5 +120,5 @@ cli
   });
 
 cli.help();
-cli.version("0.1.0");
+cli.version(pkg.version);
 cli.parse();
