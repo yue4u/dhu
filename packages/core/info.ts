@@ -1,4 +1,5 @@
-import { Page /* ElementHandle */ } from "playwright-chromium";
+import { Page } from "playwright-chromium";
+import path from "path";
 import { sleep, waitForClickNavigation } from "./utils";
 import {
   NAV_INFO,
@@ -8,8 +9,9 @@ import {
   INFO_CLASS_ALL,
   // INFO_CLASS_ITEM,
   // INFO_ITEM_ATTACHMENT_OPEN,
-  // INFO_ITEM_CLOSE,
-  // INFO_ITEM_ATTACHMENT_CLOSE,
+  INFO_ITEM_CLOSE,
+  INFO_ITEM_ATTACHMENT_CLOSE,
+  INFO_ALL,
 } from "./selectors";
 
 export type Info = {
@@ -19,7 +21,6 @@ export type Info = {
   available?: string;
   title?: string;
   type?: string;
-  //type: "general" | "class" | "all"
   url?: string;
   attachments?: Attachment[];
 };
@@ -29,114 +30,130 @@ export type Attachment = {
   url?: string;
 };
 
-export async function getInfo(page: Page): Promise<Info[]> {
+export type GetInfoOptions = {
+  all?: boolean;
+  attachments?: boolean;
+  downloadsPath: string;
+};
+
+export async function getInfo(
+  page: Page,
+  options: GetInfoOptions
+): Promise<Info[]> {
   await page.click(NAV_INFO);
   await waitForClickNavigation(page, NAV_INFO_LINK);
 
   await page.$eval(INFO_GENERAL_ALL, (e) => (e as HTMLElement).click());
-  await sleep(5000);
   await page.waitForSelector(INFO_GENERAL_ITEM);
+
+  if (options.all) {
+    console.log("all...");
+    await page.click(INFO_ALL);
+    await sleep(3000);
+
+    // const lenText = await page.$eval(
+    //   "#funcForm\\:tabArea\\:1\\:j_idt215 .keijiKensu",
+    //   (e) => {
+    //     const textContentOf = (e?: Element | null) =>
+    //       e?.textContent?.trim() ?? "";
+    //     return textContentOf(e);
+    //   }
+    // );
+    // console.log(lenText);
+  }
+
   const infoGeneralItemLinks = await page.$$(INFO_GENERAL_ITEM);
-  let len = infoGeneralItemLinks.length;
+  const len = infoGeneralItemLinks.length;
   let count = 0;
   const infoList: Info[] = [];
 
   while (count !== len) {
-    const info = await handleInfoItemLink(page, INFO_GENERAL_ITEM, count);
+    const info = await handleInfoItemLink(page, count, options);
     infoList.push(info);
     count += 1;
   }
 
   await page.$eval(INFO_CLASS_ALL, (e) => (e as HTMLElement).click());
 
-  const infoClassItemLinks = await page.$$(INFO_GENERAL_ITEM);
-  len += infoClassItemLinks.length;
-
-  while (count !== len) {
-    const info = await handleInfoItemLink(page, INFO_GENERAL_ITEM, count);
-    infoList.push(info);
-    count += 1;
-  }
-
-  //
-  //const infoClassItemLinks = await page.$$(INFO_CLASS_ITEM);
-  //
-  //for (const link of infoClassItemLinks) {
-  //  const info = await handleInfoItemLink(page, link);
-  //  infoList.push(info);
-  //}
-
   return infoList.filter((i) => Boolean(i.title));
 }
 
 export async function handleInfoItemLink(
   page: Page,
-  selector: string,
-  count: number
+  count: number,
+  options: GetInfoOptions
 ): Promise<Info> {
-  // await sleep(2000);
-  // console.log(`$$(${selector})`);
-  const infoItemLinks = await page.$$(selector);
+  const infoItemLinks = await page.$$(INFO_GENERAL_ITEM);
   const infoItem = infoItemLinks[count];
-  const linkData = { title: (await infoItem?.textContent()) ?? "" };
-  //console.log(linkData.title);
-  return linkData;
-  // const link = infoItemLinks[count];
-  // console.log(`await link.click();`);
-  // await link.click();
-  // console.log(`await maybeAttachmentButton;`);
-  // await sleep(5000);
-  // const maybeAttachmentButton = await page.evaluate(() =>
-  //   document.querySelector(`#bsd00702\\:ch\\:j_idt503`)
-  // );
-  // let attachments: Attachment[] = [];
-  // if (maybeAttachmentButton) {
-  //   console.log(`await page.click(#bsd00702\\:ch\\:j_idt503)`);
-  //   await page.click(`#bsd00702\\:ch\\:j_idt503`);
-  //   console.log(`await page.waitForSelector(".tableDownloadRow");`);
+  const title = (await infoItem?.textContent()) ?? "";
+  if (options.attachments) {
+    const { attachments } = await handleAttachment(page, count, options);
+    return { title, attachments };
+  }
+  return { title };
+}
 
-  //   await page.waitForSelector(".tableDownloadRow");
+interface HandleAttachmentOptions {
+  downloadsPath: string;
+}
 
-  //   const attachmentRows = await page.$$(".tableDownloadRow");
+async function handleAttachment(
+  page: Page,
+  count: number,
+  options: HandleAttachmentOptions
+) {
+  await sleep(3000);
+  await page.waitForLoadState();
+  const infoItemLinks = await page.$$(INFO_GENERAL_ITEM);
+  const parent = infoItemLinks[count];
+  await parent.click();
+  await page.waitForSelector(INFO_ITEM_CLOSE);
+  await sleep(3000);
+  const attachmentExist = await page.evaluate(
+    () => document.querySelector(`#bsd00702\\:ch\\:j_idt502`) !== null
+  );
+  const attachments: Attachment[] = [];
+  if (attachmentExist) {
+    await page.click(`#bsd00702\\:ch\\:j_idt502`);
+    await page.waitForSelector(".tableDownloadRow");
 
-  //   for (const row of attachmentRows) {
-  //     const title = await row.$eval("div", (e) => {
-  //       const textContentOf = (e?: Element | null) =>
-  //         e?.textContent?.trim() ?? "";
-  //       return textContentOf(e);
-  //     });
-  //     let url: string | null = null;
+    const attachmentRows = await page.$$(".tableDownloadRow");
 
-  //     //if (attachmentTitle in seen){
-  //     // skip
-  //     //}
-  //     const attachmentDownloadButton = await row.$("button");
-  //     await attachmentDownloadButton?.click();
-  //     if (attachmentDownloadButton) {
-  //       const [download] = await Promise.all([
-  //         page.waitForEvent("download"), // wait for download to start
-  //         attachmentDownloadButton.click(),
-  //       ]);
+    for (const row of attachmentRows) {
+      const title = await row.$eval("div", (e) => {
+        const textContentOf = (e?: Element | null) =>
+          e?.textContent?.trim() ?? "";
+        return textContentOf(e);
+      });
+      let url: string | null = null;
 
-  //       const failure = await download.failure();
-  //       if (failure) {
-  //         console.log(failure);
-  //       }
-  //       const path = await download.path();
-  //       if (path) {
-  //         console.log({ path });
-  //       }
+      // if (attachmentTitle in seen) {
+      // TODO
+      // }
+      const attachmentDownloadButton = await row.$("button");
+      if (!attachmentDownloadButton) continue;
+      await attachmentDownloadButton.click();
 
-  //       url = download.url();
-  //     }
-  //     console.log({ title, url });
-  //     console.log("await attachment close");
-  //     // sattachments.push({ title, url });
-  //   }
-  //   await page.click(INFO_ITEM_ATTACHMENT_CLOSE);
-  // }
-  // await sleep(2000);
-  // console.log("await close");
-  // await page.click(INFO_ITEM_CLOSE);
-  // return { attachments };
+      const [download] = await Promise.all([
+        page.waitForEvent("download"),
+        attachmentDownloadButton.click(),
+      ]);
+      const downloadPath = path.join(
+        options.downloadsPath,
+        download.suggestedFilename()
+      );
+      await download.saveAs(downloadPath);
+
+      const failure = await download.failure();
+      if (failure) {
+        console.log(failure);
+      }
+      // all urls are same, doesn't really make sense to store them.
+      url = download.url();
+      attachments.push({ title, url });
+    }
+    await page.click(INFO_ITEM_ATTACHMENT_CLOSE);
+  }
+  await page.click(INFO_ITEM_CLOSE);
+  return { attachments };
 }

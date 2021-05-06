@@ -5,7 +5,6 @@ import {
   removeUserInfo,
   getGPA,
   getInfo,
-  // getInfo,
   getTasks,
   saveGoogleCalendarCSV,
   withLoginedPage,
@@ -19,19 +18,13 @@ import {
   renderTaskMap,
   renderFS,
 } from "./view";
-// import { waitForClickNavigation, sleep } from "@dhu/core";
 const cli = cac();
 
-cli
-  // Simply omit the command name, just brackets
-  .command("", "Log logo")
-  .action(() => {
-    renderLogo();
-  });
+cli.command("", "Log logo").action(() => {
+  renderLogo();
+});
 
-cli // keep format
-  .command("login", "Save login info to local data path")
-  .action(renderLogin);
+cli.command("login", "Save login info to local data path").action(renderLogin);
 
 cli
   .command("logout", "Remove login info from local data path")
@@ -63,9 +56,27 @@ cli
 
 cli
   .command("info", "Get info")
+  .option("--all", "retrieve all info")
   .option("--head", "launch headfully")
+  .option("--attachments", "download attachments")
+  .option(
+    "--downloadsPath <downloadsPath>",
+    "path to save download attachments"
+  )
   .action(async (option) => {
-    const data = await withLoginedPage(getInfo, { headless: !option.head });
+    const data = await withLoginedPage(
+      async (page) => {
+        const { attachments, downloadsPath } = option;
+        await getInfo(page, {
+          all: Boolean(option.all),
+          attachments: Boolean(attachments),
+          downloadsPath: downloadsPath ?? process.cwd(),
+        });
+      },
+      {
+        headless: !option.head,
+      }
+    );
     console.log(data);
   });
 
