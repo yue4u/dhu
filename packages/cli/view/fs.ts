@@ -1,7 +1,7 @@
-import chalk from "chalk";
+import chalk, { Chalk } from "chalk";
 import { FS } from "@dhu/core";
 
-const map: Record<string, Function> = {
+const map: Record<string, Chalk> = {
   回答済: chalk.green,
   未回答: chalk.cyan,
   "*": chalk,

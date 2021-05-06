@@ -12,17 +12,17 @@ const logo = orange(`
                      I|Oavi                
                   ;n*#h},                  
       ,i10#aOcYLJqhaO-                     
-     IrQb#dx{<:                            ${y.bold(`dhu`)}
-          :;l-jCkadJt_:                    ${w(`version: 0.1.0`)}
+     IrQb#dx{<:                            ${y.bold("dhu")}
+          :;l-jCkadJt_:                    ${w("version: 0.1.0")}
              ,>JMMMM#m_                    
-           ,}Z#MMMMMU:                     ${w(`Have a nice day!`)}
+           ,}Z#MMMMMU:                     ${w("Have a nice day!")}
          :tkMMMMM#ZuLaokpJ/~,              
-       !XMMMMMM#w!      :{wMMMM*On]i:      ${y.bold(`To contribute:`)}
-     -Q#MMMMM#m-         ;J#MMMMMMMMLI     ${w(`@see https://github.com/rainy-me/dhu`)}
+       !XMMMMMM#w!      :{wMMMM*On]i:      ${y.bold("To contribute:")}
+     -Q#MMMMM#m-         ;J#MMMMMMMMLI     ${w("@see https://github.com/rainy-me/dhu")}
     _kMMMMMMo[,         ,|*MMMMMMMMML;     
        Itpq1,           >kMMMMMMMMMMJ,     
                        ,ZMMMMMMMMMMMz      
-                       vMMMMMMMMMMM#n      ${w(`made with ♡`)}
+                       vMMMMMMMMMMM#n      ${w("made with ♡")}
                       ;bMMMMMMMMMMM*f      
                        ,|Lb#MMMMMMM*(      
                            I?npMMMMo}      

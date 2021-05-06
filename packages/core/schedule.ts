@@ -46,7 +46,7 @@ export async function getSchedule(page: Page, q = 1): Promise<Lecture[]> {
   const schedule = await page.$eval(
     `(//table[contains(@class,"classTable")])[${q}]`,
     (table) => {
-      let all: Lecture[] = [];
+      const all: Lecture[] = [];
 
       const textContentOf = (e?: Element | null) =>
         e?.textContent?.trim() ?? "";
@@ -105,12 +105,12 @@ export async function saveGoogleCalendarCSV(
     const date = getDate(l.day).toISOString().split("T")[0];
 
     return {
-      "Subject": l.title,
+      Subject: l.title,
       "Start Time": time[0],
       "End Time": time[1],
       "Start Date": date,
       "End Date": date,
-      "Description": [l.lecturer, l.code, l.unit].join("\n"),
+      Description: [l.lecturer, l.code, l.unit].join("\n"),
       //Location: l.classroom
     };
   };

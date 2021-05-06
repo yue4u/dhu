@@ -52,6 +52,7 @@ function Questions(props: { questions: Question[] }) {
   useEffect(() => {
     if (step != props.questions.length) return;
     const [{ answer: id }, { answer: password }] = questions;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     saveUserInfo({ id: id!, password: password! });
     exit();
   }, [step, exit]);

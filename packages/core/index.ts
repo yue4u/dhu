@@ -36,4 +36,4 @@ export {
 } from "./syllabus";
 
 export { waitForClickNavigation, sleep } from "./utils";
-export * as SELECTORS from './selectors'
+export * as SELECTORS from "./selectors";

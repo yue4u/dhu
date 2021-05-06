@@ -1,4 +1,4 @@
-import chalk from "chalk";
+import chalk, { Chalk } from "chalk";
 import { Task, TaskMap } from "@dhu/core";
 
 type RenderTaskMapOptions = {
@@ -6,7 +6,7 @@ type RenderTaskMapOptions = {
   showEnd?: boolean;
 };
 
-const statusColorMap: Record<string, Function> = {
+const statusColorMap: Record<string, Chalk> = {
   提出終了: chalk.green,
   受付終了: chalk.grey,
   受付開始前: chalk.magentaBright,
@@ -35,7 +35,7 @@ export const renderTaskMap = (
 
 const renderTask = (t: Task, i: number) => {
   const color = statusColorMap[t.status ?? "*"];
-  let row = [
+  const row = [
     chalk.yellow(`  ${i + 1})`),
     `${color(t.status)}`.padEnd(10),
     chalk.magenta(t.deadline),

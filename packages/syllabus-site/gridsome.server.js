@@ -9,10 +9,7 @@ const search = require("./data/search.json");
 const { createHash } = require("crypto");
 
 const hash = (text) => {
-  return createHash("md5")
-    .update(text)
-    .digest("hex")
-    .slice(0, 8);
+  return createHash("md5").update(text).digest("hex").slice(0, 8);
 };
 
 const hashStore = {};
@@ -35,7 +32,7 @@ const uniqueHash = (text) => {
 
 const upper = (text) => text.slice(0, 1).toUpperCase() + text.slice(1);
 
-module.exports = function(api) {
+module.exports = function (api) {
   api.loadSource(({ addCollection, createReference, _addReference }) => {
     const courseType = addCollection({
       typeName: "Course",

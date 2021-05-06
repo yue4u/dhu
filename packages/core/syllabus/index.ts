@@ -39,48 +39,49 @@ export type Textbook = {
   note: string;
 };
 
-const SYLLABUS_OPEN_URL = `https://portal.dhw.ac.jp/uprx/up/pk/pky001/Pky00101.xhtml?guestlogin=Kmh006`
+// prettier-ignore
+const SYLLABUS_OPEN_URL = "https://portal.dhw.ac.jp/uprx/up/pk/pky001/Pky00101.xhtml?guestlogin=Kmh006";
 
-export async function getTotalCourseNumber(page:Page){
-  await waitForNavigation(page,()=>  page.goto(SYLLABUS_OPEN_URL))
-  await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
-  await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
-  await page.click(`#funcForm\\:search`);
+export async function getTotalCourseNumber(page: Page) {
+  await waitForNavigation(page, () => page.goto(SYLLABUS_OPEN_URL));
+  await page.selectOption("#funcForm\\:kaikoGakki_input", "");
+  await page.selectOption("#funcForm\\:kaikoGakki_input", "");
+  await page.click("#funcForm\\:search");
   await sleep(2000);
-  const totalEl = await page.$('.ui-paginator-current')
-  const totalText = await totalEl?.textContent()
+  const totalEl = await page.$(".ui-paginator-current");
+  const totalText = await totalEl?.textContent();
   const [count] = totalText?.match(/([0-9]+)/) ?? [];
-  return count
+  return count;
 }
 
-export async function getOpenSyllabus(page:Page):Promise<Course[]>{
-  await waitForNavigation(page,()=>  page.goto(SYLLABUS_OPEN_URL));
-  console.log('setting options...')
+export async function getOpenSyllabus(page: Page): Promise<Course[]> {
+  await waitForNavigation(page, () => page.goto(SYLLABUS_OPEN_URL));
+  console.log("setting options...");
   await sleep(200);
-  await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
-  await page.click(`#funcForm\\:search`);
+  await page.selectOption("#funcForm\\:kaikoGakki_input", "");
+  await page.click("#funcForm\\:search");
   await sleep(2000);
-  console.log('start gathering...')
-  return gatherCourseFromPage(page)
+  console.log("start gathering...");
+  return gatherCourseFromPage(page);
 }
 
 export async function getSyllabus(page: Page): Promise<Course[]> {
   await page.click(NAV_COURSE);
   await waitForClickNavigation(page, NAV_SYLLABUS_LINK);
-  console.log('setting options...')
-  await page.selectOption(`#funcForm\\:cgksSearchType0_input`, "");
-  await page.selectOption(`#funcForm\\:kaikoGakki_input`, "");
-  await page.click(`#funcForm\\:search`);
-  await page.selectOption(`#funcForm\\:table_rppDD`, "100");
+  console.log("setting options...");
+  await page.selectOption("#funcForm\\:cgksSearchType0_input", "");
+  await page.selectOption("#funcForm\\:kaikoGakki_input", "");
+  await page.click("#funcForm\\:search");
+  await page.selectOption("#funcForm\\:table_rppDD", "100");
   await sleep(2000);
-  console.log('start gathering...')
+  console.log("start gathering...");
   return gatherCourseFromPage(page);
 }
 
-async function gatherCourseFromPage(page:Page){
-
-  let courses: Course[] = [];
+async function gatherCourseFromPage(page: Page) {
+  const courses: Course[] = [];
   let pageIndex = 1;
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     let i = 0;
     let links = await page.$$("tr.ui-widget-content  a");
@@ -90,7 +91,7 @@ async function gatherCourseFromPage(page:Page){
     if (!links?.length) {
       break;
     }
-    for (let _ in links) {
+    for (const _ in links) {
       console.log(`page ${pageIndex} course ${i + 1}`);
       const link = links[i];
       const course = await handleCourseLink(page, link);
@@ -100,7 +101,7 @@ async function gatherCourseFromPage(page:Page){
       links = await page.$$("tr.ui-widget-content  a");
     }
     const next = await page.$eval(
-      `#funcForm\\:table_paginator_bottom > .ui-paginator-next`,
+      "#funcForm\\:table_paginator_bottom > .ui-paginator-next",
       (e: HTMLElement) => {
         if (e.classList.contains("ui-state-disabled")) {
           return false;
@@ -166,7 +167,7 @@ const handleCourseLink = async (
     courseData.length - 4
   );
 
-  let textbooks: Textbook[] = await page.$$eval(
+  const textbooks: Textbook[] = await page.$$eval(
     ".rowStyle.rowMargin",
     (els) => {
       const textbooksData: Textbook[] = [];
@@ -190,7 +191,7 @@ const handleCourseLink = async (
           note,
         });
       }
-      textbooksData.pop()
+      textbooksData.pop();
       return textbooksData;
     }
   );
