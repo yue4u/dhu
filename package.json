@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "test": "lerna test",
-    "lint": "eslint --ext .js,.ts,.tsx packages",
+    "lint": "eslint --cache --cache-location node_modules/.cache/.eslintcache --ext .js,.ts,.tsx packages",
     "build": "lerna build",
     "release": "lerna publish --no-verify-access",
     "version": "lerna version",
