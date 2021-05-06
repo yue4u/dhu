@@ -1,7 +1,6 @@
 {
   "name": "@dhu/syllabus-site",
   "private": true,
-  "version": "0.0.1",
   "scripts": {
     "dev": "gridsome develop",
     "explore": "gridsome explore",
