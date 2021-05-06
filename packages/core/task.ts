@@ -1,6 +1,6 @@
 import { Page } from "playwright-chromium";
-import { sleep, waitForClickNavigation, waitForNavigation } from "./utils";
-import { CLASS_PROFILE, CLASS_PROFILE_TASK } from "./selectors";
+import { sleep, waitForNavigation } from "./utils";
+import { CLASS_PROFILE_TASK } from "./selectors";
 
 export type Task = {
   groupName?: string; //課題グループ名;
