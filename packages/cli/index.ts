@@ -63,9 +63,27 @@ cli
 
 cli
   .command("info", "Get info")
+  .option("--all", "retrieve all info")
   .option("--head", "launch headfully")
+  .option("--attachments", "download attachments")
+  .option(
+    "--downloadsPath <downloadsPath>",
+    "path to save download attachments"
+  )
   .action(async (option) => {
-    const data = await withLoginedPage(getInfo, { headless: !option.head });
+    const data = await withLoginedPage(
+      async (page) => {
+        const { attachments, downloadsPath } = option;
+        await getInfo(page, {
+          all: Boolean(option.all),
+          attachments: Boolean(attachments),
+          downloadsPath: downloadsPath ?? process.cwd(),
+        });
+      },
+      {
+        headless: !option.head,
+      }
+    );
     console.log(data);
   });
 

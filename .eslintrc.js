@@ -26,7 +26,7 @@ module.exports = {
   rules: {
     indent: ["error", 2, { SwitchCase: 1 }],
     "linebreak-style": ["error", "unix"],
-    quotes: ["error", "double"],
+    quotes: ["error", "double", { allowTemplateLiterals: true }],
     semi: ["error", "always"],
     "prettier/prettier": "error",
     "@typescript-eslint/explicit-module-boundary-types": "off",
