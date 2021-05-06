@@ -14,7 +14,7 @@
 
 [![npm version](https://badge.fury.io/js/%40dhu%2Fcore.svg)](https://badge.fury.io/js/%40dhu%2Fcore)
 
-`yarn add @dhu/cli`
+`yarn add @dhu/core`
 
 
 ## @dhu/syllabus-site
