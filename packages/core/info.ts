@@ -39,7 +39,7 @@ export async function getInfo(page: Page): Promise<Info[]> {
   const infoGeneralItemLinks = await page.$$(INFO_GENERAL_ITEM);
   let len = infoGeneralItemLinks.length;
   let count = 0;
-  let infoList: Info[] = [];
+  const infoList: Info[] = [];
 
   while (count !== len) {
     const info = await handleInfoItemLink(page, INFO_GENERAL_ITEM, count);

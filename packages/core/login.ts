@@ -25,9 +25,9 @@ export async function login(
   result?: LoginResult;
 }> {
   const info = await getUserInfo();
-  if (!info){
-    console.log("please provide login info, try `dhu login`")
-    return { error: "please login" }
+  if (!info) {
+    console.log("please provide login info, try `dhu login`");
+    return { error: "please login" };
   }
   const { id, password } = info;
   const browser = await chromium.launch(option);
@@ -63,6 +63,7 @@ export async function login(
   return { result: { page, browser } };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 export async function exposeGlobalHelper(ctx: BrowserContext) {}
 
 export async function withLogin<T>(

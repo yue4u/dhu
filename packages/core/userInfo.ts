@@ -8,7 +8,7 @@ export type LoginInfo = {
 };
 
 function getUserDataPath() {
-  let dataPath =
+  const dataPath =
     process.env.APPDATA ||
     os.homedir() +
       (process.platform == "darwin" ? "/Library/Preferences" : "/.local/share");

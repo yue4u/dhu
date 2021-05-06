@@ -6,16 +6,14 @@ import { Course } from "@dhu/core";
 import syllabusData from "../data/syllabus.json";
 
 const hash = (text: string) => {
-  return createHash("md5")
-    .update(text)
-    .digest("hex")
-    .slice(0, 8);
+  return createHash("md5").update(text).digest("hex").slice(0, 8);
 };
 
 const hashStore: Record<string, string> = {};
 
 export const uniqueHash = (text: string) => {
   let hashString = "";
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     hashString = hash(text);
 
@@ -38,8 +36,8 @@ type SearchData = {
 };
 
 export async function buildSeachData(data: Course[]) {
-  let teacherList: string[] = [];
-  let searchData: SearchData[] = [];
+  const teacherList: string[] = [];
+  const searchData: SearchData[] = [];
 
   for (const course of data) {
     const contents = course.contents.join(" ");
@@ -50,7 +48,7 @@ export async function buildSeachData(data: Course[]) {
     delete course.textbooks;
     const other = Object.values(course).join(" ");
 
-    let text = `${other} ${contents} ${textbooks}`;
+    const text = `${other} ${contents} ${textbooks}`;
 
     if (!teacherList.includes(course.teacher)) {
       searchData.push({

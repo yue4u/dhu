@@ -1,5 +1,5 @@
 import { Page } from "playwright-chromium";
-import { sleep, waitForClickNavigation,waitForNavigation } from "./utils";
+import { sleep, waitForClickNavigation, waitForNavigation } from "./utils";
 import { CLASS_PROFILE, CLASS_PROFILE_TASK } from "./selectors";
 
 export type Task = {
@@ -29,16 +29,20 @@ export type Attachment = {
   url?: string;
 };
 
-export async function getTasks(page: Page, q: number = 1): Promise<TaskMap> {
-  await sleep(500)
-  await waitForNavigation(page, async()=>{
-    return page.evaluate(()=>{
-      document.querySelector<HTMLElement>(`#funcForm\\:j_idt361\\:j_idt2241\\:j_idt2247`)?.click()
-    })
+export async function getTasks(page: Page, q = 1): Promise<TaskMap> {
+  await sleep(500);
+  await waitForNavigation(page, async () => {
+    return page.evaluate(() => {
+      document
+        .querySelector<HTMLElement>(
+          "#funcForm\\:j_idt361\\:j_idt2241\\:j_idt2247"
+        )
+        ?.click();
+    });
   });
   let pageIndex = 0;
   while (pageIndex < q - 1) {
-    await page.click(`#funcLeftForm\\:j_idt196`);
+    await page.click("#funcLeftForm\\:j_idt196");
     await sleep(500);
     pageIndex++;
   }
@@ -51,11 +55,11 @@ export async function getTasks(page: Page, q: number = 1): Promise<TaskMap> {
   await page.click(CLASS_PROFILE_TASK);
   await sleep(500);
   const classes = await page.$$(".classList a");
-  let tasksMap: Record<string, Task[]> = {};
+  const tasksMap: Record<string, Task[]> = {};
   let i = 0;
   for (const _ of classes) {
-    let handles = await page.$$(".classList a");
-    let handle = handles[i];
+    const handles = await page.$$(".classList a");
+    const handle = handles[i];
 
     const title = await handle.textContent();
     await handle.click();
@@ -72,12 +76,12 @@ export async function getTasks(page: Page, q: number = 1): Promise<TaskMap> {
 
 async function getClassTasks(page: Page): Promise<Task[]> {
   // console.log(`goto page`);
-  const taskRows = await page.$$(`#funcForm\\:gakKdiTstList_data > tr`);
-  let tasks: Task[] = [];
+  const taskRows = await page.$$("#funcForm\\:gakKdiTstList_data > tr");
+  const tasks: Task[] = [];
   let i = 0;
   for (const _ of taskRows) {
     // console.log(`work on row`);
-    const rows = await page.$$(`#funcForm\\:gakKdiTstList_data > tr`);
+    const rows = await page.$$("#funcForm\\:gakKdiTstList_data > tr");
     const row = rows[i];
     const task = await row.$$eval("td", (tds) => {
       const textContentOf = (e?: Element | null) =>

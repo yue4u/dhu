@@ -7,8 +7,8 @@ function addStyleResource(rule) {
     .options({
       patterns: [
         path.resolve(__dirname, "./src/assets/_globals.scss"),
-        path.resolve(__dirname, "./src/assets/*.scss")
-      ]
+        path.resolve(__dirname, "./src/assets/*.scss"),
+      ],
     });
 }
 
@@ -21,13 +21,13 @@ module.exports = {
     Teacher: "/teacher/:id",
     Category: "/category/:id",
     Field: "/field/:id",
-    Year: "/year/:id"
+    Year: "/year/:id",
   },
   chainWebpack(config) {
     const types = ["vue-modules", "vue", "normal-modules", "normal"];
 
-    types.forEach(type => {
+    types.forEach((type) => {
       addStyleResource(config.module.rule("scss").oneOf(type));
     });
-  }
+  },
 };

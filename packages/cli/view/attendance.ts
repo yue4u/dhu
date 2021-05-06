@@ -7,9 +7,9 @@ export function renderAttendance(data: Attendance[]) {
 
 export function renderRow(a: Attendance) {
   console.log(chalk.whiteBright.bold(`> ${a.title} ${a.code}`));
-  let recordLog = [chalk.yellow(`  ${a.rate}`.padEnd(9))];
+  const recordLog = [chalk.yellow(`  ${a.rate}`.padEnd(9))];
 
-  for (let record of a.records) {
+  for (const record of a.records) {
     //record.date = record.date.padEnd(5);
     switch (record.status) {
       case "出席": {

@@ -1,6 +1,7 @@
 import { Page } from "playwright-chromium";
 
 export const theWorld = () => {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   return new Promise(() => {});
 };
 
