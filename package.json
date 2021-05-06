@@ -7,7 +7,8 @@
     "build": "lerna build",
     "release": "lerna publish --no-verify-access",
     "version": "lerna version",
-    "dev:cli": "yarn workspace @dhu/cli dev"
+    "dev:cli": "yarn workspace @dhu/cli dev",
+    "prepare": "husky install"
   },
   "workspaces": [
     "packages/*"
@@ -20,6 +21,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.23.2",
+    "husky": "^6.0.0",
     "lerna": "^4.0.0",
     "prettier": "^2.2.1"
   },
