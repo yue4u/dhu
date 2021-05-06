@@ -39,8 +39,8 @@ export type Textbook = {
   note: string;
 };
 
-const SYLLABUS_OPEN_URL =
-  "https://portal.dhw.ac.jp/uprx/up/pk/pky001/Pky00101.xhtml?guestlogin=Kmh006";
+// prettier-ignore
+const SYLLABUS_OPEN_URL = "https://portal.dhw.ac.jp/uprx/up/pk/pky001/Pky00101.xhtml?guestlogin=Kmh006";
 
 export async function getTotalCourseNumber(page: Page) {
   await waitForNavigation(page, () => page.goto(SYLLABUS_OPEN_URL));

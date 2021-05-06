@@ -38,10 +38,10 @@ export async function getAttendance(page: Page, q = 1): Promise<Attendance[]> {
     await sleep(500);
   }
 
-  const courseSelector =
-    "div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr > td:nth-child(2)";
-  const attendanceRowSelector =
-    "div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr";
+  // prettier-ignore
+  const courseSelector = "div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr > td:nth-child(2)";
+  // prettier-ignore
+  const attendanceRowSelector = "div.scroll_div:nth-child(1) > table:nth-child(1) > tbody:nth-child(2) > tr";
   const courses = await page.$$eval(courseSelector, (es) => {
     const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
 
