@@ -7,7 +7,7 @@ import { sortData } from "./sortData";
   const { data } = await withPage(getOpenSyllabus, { headless: true });
   if (!data) return;
   await fs.writeFile(
-    path.join(__dirname, "../{data}/syllabus.json"),
+    path.join(__dirname, "../data/syllabus.json"),
     JSON.stringify(sortData(data), null, 4),
     {
       encoding: "utf8",
