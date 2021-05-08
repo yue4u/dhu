@@ -8,6 +8,7 @@
     "release": "lerna publish --no-verify-access",
     "version": "lerna version",
     "dev:cli": "yarn workspace @dhu/cli dev",
+    "test:tsc": "tsc -p . --noEmit",
     "prepare": "husky install"
   },
   "workspaces": [

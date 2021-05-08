@@ -1,11 +1,4 @@
-export {
-  login,
-  withBrowser,
-  withPage,
-  withLogin,
-  withLoginedBrowser,
-  withLoginedPage,
-} from "./login";
+export { login, withBrowser, withPage, withLogin } from "./login";
 
 export {
   Attendance,
@@ -35,5 +28,5 @@ export {
   Textbook,
 } from "./syllabus";
 
-export { waitForClickNavigation, sleep } from "./utils";
+export { waitForClickNavigation, sleep, match } from "./utils";
 export * as SELECTORS from "./selectors";
