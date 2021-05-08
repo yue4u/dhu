@@ -11,7 +11,7 @@ import {
   LOGIN_SUBMIT_BUTTON,
   URL_TOP,
 } from "./selectors";
-import { getUserInfo, removeUserInfo } from "./userInfo";
+import { getUserInfo, LoginInfo, removeUserInfo } from "./userInfo";
 import { waitForClickNavigation, waitForNavigation } from "./utils";
 export type LoginResult = {
   page: Page;
@@ -19,13 +19,13 @@ export type LoginResult = {
 };
 
 export async function login(
-  id: string,
-  password: string,
+  info: LoginInfo,
   option?: LaunchOptions
 ): Promise<{
   error?: string;
   result?: LoginResult;
 }> {
+  const { id, password } = info;
   const browser = await chromium.launch(option);
   // @ts-ignore
   const ctx = await browser.newContext({ acceptDownloads: true });
@@ -71,8 +71,7 @@ export async function withLogin<T>(
     console.log("please provide login info, try `dhu login`");
     return { error: "please login" };
   }
-  const { id, password } = info;
-  const { error, result } = await login(id, password, option);
+  const { error, result } = await login(info, option);
   if (error || !result) {
     throw error;
   }
