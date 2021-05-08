@@ -1,4 +1,4 @@
-import { Page } from "playwright-chromium";
+import { LoginContext } from "./login";
 import { NAV_ATTENDANCE, NAV_ATTENDANCE_LINK } from "./selectors";
 import { waitForClickNavigation, sleep } from "./utils";
 export type Attendance = {
@@ -26,7 +26,10 @@ export type AttendanceRecord = {
   date: string;
 };
 
-export async function getAttendance(page: Page, q = 1): Promise<Attendance[]> {
+export async function getAttendance(
+  { page }: LoginContext,
+  q = 1
+): Promise<Attendance[]> {
   await page.click(NAV_ATTENDANCE);
   await waitForClickNavigation(page, NAV_ATTENDANCE_LINK);
   if (q != 1) {

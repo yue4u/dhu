@@ -13,6 +13,7 @@ import {
   INFO_ITEM_ATTACHMENT_CLOSE,
   INFO_ALL,
 } from "./selectors";
+import { LoginContext } from "./login";
 
 export type Info = {
   sender?: string;
@@ -37,7 +38,7 @@ export type GetInfoOptions = {
 };
 
 export async function getInfo(
-  page: Page,
+  { page }: LoginContext,
   options: GetInfoOptions
 ): Promise<Info[]> {
   await page.click(NAV_INFO);

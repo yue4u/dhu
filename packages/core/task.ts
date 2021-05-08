@@ -1,6 +1,7 @@
 import { Page } from "playwright-chromium";
 import { sleep, waitForNavigation } from "./utils";
 import { CLASS_PROFILE_TASK } from "./selectors";
+import { LoginContext } from "./login";
 
 export type Task = {
   groupName?: string; //課題グループ名;
@@ -29,7 +30,10 @@ export type Attachment = {
   url?: string;
 };
 
-export async function getTasks(page: Page, q = 1): Promise<TaskMap> {
+export async function getTasks(
+  { page }: LoginContext,
+  q = 1
+): Promise<TaskMap> {
   await sleep(500);
   await waitForNavigation(page, async () => {
     return page.evaluate(() => {

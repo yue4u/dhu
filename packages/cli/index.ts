@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 import cac from "cac";
 import {
+  match,
   getAttendance,
   removeUserInfo,
   getGPA,
   getInfo,
   getTasks,
   saveGoogleCalendarCSV,
-  withLoginedPage,
+  withLogin,
   getFS,
 } from "@dhu/core";
 import {
@@ -21,38 +22,35 @@ import {
 import pkg from "@dhu/cli/package.json";
 const cli = cac();
 
-cli.command("", "Log logo").action(() => {
-  renderLogo();
-});
+cli.command("", "Log logo").action(renderLogo);
 
 cli.command("login", "Save login info to local data path").action(renderLogin);
 
 cli
   .command("logout", "Remove login info from local data path")
-  .action(async () => {
-    await removeUserInfo();
-  });
+  .action(removeUserInfo);
 
 cli
   .command("gpa", "Get GPA")
   .option("--head", "launch headfully")
-  .action(async (option) => {
-    const data = await withLoginedPage(getGPA, { headless: !option.head });
-    renderGPA(data);
-  });
+  .action(async (option) =>
+    match(await withLogin(getGPA, { headless: !option.head }), {
+      ok: renderGPA,
+    })
+  );
 
 cli
   .command("atte", "Get attendance")
   .option("--head", "launch headfully")
   .option("-q <q>", "quarter 1/2/3/4")
   .action(async (option) => {
-    const data = await withLoginedPage(
-      (page) => getAttendance(page, parseInt(option.q)),
-      {
-        headless: !option.head,
-      }
-    );
-    renderAttendance(data);
+    option.q &&= parseInt(option.q);
+    const result = await withLogin((page) => getAttendance(page, option.q), {
+      headless: !option.head,
+    });
+    await match(result, {
+      ok: renderAttendance,
+    });
   });
 
 cli
@@ -65,29 +63,24 @@ cli
     "path to save download attachments"
   )
   .action(async (option) => {
-    const data = await withLoginedPage(
-      async (page) => {
-        const { attachments, downloadsPath } = option;
-        const options = {
-          all: Boolean(option.all),
-          attachments: Boolean(attachments),
-          downloadsPath: downloadsPath ?? process.cwd(),
-        };
-        return getInfo(page, options);
-      },
-      {
-        headless: !option.head,
-      }
-    );
-    console.log(data);
+    const { attachments, downloadsPath } = option;
+    const options = {
+      all: Boolean(option.all),
+      attachments: Boolean(attachments),
+      downloadsPath: downloadsPath ?? process.cwd(),
+    };
+    const data = await withLogin(async (page) => getInfo(page, options), {
+      headless: !option.head,
+    });
+    await match(data);
   });
 
 cli
   .command("fs", "Get fs")
   .option("--head", "launch headfully")
   .action(async (option) => {
-    const data = await withLoginedPage(getFS, { headless: !option.head });
-    renderFS(data);
+    const result = await withLogin(getFS, { headless: !option.head });
+    await match(result, { ok: renderFS });
   });
 
 cli
@@ -97,11 +90,16 @@ cli
   .option("--empty", "show empty tasks")
   .option("-q <q>", "quarter 1/2/3/4")
   .action(async (option) => {
-    const data = await withLoginedPage(
-      (page) => getTasks(page, parseInt(option.q, 10)),
+    const result = await withLogin(
+      (ctx) => getTasks(ctx, parseInt(option.q, 10)),
       { headless: !option.head }
     );
-    renderTaskMap(data, { showEmpty: option.empty, showEnd: option.end });
+    await match(result, {
+      ok(data) {
+        const renderOptions = { showEmpty: option.empty, showEnd: option.end };
+        renderTaskMap(data, renderOptions);
+      },
+    });
   });
 
 cli
@@ -110,8 +108,8 @@ cli
   .option("-q <q>", "quarter 1/2/3/4?")
   .option("-s, --start <start>", "first monday when quarter start")
   .action(async (option) => {
-    /*const data = */ await withLoginedPage(
-      (page) => saveGoogleCalendarCSV(page, option.q, option.start),
+    await withLogin(
+      (ctx) => saveGoogleCalendarCSV(ctx, option.q, option.start),
       {
         headless: !option.head,
       }
