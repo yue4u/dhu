@@ -40,8 +40,8 @@ export async function buildSeachData(data: Course[]) {
   const searchData: SearchData[] = [];
 
   for (const course of data) {
-    const contents = course.contents.join(" ");
-    const textbooks = course.textbooks
+    const contents = (course.contents || []).join(" ");
+    const textbooks = (course.textbooks || [])
       .map((t) => Object.values(t).join(" "))
       .join(" ");
     delete course.contents;

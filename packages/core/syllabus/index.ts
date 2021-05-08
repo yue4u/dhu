@@ -21,9 +21,9 @@ export type Course = {
   gradePolicy: string;
   finalTest: string;
   task: string;
-  contents: string[];
+  contents?: string[];
 
-  textbooks: Textbook[];
+  textbooks?: Textbook[];
 
   thingsToPrepare: string;
   references: string;

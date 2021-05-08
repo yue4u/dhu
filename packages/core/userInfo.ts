@@ -33,7 +33,7 @@ export async function saveUserInfo(info: LoginInfo) {
 
 export async function getUserInfo(): Promise<LoginInfo | null> {
   try {
-    return await readUserInfo();
+    return readUserInfo();
   } catch {
     return null;
   }

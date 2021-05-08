@@ -1,4 +1,4 @@
-import { Page } from "playwright-chromium";
+import { LoginContext } from "./login";
 import { NAV_GRADE, NAV_GRADE_LINK, GRADE_GPA } from "./selectors";
 import { waitForClickNavigation } from "./utils";
 export type GPA = {
@@ -6,7 +6,7 @@ export type GPA = {
   gpa: string;
 };
 
-export async function getGPA(page: Page): Promise<GPA[]> {
+export async function getGPA({ page }: LoginContext): Promise<GPA[]> {
   await page.click(NAV_GRADE);
   await waitForClickNavigation(page, NAV_GRADE_LINK);
   const GPATable = await page.$eval(GRADE_GPA, (table) => {

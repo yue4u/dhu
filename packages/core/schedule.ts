@@ -3,6 +3,7 @@ import { NAV_ATTENDANCE, NAV_SCHEDULE_LINK } from "./selectors";
 import { parseAsync } from "json2csv";
 import { promises as fs } from "fs";
 import { waitForClickNavigation } from "./utils";
+import { LoginContext } from "./login";
 
 const timeMap = {
   1: ["08:40 AM", "10:10 AM"],
@@ -40,7 +41,10 @@ type CalendarEvent = {
   Private?: boolean;
 };
 
-export async function getSchedule(page: Page, q = 1): Promise<Lecture[]> {
+export async function getSchedule(
+  { page }: LoginContext,
+  q = 1
+): Promise<Lecture[]> {
   await page.click(NAV_ATTENDANCE);
   await waitForClickNavigation(page, NAV_SCHEDULE_LINK);
   const schedule = await page.$eval(
@@ -90,7 +94,7 @@ export async function getSchedule(page: Page, q = 1): Promise<Lecture[]> {
 }
 
 export async function saveGoogleCalendarCSV(
-  page: Page,
+  ctx: LoginContext,
   q = 1,
   start = "2020-5-4"
 ) {
@@ -115,7 +119,7 @@ export async function saveGoogleCalendarCSV(
     };
   };
 
-  const schedule = await getSchedule(page, q);
+  const schedule = await getSchedule(ctx, q);
   const csv = await parseAsync(schedule.map(toGoogleEvent));
   await fs.writeFile(`${process.cwd()}/dhu-timetable-${start}.csv`, csv);
   return csv;
