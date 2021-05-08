@@ -127,9 +127,10 @@ export async function withPage<T>(
       const ctx = await browser.newContext({ acceptDownloads: true });
       const page = await ctx.newPage();
       const data = await fn(page);
-      return { data };
-    } catch (e) {
-      return e;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return null;
     }
   }, option);
 }
