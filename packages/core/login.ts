@@ -19,17 +19,13 @@ export type LoginResult = {
 };
 
 export async function login(
+  id: string,
+  password: string,
   option?: LaunchOptions
 ): Promise<{
   error?: string;
   result?: LoginResult;
 }> {
-  const info = await getUserInfo();
-  if (!info) {
-    console.log("please provide login info, try `dhu login`");
-    return { error: "please login" };
-  }
-  const { id, password } = info;
   const browser = await chromium.launch(option);
   // @ts-ignore
   const ctx = await browser.newContext({ acceptDownloads: true });
@@ -70,7 +66,13 @@ export async function withLogin<T>(
   fn: (ctx: LoginResult) => Promise<T>,
   option?: LaunchOptions
 ) {
-  const { error, result } = await login(option);
+  const info = await getUserInfo();
+  if (!info) {
+    console.log("please provide login info, try `dhu login`");
+    return { error: "please login" };
+  }
+  const { id, password } = info;
+  const { error, result } = await login(id, password, option);
   if (error || !result) {
     throw error;
   }
