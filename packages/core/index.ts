@@ -12,6 +12,9 @@ export {
   getUserInfo,
   readUserInfo,
   removeUserInfo,
+  getUserConfig,
+  updateUserConfig,
+  configKeys,
 } from "./userInfo";
 
 export { getInfo } from "./info";
