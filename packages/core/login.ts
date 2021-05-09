@@ -15,8 +15,8 @@ import { getUserInfo, LoginInfo, removeUserInfo } from "./userInfo";
 import { waitForClickNavigation, waitForNavigation } from "./utils";
 
 export type LoginContext = {
+  ctx: BrowserContext;
   page: Page;
-  browser: Browser;
 };
 
 export type Result<T, E = string> = {
@@ -73,7 +73,7 @@ export async function login(
     return { error };
   }
 
-  return { data: { page, browser } };
+  return { data: { ctx, page } };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
