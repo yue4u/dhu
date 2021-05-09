@@ -19,7 +19,7 @@ export { getFS, FS } from "./fs";
 export { getGPA, GPA } from "./grade";
 export { saveGoogleCalendarCSV, getSchedule } from "./schedule";
 export { getTasks, Task, TaskMap } from "./task";
-
+export { getMaterials, Material, MaterialMap } from "./materials";
 export {
   getOpenSyllabus,
   getSyllabus,

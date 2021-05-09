@@ -1,5 +1,10 @@
 import { Page } from "playwright-chromium";
-import { sleep, waitForNavigation } from "./utils";
+import {
+  sleep,
+  navigateToClassProfile,
+  openClassProfileSidebar,
+  collectFromClassProfile,
+} from "./utils";
 import { CLASS_PROFILE_TASK } from "./selectors";
 import { LoginContext } from "./login";
 
@@ -25,6 +30,7 @@ export type Task = {
 };
 
 export type TaskMap = Record<string, Task[]>;
+
 export type Attachment = {
   title: string;
   url?: string;
@@ -34,51 +40,31 @@ export async function getTasks(
   { page }: LoginContext,
   q = 1
 ): Promise<TaskMap> {
-  await sleep(500);
-  await waitForNavigation(page, async () => {
-    return page.evaluate(() => {
-      document
-        .querySelector<HTMLElement>(
-          "#funcForm\\:j_idt361\\:j_idt2241\\:j_idt2247"
-        )
-        ?.click();
-    });
-  });
+  await navigateToClassProfile(page);
+
   let pageIndex = 0;
   while (pageIndex < q - 1) {
     await page.click("#funcLeftForm\\:j_idt196");
     await sleep(500);
     pageIndex++;
   }
-  await page.evaluate(() => {
-    Array.from(
-      document.querySelectorAll<HTMLElement>(".ui-icon-plusthick")
-    ).forEach((e) => e.click());
-  });
-  await sleep(500);
+
+  await openClassProfileSidebar(page);
+
   await page.click(CLASS_PROFILE_TASK);
   await sleep(500);
-  const classes = await page.$$(".classList a");
-  const tasksMap: Record<string, Task[]> = {};
-  let i = 0;
-  for (const _ of classes) {
-    const handles = await page.$$(".classList a");
-    const handle = handles[i];
 
-    const title = await handle.textContent();
-    await handle.click();
-    await sleep(1000);
+  const tasksMap: TaskMap = {};
 
-    // console.log(`start ${title}`);
-    const tasks = await getClassTasks(page);
-    tasksMap[title ?? ""] = tasks;
-    i++;
-    // console.log(`end ${title}`);
-  }
+  await collectFromClassProfile(page, async (page, title) => {
+    const tasks = await collectClassTasks(page);
+    tasksMap[title] = tasks;
+  });
+
   return tasksMap;
 }
 
-async function getClassTasks(page: Page): Promise<Task[]> {
+async function collectClassTasks(page: Page): Promise<Task[]> {
   // console.log(`goto page`);
   const taskRows = await page.$$("#funcForm\\:gakKdiTstList_data > tr");
   const tasks: Task[] = [];

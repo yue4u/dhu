@@ -7,6 +7,7 @@ import {
   getGPA,
   getInfo,
   getTasks,
+  getMaterials,
   saveGoogleCalendarCSV,
   withLogin,
   getFS,
@@ -17,6 +18,7 @@ import {
   renderAttendance,
   renderGPA,
   renderTaskMap,
+  renderMaterialMap,
   renderFS,
 } from "./view";
 import pkg from "@dhu/cli/package.json";
@@ -98,6 +100,20 @@ cli
       ok(data) {
         const renderOptions = { showEmpty: option.empty, showEnd: option.end };
         renderTaskMap(data, renderOptions);
+      },
+    });
+  });
+
+cli
+  .command("matl", "Get Materials")
+  .option("--head", "launch headfully")
+  .action(async (option) => {
+    const result = await withLogin((ctx) => getMaterials(ctx), {
+      headless: !option.head,
+    });
+    await match(result, {
+      ok(data) {
+        renderMaterialMap(data);
       },
     });
   });
