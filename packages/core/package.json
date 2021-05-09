@@ -1,10 +1,11 @@
 {
   "name": "@dhu/core",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "clean": "rm -rf ./dist"
   },
   "publishConfig": {
     "access": "public"
