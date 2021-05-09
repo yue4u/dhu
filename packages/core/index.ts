@@ -1,3 +1,4 @@
+export * from "playwright-chromium";
 export { login, withBrowser, withPage, withLogin } from "./login";
 
 export {
