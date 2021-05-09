@@ -133,7 +133,7 @@ cli
   });
 
 cli
-  .command("config [...kv]", "Get config")
+  .command("config [...kv]", "Set config")
   .option("-s,--show", "Show key")
   .option("-d,--delete", "Show key")
   .action(async (kv: string[], option) => {
