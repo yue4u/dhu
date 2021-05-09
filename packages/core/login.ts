@@ -29,12 +29,11 @@ export type LoginOptions = {
 };
 
 export async function login(
+  browser: Browser,
   info: LoginInfo,
-  launchOptions: LaunchOptions = {},
   loginOptions: LoginOptions = {}
 ): Promise<Result<LoginContext>> {
   const { id, password } = info;
-  const browser = await chromium.launch(launchOptions);
   const ctx = await browser.newContext({ acceptDownloads: true });
   const page = await ctx.newPage();
   try {
@@ -69,7 +68,7 @@ export async function login(
       throw new Error(loginErrorMessage);
     }
   } catch (error) {
-    await browser.close();
+    await ctx.close();
 
     return { error };
   }
@@ -88,19 +87,18 @@ export async function withLogin<T>(
   if (!info) {
     return { error: "please provide login info, try `dhu login`" };
   }
-  const { error, data: loginContext } = await login(info, option, {
-    removeUserInfoOnError: true,
-  });
-  if (error || !loginContext) {
-    return { error };
-  }
-  try {
-    const data = await fn(loginContext);
-    await loginContext.browser.close();
-    return { data };
-  } catch (error) {
-    return { error };
-  }
+  return withBrowser(async (browser) => {
+    const { error, data: loginContext } = await login(browser, info, {
+      removeUserInfoOnError: true,
+    });
+    if (error) {
+      throw error;
+    }
+    if (!loginContext) {
+      throw new Error("failed to init loginContext");
+    }
+    return fn(loginContext);
+  }, option);
 }
 
 export async function withBrowser<T>(
@@ -108,14 +106,15 @@ export async function withBrowser<T>(
   option?: LaunchOptions
 ): Promise<Result<T>> {
   const browser = await chromium.launch(option);
+  let result: Result<T> = {};
   try {
     const data = await fn(browser);
-    await browser.close();
-    return { data };
+    result = { data };
   } catch (error) {
-    await browser.close();
-    return { error };
+    result = { error };
   }
+  await browser.close();
+  return result;
 }
 
 export async function withPage<T>(
