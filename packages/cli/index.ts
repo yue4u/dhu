@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import cac from "cac";
 import path from "path";
+import chalk from "chalk";
 import {
   match,
   getAttendance,
@@ -12,6 +13,9 @@ import {
   saveGoogleCalendarCSV,
   withLogin,
   getFS,
+  configKeys,
+  getUserConfig,
+  updateUserConfig,
 } from "@dhu/core";
 import {
   renderLogo,
@@ -107,20 +111,65 @@ cli
   .option("--head", "launch headfully")
   .option("--dir <dir>", "path to save download attachments")
   .action(async (option) => {
-    const result = await withLogin(
-      (ctx) =>
-        getMaterials(ctx, {
-          dir: option.dir ?? path.join(process.cwd(), ".dhu-sync"),
-        }),
-      {
-        headless: !option.head,
-      }
-    );
+    const getDir = async () => {
+      if (option.dir) return option.dir;
+      const config = await getUserConfig();
+      if (config?.syncDir) return config.syncDir;
+      return path.join(process.cwd(), ".dhu-sync");
+    };
+
+    const dir = await getDir();
+    console.log(chalk`syncing data with {cyan ${dir}}`);
+
+    const result = await withLogin((ctx) => getMaterials(ctx, { dir }), {
+      headless: !option.head,
+    });
+
     await match(result, {
       ok(data) {
         renderMaterialMap(data);
       },
     });
+  });
+
+cli
+  .command("config [...kv]", "Set config")
+  .option("-s,--show", "Show key")
+  .option("-d,--delete", "Show key")
+  .action(async (kv: string[], option) => {
+    if (kv.length < 1) {
+      console.log(`usage: dhu config --show key`);
+      console.log(`       dhu config key value`);
+      return;
+    }
+
+    const [k, v] = kv;
+
+    if (!configKeys.has(k)) {
+      console.error(
+        `unknown key ${k}, expected: ${Array.from(configKeys.keys()).join()}`
+      );
+      return;
+    }
+
+    if (option.show) {
+      const config = await getUserConfig();
+      // @ts-ignore
+      console.log(config?.[k]);
+      return;
+    }
+
+    if (option.delete) {
+      await updateUserConfig(k, undefined);
+      return;
+    }
+
+    if (!v) {
+      console.log(`dhu config key value`);
+      return;
+    }
+
+    await updateUserConfig(k, v);
   });
 
 cli
