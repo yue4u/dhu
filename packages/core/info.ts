@@ -3,6 +3,7 @@ import {
   sleep,
   waitForClickNavigation,
   handleDownloadTable,
+  Attachment,
   HandleAttachmentOptions,
 } from "./utils";
 import {
@@ -11,8 +12,6 @@ import {
   INFO_GENERAL_ALL,
   INFO_GENERAL_ITEM,
   INFO_CLASS_ALL,
-  // INFO_CLASS_ITEM,
-  // INFO_ITEM_ATTACHMENT_OPEN,
   INFO_ITEM_CLOSE,
   INFO_ALL,
 } from "./selectors";
@@ -29,15 +28,10 @@ export type Info = {
   attachments?: Attachment[];
 };
 
-export type Attachment = {
-  title: string;
-  url?: string;
-};
-
 export type GetInfoOptions = {
   all?: boolean;
   attachments?: boolean;
-  downloadsPath: string;
+  dir: string;
 };
 
 export async function getInfo(
@@ -51,7 +45,6 @@ export async function getInfo(
   await page.waitForSelector(INFO_GENERAL_ITEM);
 
   if (options.all) {
-    console.log("all...");
     await page.click(INFO_ALL);
     await sleep(3000);
 

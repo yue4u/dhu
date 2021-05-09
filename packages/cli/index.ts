@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import cac from "cac";
+import path from "path";
 import {
   match,
   getAttendance,
@@ -60,16 +61,13 @@ cli
   .option("--all", "retrieve all info")
   .option("--head", "launch headfully")
   .option("--attachments", "download attachments")
-  .option(
-    "--downloadsPath <downloadsPath>",
-    "path to save download attachments"
-  )
+  .option("--dir <dir>", "path to save download attachments")
   .action(async (option) => {
-    const { attachments, downloadsPath } = option;
+    const { attachments, dir } = option;
     const options = {
       all: Boolean(option.all),
       attachments: Boolean(attachments),
-      downloadsPath: downloadsPath ?? process.cwd(),
+      dir: dir ?? process.cwd(),
     };
     const data = await withLogin(async (page) => getInfo(page, options), {
       headless: !option.head,
@@ -107,10 +105,17 @@ cli
 cli
   .command("matl", "Get Materials")
   .option("--head", "launch headfully")
+  .option("--dir <dir>", "path to save download attachments")
   .action(async (option) => {
-    const result = await withLogin((ctx) => getMaterials(ctx), {
-      headless: !option.head,
-    });
+    const result = await withLogin(
+      (ctx) =>
+        getMaterials(ctx, {
+          dir: option.dir ?? path.join(process.cwd(), ".dhu-sync"),
+        }),
+      {
+        headless: !option.head,
+      }
+    );
     await match(result, {
       ok(data) {
         renderMaterialMap(data);

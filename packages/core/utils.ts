@@ -1,6 +1,5 @@
 import path from "path";
 import { Page } from "playwright-chromium";
-import { Attachment } from "./info";
 import { Result } from "./login";
 import { INFO_ITEM_ATTACHMENT_CLOSE } from "./selectors";
 
@@ -85,8 +84,13 @@ export async function collectFromClassProfile(
   }
 }
 
+export interface Attachment {
+  title: string;
+  filename: string;
+  url?: string;
+}
 export interface HandleAttachmentOptions {
-  downloadsPath: string;
+  dir: string;
 }
 
 export async function handleDownloadTable(
@@ -118,10 +122,8 @@ export async function handleDownloadTable(
       page.waitForEvent("download"),
       attachmentDownloadButton.click(),
     ]);
-    const downloadPath = path.join(
-      options.downloadsPath,
-      download.suggestedFilename()
-    );
+    const suggestedFilename = download.suggestedFilename();
+    const downloadPath = path.join(options.dir, suggestedFilename);
     await download.saveAs(downloadPath);
 
     const failure = await download.failure();
@@ -130,7 +132,7 @@ export async function handleDownloadTable(
     }
     // all urls are same, doesn't really make sense to store them.
     url = download.url();
-    attachments.push({ title, url });
+    attachments.push({ title, url, filename: suggestedFilename });
   }
   await page.click(INFO_ITEM_ATTACHMENT_CLOSE);
 

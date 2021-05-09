@@ -1,4 +1,6 @@
 import { Page } from "playwright-chromium";
+import fs from "fs-extra";
+import path from "path";
 import { CLASS_PROFILE_MATERIALS } from "./selectors";
 import { LoginContext } from "./login";
 import {
@@ -7,6 +9,7 @@ import {
   collectFromClassProfile,
   waitForClickNavigation,
   waitForNavigation,
+  Attachment,
   handleDownloadTable,
 } from "./utils";
 
@@ -26,11 +29,6 @@ export interface Material {
   attachments?: Attachment[];
 }
 
-export interface Attachment {
-  title: string;
-  url?: string;
-}
-
 export interface SyncMaterialsOptions {
   dir: string;
 }
@@ -39,7 +37,7 @@ export type MaterialMap = Record<string, Material[]>;
 
 export async function getMaterials(
   { page }: LoginContext,
-  options?: SyncMaterialsOptions
+  options: SyncMaterialsOptions
 ): Promise<MaterialMap> {
   await navigateToClassProfile(page);
   await openClassProfileSidebar(page);
@@ -47,13 +45,19 @@ export async function getMaterials(
 
   const materialsMap: Record<string, Material[]> = {};
   await collectFromClassProfile(page, async (page, title, index) => {
-    const tasks = await collectClassMaterials(page, index);
+    const classDir = path.join(options.dir, title);
+    await fs.ensureDir(classDir);
+    const tasks = await collectClassMaterials(page, index, classDir);
     materialsMap[title] = tasks;
   });
   return materialsMap;
 }
 
-async function collectClassMaterials(page: Page, classIndex: number) {
+async function collectClassMaterials(
+  page: Page,
+  classIndex: number,
+  classDir: string
+) {
   const materialsRows = await page.$$("#funcForm\\:jgdocList_data > tr");
   const materials: Material[] = [];
   let i = 0;
@@ -88,21 +92,34 @@ async function collectClassMaterials(page: Page, classIndex: number) {
       };
     });
     if (material.name) {
-      const hasDetail = await rows[i].evaluate(
-        (e) => e.querySelector("a") !== null
-      );
-      if (hasDetail) {
-        await waitForNavigation(page, async () => {
-          await rows[i].evaluate((e) => {
-            e.querySelector("a")?.click();
+      material.name = material.name.replaceAll("/", "-");
+      const mdPath = path.join(classDir, `${material.name}.md`);
+      const exist = await fs.pathExists(mdPath);
+      if (exist) {
+        console.log(`skip: ${mdPath}`);
+      } else {
+        const hasDetail = await rows[i].evaluate(
+          (e) => e.querySelector("a") !== null
+        );
+        if (hasDetail) {
+          console.log(`syncing: ${material.name}`);
+          await waitForNavigation(page, async () => {
+            await rows[i].evaluate((e) => {
+              e.querySelector("a")?.click();
+            });
           });
-        });
 
-        console.log(`on details ${material.name}`);
-        const details = await collectClassMaterialsDetails(page, classIndex);
-        material = { ...material, ...details };
+          const details = await collectClassMaterialsDetails(
+            page,
+            classIndex,
+            classDir
+          );
+          material = { ...material, ...details };
+        }
+        await fs.writeFile(mdPath, materialToMarkdown(material), {
+          encoding: "utf-8",
+        });
       }
-      console.log({ material, hasDetail });
       materials.push(material);
     }
     i++;
@@ -112,7 +129,8 @@ async function collectClassMaterials(page: Page, classIndex: number) {
 
 async function collectClassMaterialsDetails(
   page: Page,
-  classIndex: number
+  classIndex: number,
+  dir: string
 ): Promise<Pick<Material, "content" | "attachments">> {
   const content = await page.$eval(".contentsArea", (e) => {
     const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
@@ -126,9 +144,7 @@ async function collectClassMaterialsDetails(
 
   if (hasAttachments) {
     await page.click("#funcForm\\:j_idt368");
-    attachments.push(
-      ...(await handleDownloadTable(page, { downloadsPath: process.cwd() }))
-    );
+    attachments.push(...(await handleDownloadTable(page, { dir })));
   }
 
   // go back
@@ -137,5 +153,32 @@ async function collectClassMaterialsDetails(
     await handles[classIndex].click();
   });
 
-  return { content };
+  return { content, attachments };
+}
+
+const keyNames = [
+  ["group", "授業資料グループ"],
+  ["name", "授業資料名"],
+  ["course", "コース"],
+  ["tableOfContents", "目次"],
+  ["when", "未確認"],
+  ["lectureTime", "授業実施日"],
+  ["publicTime", "資料公開開始日"],
+  ["finishTime", "資料公開終了日"],
+  ["sender", "作成者"],
+  ["content", "内容"],
+] as const;
+
+function materialToMarkdown(material: Material) {
+  const main = keyNames.flatMap(([key, name]) => {
+    const val = material[key] ?? "";
+    return [`## ${name}`, val].filter(Boolean);
+  });
+  const attachments = (material.attachments || [])
+    .map((a) => `- [${a.title}](./${a.filename})`)
+    .join("\n");
+
+  return [`# ${material.name}"`, ...main, "## Attachments", attachments].join(
+    "\n\n"
+  );
 }
