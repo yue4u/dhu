@@ -80,6 +80,7 @@ export type FSForm = typeof FS_QUESTIONS;
 export type FSQuestionSchema = { text: string } & (
   | {
       type: "select";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       options: { label: string; value: any }[];
     }
   | {
@@ -117,7 +118,6 @@ export async function fillFS(
 ): Promise<Result<"success">> {
   await page.click(NAV_INFO);
   await waitForClickNavigation(page, NAV_FS_LINK);
-
   try {
     // log(`--- click row`);
     const rows = await page.$$("tr.ui-widget-content");

@@ -10,18 +10,17 @@ export function useSteps<T extends unknown[], D extends unknown[]>({
 }) {
   const { exit } = useApp();
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<[keyof D][]>([]);
+  const [answers, setAnswers] = useState<D[number][]>([]);
 
   useEffect(() => {
     (async () => {
-      if (step <= stepData.length) return;
+      if (step < stepData.length) return;
       await onFinish(answers as D);
       exit();
     })();
   }, [step, exit, stepData]);
-
-  const advance = (data: keyof D) => {
-    setAnswers([...answers, data] as [keyof D][]);
+  const advance = (data: D[number]) => {
+    setAnswers([...answers, data]);
     setStep(step + 1);
   };
 

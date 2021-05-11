@@ -34,7 +34,7 @@ interface Question {
 }
 
 function Questions({ questions }: { questions: Question[] }) {
-  const { step, advance } = useSteps({
+  const { step, advance } = useSteps<Question[], string[]>({
     stepData: questions,
     onFinish(data) {
       const [id, password] = data;
