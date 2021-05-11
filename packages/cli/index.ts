@@ -24,7 +24,7 @@ import {
   renderGPA,
   renderTaskMap,
   renderMaterialMap,
-  renderFS,
+  fs,
 } from "./view";
 import pkg from "@dhu/cli/package.json";
 const cli = cac();
@@ -83,8 +83,7 @@ cli
   .command("fs", "Get fs")
   .option("--head", "launch headfully")
   .action(async (option) => {
-    const result = await withLogin(getFS, { headless: !option.head });
-    await match(result, { ok: renderFS });
+    await withLogin(fs.write, { headless: !option.head });
   });
 
 cli
