@@ -47,8 +47,7 @@ export const FS_QUESTIONS = [
   },
   {
     type: "input",
-    text:
-      "よく解らなかったと記入した方で、授業へのご要望があれば教えてください。",
+    text: "よく解らなかったと記入した方で、授業へのご要望があれば教えてください。",
   },
   {
     type: "select",
