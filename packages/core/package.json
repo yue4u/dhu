@@ -1,15 +1,17 @@
 {
   "name": "@dhu/core",
-  "version": "0.2.0",
+  "version": "0.3.2",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "clean": "rm -rf ./dist"
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
+    "fs-extra": "^10.0.0",
     "json2csv": "^5.0.6",
     "playwright-chromium": "^1.10.0"
   },
@@ -18,6 +20,7 @@
     "package.json"
   ],
   "devDependencies": {
+    "@types/fs-extra": "^9.0.11",
     "@types/json2csv": "^5.0.1"
   }
 }

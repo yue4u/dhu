@@ -1,3 +1,4 @@
+export * from "playwright-chromium";
 export { login, withBrowser, withPage, withLogin } from "./login";
 
 export {
@@ -12,14 +13,27 @@ export {
   getUserInfo,
   readUserInfo,
   removeUserInfo,
+  getUserConfig,
+  updateUserConfig,
+  configKeys,
 } from "./userInfo";
 
 export { getInfo } from "./info";
-export { getFS, FS } from "./fs";
+export {
+  getFS,
+  fillFS,
+  FS,
+  FSAnswer,
+  FS_QUESTIONS,
+  FSForm,
+  FSFormAnswers,
+  FSQuestion,
+  FSQuestionSchema,
+} from "./fs";
 export { getGPA, GPA } from "./grade";
 export { saveGoogleCalendarCSV, getSchedule } from "./schedule";
 export { getTasks, Task, TaskMap } from "./task";
-
+export { getMaterials, Material, MaterialMap } from "./materials";
 export {
   getOpenSyllabus,
   getSyllabus,
@@ -30,3 +44,5 @@ export {
 
 export { waitForClickNavigation, sleep, match } from "./utils";
 export * as SELECTORS from "./selectors";
+
+export * from "playwright-chromium";

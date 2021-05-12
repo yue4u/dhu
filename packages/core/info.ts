@@ -1,16 +1,18 @@
 import { Page } from "playwright-chromium";
-import path from "path";
-import { sleep, waitForClickNavigation } from "./utils";
+import {
+  sleep,
+  waitForClickNavigation,
+  handleDownloadTable,
+  Attachment,
+  HandleAttachmentOptions,
+} from "./utils";
 import {
   NAV_INFO,
   NAV_INFO_LINK,
   INFO_GENERAL_ALL,
   INFO_GENERAL_ITEM,
   INFO_CLASS_ALL,
-  // INFO_CLASS_ITEM,
-  // INFO_ITEM_ATTACHMENT_OPEN,
   INFO_ITEM_CLOSE,
-  INFO_ITEM_ATTACHMENT_CLOSE,
   INFO_ALL,
 } from "./selectors";
 import { LoginContext } from "./login";
@@ -26,15 +28,10 @@ export type Info = {
   attachments?: Attachment[];
 };
 
-export type Attachment = {
-  title: string;
-  url?: string;
-};
-
 export type GetInfoOptions = {
   all?: boolean;
   attachments?: boolean;
-  downloadsPath: string;
+  dir: string;
 };
 
 export async function getInfo(
@@ -48,7 +45,6 @@ export async function getInfo(
   await page.waitForSelector(INFO_GENERAL_ITEM);
 
   if (options.all) {
-    console.log("all...");
     await page.click(INFO_ALL);
     await sleep(3000);
 
@@ -94,10 +90,6 @@ export async function handleInfoItemLink(
   return { title };
 }
 
-interface HandleAttachmentOptions {
-  downloadsPath: string;
-}
-
 async function handleAttachment(
   page: Page,
   count: number,
@@ -110,50 +102,13 @@ async function handleAttachment(
   await parent.click();
   await page.waitForSelector(INFO_ITEM_CLOSE);
   await sleep(3000);
-  const attachmentExist = await page.evaluate(
+  const hasAttachments = await page.evaluate(
     () => document.querySelector(`#bsd00702\\:ch\\:j_idt502`) !== null
   );
   const attachments: Attachment[] = [];
-  if (attachmentExist) {
+  if (hasAttachments) {
     await page.click(`#bsd00702\\:ch\\:j_idt502`);
-    await page.waitForSelector(".tableDownloadRow");
-
-    const attachmentRows = await page.$$(".tableDownloadRow");
-
-    for (const row of attachmentRows) {
-      const title = await row.$eval("div", (e) => {
-        const textContentOf = (e?: Element | null) =>
-          e?.textContent?.trim() ?? "";
-        return textContentOf(e);
-      });
-      let url: string | null = null;
-
-      // if (attachmentTitle in seen) {
-      // TODO
-      // }
-      const attachmentDownloadButton = await row.$("button");
-      if (!attachmentDownloadButton) continue;
-      await attachmentDownloadButton.click();
-
-      const [download] = await Promise.all([
-        page.waitForEvent("download"),
-        attachmentDownloadButton.click(),
-      ]);
-      const downloadPath = path.join(
-        options.downloadsPath,
-        download.suggestedFilename()
-      );
-      await download.saveAs(downloadPath);
-
-      const failure = await download.failure();
-      if (failure) {
-        console.log(failure);
-      }
-      // all urls are same, doesn't really make sense to store them.
-      url = download.url();
-      attachments.push({ title, url });
-    }
-    await page.click(INFO_ITEM_ATTACHMENT_CLOSE);
+    attachments.push(...(await handleDownloadTable(page, options)));
   }
   await page.click(INFO_ITEM_CLOSE);
   return { attachments };
