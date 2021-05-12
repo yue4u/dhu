@@ -73,6 +73,12 @@ function WriteFS({
     })();
   }, []);
 
+  useEffect(() => {
+    if (!FSList) return;
+    if (FSList.length) return;
+    exit();
+  }, [FSList]);
+
   const { step, advance } = useSteps<
     FSQuestionSchema[],
     [number, ...FSFormAnswers]
@@ -86,17 +92,15 @@ function WriteFS({
 
   if (!FSList) {
     return (
-      <>
+      <Text>
         <Spinner />
-        <Text>fetching data</Text>
-      </>
+        fetching data
+      </Text>
     );
   }
 
   if (!FSList.length) {
-    console.log("no unfilled fs");
-    exit();
-    return null;
+    return <Text color="green">No unfilled FS</Text>;
   }
 
   const allQuestions: FSQuestionSchema[] = [
