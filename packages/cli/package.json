@@ -1,6 +1,6 @@
 {
   "name": "@dhu/cli",
-  "version": "0.1.2",
+  "version": "0.1.12",
   "main": "bin/index.js",
   "license": "MIT",
   "bin": {
@@ -11,14 +11,18 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node --files --transpile-only index.ts"
+    "dev": "ts-node --files --transpile-only index.ts",
+    "clean": "rm -rf ./bin"
   },
   "dependencies": {
-    "@dhu/core": "^0.1.1",
+    "@dhu/core": "^0.3.2",
     "cac": "^6.7.3",
     "chalk": "^4.1.1",
     "immer": "^9.0.2",
     "ink": "^3.0.8",
+    "ink-select-input": "^4.2.0",
+    "ink-spinner": "^4.0.1",
+    "latest-version": "^5.1.0",
     "react": "^17.0.2"
   },
   "files": [

@@ -21,9 +21,9 @@ export type Course = {
   gradePolicy: string;
   finalTest: string;
   task: string;
-  contents: string[];
+  contents?: string[];
 
-  textbooks: Textbook[];
+  textbooks?: Textbook[];
 
   thingsToPrepare: string;
   references: string;
@@ -180,9 +180,8 @@ const handleCourseLink = async (
           break;
         }
 
-        const [name, author, publisher, ISBN, note] = details.map(
-          textContentOf
-        );
+        const [name, author, publisher, ISBN, note] =
+          details.map(textContentOf);
         textbooksData.push({
           name,
           author,

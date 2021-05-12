@@ -1,14 +1,21 @@
 #!/usr/bin/env node
 import cac from "cac";
+import path from "path";
+import chalk from "chalk";
+import latestVersion from "latest-version";
 import {
+  match,
   getAttendance,
   removeUserInfo,
   getGPA,
   getInfo,
   getTasks,
+  getMaterials,
   saveGoogleCalendarCSV,
-  withLoginedPage,
-  getFS,
+  withLogin,
+  configKeys,
+  getUserConfig,
+  updateUserConfig,
 } from "@dhu/core";
 import {
   renderLogo,
@@ -16,43 +23,42 @@ import {
   renderAttendance,
   renderGPA,
   renderTaskMap,
-  renderFS,
+  renderMaterialMap,
+  fs,
 } from "./view";
 import pkg from "@dhu/cli/package.json";
+
 const cli = cac();
 
-cli.command("", "Log logo").action(() => {
-  renderLogo();
-});
+cli.command("", "Log logo").action(renderLogo);
 
 cli.command("login", "Save login info to local data path").action(renderLogin);
 
 cli
   .command("logout", "Remove login info from local data path")
-  .action(async () => {
-    await removeUserInfo();
-  });
+  .action(removeUserInfo);
 
 cli
   .command("gpa", "Get GPA")
   .option("--head", "launch headfully")
-  .action(async (option) => {
-    const data = await withLoginedPage(getGPA, { headless: !option.head });
-    renderGPA(data);
-  });
+  .action(async (option) =>
+    match(await withLogin(getGPA, { headless: !option.head }), {
+      ok: renderGPA,
+    })
+  );
 
 cli
   .command("atte", "Get attendance")
   .option("--head", "launch headfully")
   .option("-q <q>", "quarter 1/2/3/4")
   .action(async (option) => {
-    const data = await withLoginedPage(
-      (page) => getAttendance(page, parseInt(option.q)),
-      {
-        headless: !option.head,
-      }
-    );
-    renderAttendance(data);
+    option.q &&= parseInt(option.q);
+    const result = await withLogin((page) => getAttendance(page, option.q), {
+      headless: !option.head,
+    });
+    await match(result, {
+      ok: renderAttendance,
+    });
   });
 
 cli
@@ -60,34 +66,25 @@ cli
   .option("--all", "retrieve all info")
   .option("--head", "launch headfully")
   .option("--attachments", "download attachments")
-  .option(
-    "--downloadsPath <downloadsPath>",
-    "path to save download attachments"
-  )
+  .option("--dir <dir>", "path to save download attachments")
   .action(async (option) => {
-    const data = await withLoginedPage(
-      async (page) => {
-        const { attachments, downloadsPath } = option;
-        const options = {
-          all: Boolean(option.all),
-          attachments: Boolean(attachments),
-          downloadsPath: downloadsPath ?? process.cwd(),
-        };
-        return getInfo(page, options);
-      },
-      {
-        headless: !option.head,
-      }
-    );
-    console.log(data);
+    const { attachments, dir } = option;
+    const options = {
+      all: Boolean(option.all),
+      attachments: Boolean(attachments),
+      dir: dir ?? process.cwd(),
+    };
+    const data = await withLogin(async (page) => getInfo(page, options), {
+      headless: !option.head,
+    });
+    await match(data);
   });
 
 cli
   .command("fs", "Get fs")
   .option("--head", "launch headfully")
   .action(async (option) => {
-    const data = await withLoginedPage(getFS, { headless: !option.head });
-    renderFS(data);
+    await withLogin(fs.write, { headless: !option.head });
   });
 
 cli
@@ -97,11 +94,82 @@ cli
   .option("--empty", "show empty tasks")
   .option("-q <q>", "quarter 1/2/3/4")
   .action(async (option) => {
-    const data = await withLoginedPage(
-      (page) => getTasks(page, parseInt(option.q, 10)),
+    const result = await withLogin(
+      (ctx) => getTasks(ctx, parseInt(option.q, 10)),
       { headless: !option.head }
     );
-    renderTaskMap(data, { showEmpty: option.empty, showEnd: option.end });
+    await match(result, {
+      ok(data) {
+        const renderOptions = { showEmpty: option.empty, showEnd: option.end };
+        renderTaskMap(data, renderOptions);
+      },
+    });
+  });
+
+cli
+  .command("matl", "Get Materials")
+  .option("--head", "launch headfully")
+  .option("--dir <dir>", "path to save download attachments")
+  .action(async (option) => {
+    const getDir = async () => {
+      if (option.dir) return option.dir;
+      const config = await getUserConfig();
+      if (config?.syncDir) return config.syncDir;
+      return path.join(process.cwd(), ".dhu-sync");
+    };
+
+    const dir = await getDir();
+    console.log(chalk`syncing data with {cyan ${dir}}`);
+
+    const result = await withLogin((ctx) => getMaterials(ctx, { dir }), {
+      headless: !option.head,
+    });
+
+    await match(result, {
+      ok(data) {
+        renderMaterialMap(data);
+      },
+    });
+  });
+
+cli
+  .command("config [...kv]", "Set config")
+  .option("-s,--show", "Show key")
+  .option("-d,--delete", "Show key")
+  .action(async (kv: string[], option) => {
+    if (kv.length < 1) {
+      console.log(`usage: dhu config --show key`);
+      console.log(`       dhu config key value`);
+      return;
+    }
+
+    const [k, v] = kv;
+
+    if (!configKeys.has(k)) {
+      console.error(
+        `unknown key ${k}, expected: ${Array.from(configKeys.keys()).join()}`
+      );
+      return;
+    }
+
+    if (option.show) {
+      const config = await getUserConfig();
+      // @ts-ignore
+      console.log(config?.[k]);
+      return;
+    }
+
+    if (option.delete) {
+      await updateUserConfig(k, undefined);
+      return;
+    }
+
+    if (!v) {
+      console.log(`dhu config key value`);
+      return;
+    }
+
+    await updateUserConfig(k, v);
   });
 
 cli
@@ -110,8 +178,8 @@ cli
   .option("-q <q>", "quarter 1/2/3/4?")
   .option("-s, --start <start>", "first monday when quarter start")
   .action(async (option) => {
-    /*const data = */ await withLoginedPage(
-      (page) => saveGoogleCalendarCSV(page, option.q, option.start),
+    await withLogin(
+      (ctx) => saveGoogleCalendarCSV(ctx, option.q, option.start),
       {
         headless: !option.head,
       }
@@ -121,4 +189,19 @@ cli
 
 cli.help();
 cli.version(pkg.version);
-cli.parse();
+
+async function checkVersion() {
+  const ver = await latestVersion(pkg.name);
+  if (ver === pkg.version) return;
+  console.log(
+    chalk.yellow
+      .bold`A new version of ${pkg.name} {cyan.bold ${ver}} (currently ${pkg.version}) has been released, try run {cyan.bold \`yarn global add @dhu/cli\`} to upgrade.`
+  );
+}
+
+async function run() {
+  await checkVersion();
+  cli.parse();
+}
+
+run();

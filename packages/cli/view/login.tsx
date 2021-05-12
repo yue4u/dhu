@@ -1,29 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { render, Text, Box, useApp, useInput } from "ink";
-import { produce } from "immer";
+import React from "react";
+import { render, Text, Box } from "ink";
 import { saveUserInfo } from "@dhu/core";
+import { useSteps, useStepInput, StepProps } from "./hooks/useSteps";
 
-interface QuestionProps {
+interface QuestionProps extends StepProps {
   question: Question;
   active: boolean;
   done: boolean;
-  updateQuestion(text: string): void;
+  onSubmit(text: string): void;
 }
 
-function Question({ active, done, question, updateQuestion }: QuestionProps) {
-  const [text, setText] = useState("");
-
-  useInput((input, key) => {
-    if (!active) return;
-    if (key.return) {
-      updateQuestion(text);
-      return;
-    }
-    if (key.delete) {
-      setText(text.slice(0, text.length - 1));
-    } else {
-      setText(text + input);
-    }
+function Question({ active, done, question, onSubmit }: QuestionProps) {
+  const { text } = useStepInput({
+    active,
+    onSubmit,
   });
 
   if (active || done) {
@@ -41,40 +31,27 @@ function Question({ active, done, question, updateQuestion }: QuestionProps) {
 interface Question {
   text: string;
   hideInput?: boolean;
-  answer?: string;
 }
 
-function Questions(props: { questions: Question[] }) {
-  const { exit } = useApp();
-  const [step, setStep] = useState(0);
-  const [questions, setQuestions] = useState(props.questions);
-
-  useEffect(() => {
-    if (step != props.questions.length) return;
-    const [{ answer: id }, { answer: password }] = questions;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    saveUserInfo({ id: id!, password: password! });
-    exit();
-  }, [step, exit]);
-
-  const updateQuestion = (answer: Question["text"]) => {
-    setQuestions(
-      produce(questions, (questions) => {
-        questions[step].answer = answer;
-      })
-    );
-    setStep(step + 1);
-  };
+function Questions({ questions }: { questions: Question[] }) {
+  const { step, advance } = useSteps<Question[], string[]>({
+    stepData: questions,
+    onFinish(data) {
+      const [id, password] = data;
+      saveUserInfo({ id, password });
+    },
+  });
 
   return (
     <Box flexDirection="column">
       {questions.map((q, index) => (
         <Question
           key={q.text}
+          index={index}
           active={index === step}
           done={index < step}
           question={q}
-          updateQuestion={updateQuestion}
+          onSubmit={advance}
         />
       ))}
     </Box>
