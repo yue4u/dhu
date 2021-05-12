@@ -2,6 +2,7 @@
 import cac from "cac";
 import path from "path";
 import chalk from "chalk";
+import latestVersion from "latest-version";
 import {
   match,
   getAttendance,
@@ -12,7 +13,6 @@ import {
   getMaterials,
   saveGoogleCalendarCSV,
   withLogin,
-  getFS,
   configKeys,
   getUserConfig,
   updateUserConfig,
@@ -27,6 +27,7 @@ import {
   fs,
 } from "./view";
 import pkg from "@dhu/cli/package.json";
+
 const cli = cac();
 
 cli.command("", "Log logo").action(renderLogo);
@@ -188,4 +189,19 @@ cli
 
 cli.help();
 cli.version(pkg.version);
-cli.parse();
+
+async function checkVersion() {
+  const ver = await latestVersion(pkg.name);
+  if (ver === pkg.version) return;
+  console.log(
+    chalk.yellow
+      .bold`A new version of ${pkg.name} {cyan.bold ${ver}} (currently ${pkg.version}) has been released, try run {cyan.bold \`yarn global add @dhu/cli\`} to upgrade.`
+  );
+}
+
+async function run() {
+  await checkVersion();
+  cli.parse();
+}
+
+run();

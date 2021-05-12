@@ -21,6 +21,7 @@
     "immer": "^9.0.2",
     "ink": "^3.0.8",
     "ink-spinner": "^4.0.1",
+    "latest-version": "^5.1.0",
     "react": "^17.0.2"
   },
   "files": [
