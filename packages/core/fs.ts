@@ -101,10 +101,10 @@ export type FSAnswer<T> = T extends FSQuestion
       type: "select";
     }
     ? T["options"][number]["value"]
-    : string
+    : string | undefined
   : never;
 
-type FSAnswersFrom<T extends readonly unknown[]> = Tail<T> extends never
+type FSAnswersFrom<T extends readonly unknown[]> = Head<Tail<T>> extends never
   ? [FSAnswer<Head<T>>]
   : [FSAnswer<Head<T>>, ...FSAnswersFrom<Tail<T>>];
 
@@ -132,13 +132,17 @@ export async function fillFS(
     // q1
     await buttons[answer1].click();
     // q2
-    await textareas[0].type(answer2);
+    if (answer2) {
+      await textareas[0].type(answer2);
+    }
     // q3
     await buttons[answer3].click();
     // q4
     await buttons[answer4].click();
     // q5
-    await textareas[1].type(answer5);
+    if (answer5) {
+      await textareas[1].type(answer5);
+    }
 
     // log(`--- try confirm`);
     await page.click(`.btnAnswer`);
