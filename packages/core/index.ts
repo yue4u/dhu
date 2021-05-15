@@ -26,7 +26,7 @@ export {
   configKeys,
 } from "./userInfo";
 
-export { getInfo } from "./info";
+export { getInfo, Info } from "./info";
 export {
   getFS,
   fillFS,
