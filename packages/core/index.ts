@@ -1,5 +1,13 @@
 export * from "playwright-chromium";
-export { login, withBrowser, withPage, withLogin } from "./login";
+export {
+  login,
+  withBrowser,
+  withPage,
+  withLogin,
+  LoginContext,
+  Result,
+  LoginOptions,
+} from "./login";
 
 export {
   Attendance,
