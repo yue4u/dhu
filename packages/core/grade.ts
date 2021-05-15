@@ -1,6 +1,7 @@
 import { LoginContext } from "./login";
 import { NAV_GRADE, NAV_GRADE_LINK, GRADE_GPA } from "./selectors";
 import { waitForClickNavigation } from "./utils";
+
 export type GPA = {
   semester: string;
   gpa: string;
