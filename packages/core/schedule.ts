@@ -5,7 +5,7 @@ import { promises as fs } from "fs";
 import { waitForClickNavigation } from "./utils";
 import { LoginContext } from "./login";
 
-const timeMap = {
+export const timeMap = {
   1: ["08:40 AM", "10:10 AM"],
   2: ["10:20 AM", "11:50 AM"],
   3: ["12:40 PM", "14:10 PM"],
@@ -16,10 +16,10 @@ const timeMap = {
 
 // const ja = [/*"日",*/ "月", "火", "水", "木", "金", "土"] as const;
 
-type TimeMap = typeof timeMap;
-type Time = keyof TimeMap;
+export type TimeMap = typeof timeMap;
+export type Time = keyof TimeMap;
 
-type Lecture = {
+export type Lecture = {
   day: number;
   title: string;
   lecturer: string;
@@ -29,7 +29,7 @@ type Lecture = {
   // classroom: string;
 };
 
-type CalendarEvent = {
+export type CalendarEvent = {
   Subject: string;
   "Start Date": string;
   "Start Time"?: string;

@@ -8,7 +8,7 @@ export type Attendance = {
   records: AttendanceRecord[];
 };
 
-export const AttendanceStatusMap = {
+export const attendanceStatusMap = {
   〇: "出席",
   "▽": "早退",
   "△": "遅刻",
@@ -20,9 +20,9 @@ export const AttendanceStatusMap = {
   "": "期試験/追試験/再試験",
 } as const;
 
-export type AttendanceRecordMark = keyof typeof AttendanceStatusMap;
+export type AttendanceRecordMark = keyof typeof attendanceStatusMap;
 export type AttendanceRecord = {
-  status: typeof AttendanceStatusMap[AttendanceRecordMark];
+  status: typeof attendanceStatusMap[AttendanceRecordMark];
   date: string;
 };
 
