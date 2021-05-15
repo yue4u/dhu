@@ -15,7 +15,7 @@
     "clean": "rm -rf ./bin"
   },
   "dependencies": {
-    "@dhu/core": "^0.3.4",
+    "@dhu/core": "^0.3.5",
     "cac": "^6.7.3",
     "chalk": "^4.1.1",
     "immer": "^9.0.2",
