@@ -17,22 +17,27 @@ import {
 } from "./selectors";
 import { LoginContext } from "./login";
 
-export type Info = {
+export interface InfoContent {
   sender?: string;
   category?: string;
   content?: string;
   available?: string;
   title?: string;
-  type?: string;
+  attachments?: Attachment[];
+}
+
+export interface Info extends InfoContent {
+  title?: string;
   url?: string;
   attachments?: Attachment[];
-};
+}
 
-export type GetInfoOptions = {
+export interface GetInfoOptions {
   all?: boolean;
+  content?: boolean;
   attachments?: boolean;
   dir: string;
-};
+}
 
 export async function getInfo(
   { page }: LoginContext,
@@ -65,7 +70,7 @@ export async function getInfo(
   const infoList: Info[] = [];
 
   while (count !== len) {
-    const info = await handleInfoItemLink(page, count, options);
+    const info = await getInfoItem(page, count, options);
     infoList.push(info);
     count += 1;
   }
@@ -75,7 +80,7 @@ export async function getInfo(
   return infoList.filter((i) => Boolean(i.title));
 }
 
-export async function handleInfoItemLink(
+export async function getInfoItem(
   page: Page,
   count: number,
   options: GetInfoOptions
@@ -83,33 +88,59 @@ export async function handleInfoItemLink(
   const infoItemLinks = await page.$$(INFO_GENERAL_ITEM);
   const infoItem = infoItemLinks[count];
   const title = (await infoItem?.textContent()) ?? "";
-  if (options.attachments) {
-    const { attachments } = await handleAttachment(page, count, options);
-    return { title, attachments };
+  if (!(options.content || options.attachments)) {
+    return { title };
   }
-  return { title };
+  const details = await getInfoItemDetail(page, count, options);
+  return { title, ...details };
 }
 
-async function handleAttachment(
+type GetInfoItemDetailOptions = HandleAttachmentOptions &
+  Omit<GetInfoOptions, "all">;
+
+async function getInfoItemDetail(
   page: Page,
   count: number,
-  options: HandleAttachmentOptions
-) {
-  await sleep(3000);
-  await page.waitForLoadState();
+  options: GetInfoItemDetailOptions
+): Promise<InfoContent> {
+  let ret = {};
+  if (!(options.content || options.attachments)) {
+    return ret;
+  }
+  await sleep(2000);
   const infoItemLinks = await page.$$(INFO_GENERAL_ITEM);
   const parent = infoItemLinks[count];
   await parent.click();
   await page.waitForSelector(INFO_ITEM_CLOSE);
-  await sleep(3000);
-  const hasAttachments = await page.evaluate(
-    () => document.querySelector(`#bsd00702\\:ch\\:j_idt502`) !== null
-  );
-  const attachments: Attachment[] = [];
-  if (hasAttachments) {
-    await page.click(`#bsd00702\\:ch\\:j_idt502`);
-    attachments.push(...(await handleDownloadTable(page, options)));
+  if (options.content) {
+    const [sender, category, title, body, availableTime] = await page.$$eval(
+      "tr > .ui-panelgrid-cell:nth-child(2)",
+      (els) => {
+        const textContentOf = (e?: Element | null) =>
+          e?.textContent?.trim() ?? "";
+        return els.map(textContentOf);
+      }
+    );
+    const content = {
+      sender,
+      category,
+      title,
+      body,
+      availableTime,
+    };
+    ret = { ...ret, content };
+  }
+  if (options.attachments) {
+    const hasAttachments = await page.evaluate(
+      () => document.querySelector(`#bsd00702\\:ch\\:j_idt502`) !== null
+    );
+    let attachments: Attachment[] = [];
+    if (hasAttachments) {
+      await page.click(`#bsd00702\\:ch\\:j_idt502`);
+      attachments = await handleDownloadTable(page, options);
+    }
+    ret = { ...ret, attachments };
   }
   await page.click(INFO_ITEM_CLOSE);
-  return { attachments };
+  return ret;
 }
