@@ -4,7 +4,6 @@ import {
   waitForClickNavigation,
   handleDownloadTable,
   Attachment,
-  HandleAttachmentOptions,
 } from "./utils";
 import {
   NAV_INFO,
@@ -17,18 +16,14 @@ import {
 } from "./selectors";
 import { LoginContext } from "./login";
 
-export interface InfoContent {
+export interface Info {
+  title?: string;
+  url?: string;
+
   sender?: string;
   category?: string;
   content?: string;
-  available?: string;
-  title?: string;
-  attachments?: Attachment[];
-}
-
-export interface Info extends InfoContent {
-  title?: string;
-  url?: string;
+  availableTime?: string;
   attachments?: Attachment[];
 }
 
@@ -39,29 +34,41 @@ export interface GetInfoOptions {
   dir: string;
 }
 
-export async function getInfo(
-  { page }: LoginContext,
-  options: GetInfoOptions
-): Promise<Info[]> {
+export interface GetInfoItemOptions extends GetInfoOptions {
+  navigate?: boolean;
+}
+
+export async function navigateToInfo(page: Page) {
   await page.click(NAV_INFO);
   await waitForClickNavigation(page, NAV_INFO_LINK);
 
   await page.$eval(INFO_GENERAL_ALL, (e) => (e as HTMLElement).click());
   await page.waitForSelector(INFO_GENERAL_ITEM);
+}
+
+export async function openAll(page: Page) {
+  await page.click(INFO_ALL);
+  await sleep(3000);
+
+  // const lenText = await page.$eval(
+  //   "#funcForm\\:tabArea\\:1\\:j_idt215 .keijiKensu",
+  //   (e) => {
+  //     const textContentOf = (e?: Element | null) =>
+  //       e?.textContent?.trim() ?? "";
+  //     return textContentOf(e);
+  //   }
+  // );
+  // console.log(lenText);
+}
+
+export async function getInfo(
+  { page }: LoginContext,
+  options: GetInfoOptions
+): Promise<Info[]> {
+  await navigateToInfo(page);
 
   if (options.all) {
-    await page.click(INFO_ALL);
-    await sleep(3000);
-
-    // const lenText = await page.$eval(
-    //   "#funcForm\\:tabArea\\:1\\:j_idt215 .keijiKensu",
-    //   (e) => {
-    //     const textContentOf = (e?: Element | null) =>
-    //       e?.textContent?.trim() ?? "";
-    //     return textContentOf(e);
-    //   }
-    // );
-    // console.log(lenText);
+    await openAll(page);
   }
 
   const infoGeneralItemLinks = await page.$$(INFO_GENERAL_ITEM);
@@ -70,7 +77,7 @@ export async function getInfo(
   const infoList: Info[] = [];
 
   while (count !== len) {
-    const info = await getInfoItem(page, count, options);
+    const info = await getInfoItemByIndex(page, count, options);
     infoList.push(info);
     count += 1;
   }
@@ -80,40 +87,33 @@ export async function getInfo(
   return infoList.filter((i) => Boolean(i.title));
 }
 
-export async function getInfoItem(
+export async function getInfoItemByIndex(
   page: Page,
   count: number,
-  options: GetInfoOptions
+  options: GetInfoItemOptions
 ): Promise<Info> {
-  const infoItemLinks = await page.$$(INFO_GENERAL_ITEM);
-  const infoItem = infoItemLinks[count];
-  const title = (await infoItem?.textContent()) ?? "";
-  if (!(options.content || options.attachments)) {
-    return { title };
+  if (options.navigate) {
+    await navigateToInfo(page);
   }
-  const details = await getInfoItemDetail(page, count, options);
-  return { title, ...details };
-}
 
-type GetInfoItemDetailOptions = HandleAttachmentOptions &
-  Omit<GetInfoOptions, "all">;
+  if (options.all) {
+    await openAll(page);
+  }
 
-async function getInfoItemDetail(
-  page: Page,
-  count: number,
-  options: GetInfoItemDetailOptions
-): Promise<InfoContent> {
-  let ret = {};
+  const infoItemLinks = await page.$$(INFO_GENERAL_ITEM);
+  const parent = infoItemLinks[count];
+
+  const title = (await parent.textContent()) ?? "";
+  let ret: Info = { title };
   if (!(options.content || options.attachments)) {
     return ret;
   }
-  await sleep(2000);
-  const infoItemLinks = await page.$$(INFO_GENERAL_ITEM);
-  const parent = infoItemLinks[count];
+
   await parent.click();
   await page.waitForSelector(INFO_ITEM_CLOSE);
+
   if (options.content) {
-    const [sender, category, title, body, availableTime] = await page.$$eval(
+    const [sender, category, title, content, availableTime] = await page.$$eval(
       "tr > .ui-panelgrid-cell:nth-child(2)",
       (els) => {
         const textContentOf = (e?: Element | null) =>
@@ -121,15 +121,9 @@ async function getInfoItemDetail(
         return els.map(textContentOf);
       }
     );
-    const content = {
-      sender,
-      category,
-      title,
-      body,
-      availableTime,
-    };
-    ret = { ...ret, content };
+    ret = { ...ret, sender, category, title, content, availableTime };
   }
+
   if (options.attachments) {
     const hasAttachments = await page.evaluate(
       () => document.querySelector(`#bsd00702\\:ch\\:j_idt502`) !== null
@@ -141,6 +135,8 @@ async function getInfoItemDetail(
     }
     ret = { ...ret, attachments };
   }
+
   await page.click(INFO_ITEM_CLOSE);
+  await sleep(2000);
   return ret;
 }
