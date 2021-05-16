@@ -77,7 +77,13 @@ export async function getInfo(
   const infoList: Info[] = [];
 
   while (count !== len) {
-    const info = await getInfoItemByIndex(page, count, options);
+    const info = await getInfoItemByIndex(page, count, {
+      ...options,
+      // skip open here
+      all: false,
+      // skip navigation here
+      navigate: false,
+    });
     infoList.push(info);
     count += 1;
   }
