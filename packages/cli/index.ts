@@ -65,18 +65,23 @@ cli
   .command("info", "Get info")
   .option("--all", "retrieve all info")
   .option("--head", "launch headfully")
-  .option("--attachments", "download attachments")
+  .option("-c,--content", "get content info")
+  .option("-a,--attachments", "download attachments")
   .option("--dir <dir>", "path to save download attachments")
   .action(async (option) => {
-    const { attachments, dir } = option;
-    const options = {
-      all: Boolean(option.all),
+    const { all, attachments, content, dir } = option;
+    const getInfoOptions = {
+      all: Boolean(all),
+      content: Boolean(content),
       attachments: Boolean(attachments),
       dir: dir ?? process.cwd(),
     };
-    const data = await withLogin(async (page) => getInfo(page, options), {
-      headless: !option.head,
-    });
+    const data = await withLogin(
+      async (page) => getInfo(page, getInfoOptions),
+      {
+        headless: !option.head,
+      }
+    );
     await match(data);
   });
 
