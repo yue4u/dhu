@@ -1,6 +1,6 @@
 {
   "name": "@dhu/cli",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "main": "bin/index.js",
   "license": "MIT",
   "bin": {
@@ -15,7 +15,7 @@
     "clean": "rm -rf ./bin"
   },
   "dependencies": {
-    "@dhu/core": "^0.3.5",
+    "@dhu/core": "^0.3.6",
     "cac": "^6.7.3",
     "chalk": "^4.1.1",
     "immer": "^9.0.2",
