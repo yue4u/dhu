@@ -133,7 +133,7 @@ function WriteFS({
   );
 }
 
-export const fs = {
+export const renderFS = {
   async write(ctx: LoginContext) {
     return render(
       <WriteFS ctx={ctx} questions={[...FS_QUESTIONS] as FSQuestionSchema[]} />

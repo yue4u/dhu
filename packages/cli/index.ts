@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { promises as fs } from "fs";
 import cac from "cac";
 import path from "path";
 import chalk from "chalk";
@@ -24,7 +25,7 @@ import {
   renderGPA,
   renderTaskMap,
   renderMaterialMap,
-  fs,
+  renderFS,
 } from "./view";
 import pkg from "@dhu/cli/package.json";
 
@@ -89,7 +90,7 @@ cli
   .command("fs", "Get fs")
   .option("--head", "launch headfully")
   .action(async (option) => {
-    await withLogin(fs.write, { headless: !option.head });
+    await withLogin(renderFS.write, { headless: !option.head });
   });
 
 cli
@@ -184,7 +185,14 @@ cli
   .option("-s, --start <start>", "first monday when quarter start")
   .action(async (option) => {
     await withLogin(
-      (ctx) => saveGoogleCalendarCSV(ctx, option.q, option.start),
+      async (ctx) => {
+        const csv = await saveGoogleCalendarCSV(ctx, option.q, option.start);
+        await fs.writeFile(
+          `${process.cwd()}/dhu-timetable-${option.start}.csv`,
+          csv,
+          { encoding: "utf-8" }
+        );
+      },
       {
         headless: !option.head,
       }
