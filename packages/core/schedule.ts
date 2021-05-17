@@ -1,7 +1,5 @@
-import { Page } from "playwright-chromium";
 import { NAV_ATTENDANCE, NAV_SCHEDULE_LINK } from "./selectors";
 import { parseAsync } from "json2csv";
-import { promises as fs } from "fs";
 import { waitForClickNavigation } from "./utils";
 import { LoginContext } from "./login";
 
@@ -14,8 +12,6 @@ export const timeMap = {
   6: ["17:40 PM", "19:10 PM"],
 };
 
-// const ja = [/*"日",*/ "月", "火", "水", "木", "金", "土"] as const;
-
 export type TimeMap = typeof timeMap;
 export type Time = keyof TimeMap;
 
@@ -26,7 +22,6 @@ export type Lecture = {
   code: string;
   unit: string;
   time: number;
-  // classroom: string;
 };
 
 export type CalendarEvent = {
@@ -115,12 +110,10 @@ export async function saveGoogleCalendarCSV(
       "Start Date": date,
       "End Date": date,
       Description: [l.lecturer, l.code, l.unit].join("\n"),
-      //Location: l.classroom
     };
   };
 
   const schedule = await getSchedule(ctx, q);
   const csv = await parseAsync(schedule.map(toGoogleEvent));
-  await fs.writeFile(`${process.cwd()}/dhu-timetable-${start}.csv`, csv);
   return csv;
 }
