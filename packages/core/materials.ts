@@ -64,8 +64,8 @@ async function collectClassMaterials(
   for (const _ of materialsRows) {
     const rows = await page.$$("#funcForm\\:jgdocList_data > tr");
     let material = await rows[i].$$eval("td", (tds) => {
-      const textContentOf = (e?: Element | null) =>
-        e?.textContent?.trim() ?? "";
+      const innerTextOf = (e?: Element | null) =>
+        (e as HTMLElement)?.innerText?.trim() ?? "";
 
       const [
         group,
@@ -77,7 +77,7 @@ async function collectClassMaterials(
         publicTime,
         finishTime,
         sender,
-      ] = tds.map(textContentOf);
+      ] = tds.map(innerTextOf);
 
       return {
         group,
@@ -133,8 +133,9 @@ async function collectClassMaterialsDetails(
   dir: string
 ): Promise<Pick<Material, "content" | "attachments">> {
   const content = await page.$eval(".contentsArea", (e) => {
-    const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
-    return textContentOf(e);
+    const innerTextOf = (e?: Element | null) =>
+      (e as HTMLElement)?.innerText?.trim() ?? "";
+    return innerTextOf(e);
   });
 
   const hasAttachments = await page.evaluate(
