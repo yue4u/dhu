@@ -1,9 +1,10 @@
 import { Page } from "playwright-chromium";
 import {
+  Attachment,
   sleep,
   waitForClickNavigation,
   handleDownloadTable,
-  Attachment,
+  HandleAttachmentOptions,
 } from "./utils";
 import {
   NAV_INFO,
@@ -32,7 +33,8 @@ export type GetInfoOptions = {
   listAll?: boolean;
   skipRead?: boolean;
   content?: boolean;
-} & ({ attachments: true; dir: string } | { attachments?: false });
+  attachments?: HandleAttachmentOptions;
+};
 
 export type GetInfoItemOptions = GetInfoOptions & {
   navigate?: boolean;
@@ -146,7 +148,7 @@ export async function getInfoItemByIndex(
     let attachments: Attachment[] = [];
     if (hasAttachments) {
       await page.click(`#bsd00702\\:ch\\:j_idt502`);
-      attachments = await handleDownloadTable(page, options);
+      attachments = await handleDownloadTable(page, options.attachments);
     }
     ret = { ...ret, attachments };
   }

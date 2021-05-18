@@ -11,6 +11,7 @@ import {
   waitForNavigation,
   Attachment,
   handleDownloadTable,
+  HandleAttachmentOptions,
 } from "./utils";
 
 export interface Material {
@@ -109,11 +110,10 @@ async function collectClassMaterials(
             });
           });
 
-          const details = await collectClassMaterialsDetails(
-            page,
-            classIndex,
-            classDir
-          );
+          const details = await collectClassMaterialsDetails(page, classIndex, {
+            download: true,
+            dir: classDir,
+          });
           material = { ...material, ...details };
         }
         await fs.writeFile(mdPath, materialToMarkdown(material), {
@@ -130,7 +130,7 @@ async function collectClassMaterials(
 async function collectClassMaterialsDetails(
   page: Page,
   classIndex: number,
-  dir: string
+  options: HandleAttachmentOptions
 ): Promise<Pick<Material, "content" | "attachments">> {
   const content = await page.$eval(".contentsArea", (e) => {
     const innerTextOf = (e?: Element | null) =>
@@ -141,11 +141,11 @@ async function collectClassMaterialsDetails(
   const hasAttachments = await page.evaluate(
     () => document.querySelector("#funcForm\\:j_idt368") !== null
   );
-  const attachments: Attachment[] = [];
+  let attachments: Attachment[] = [];
 
   if (hasAttachments) {
     await page.click("#funcForm\\:j_idt368");
-    attachments.push(...(await handleDownloadTable(page, { dir })));
+    attachments = await handleDownloadTable(page, options);
   }
 
   // go back

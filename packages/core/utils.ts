@@ -86,12 +86,16 @@ export async function collectFromClassProfile(
 
 export interface Attachment {
   title: string;
-  filename: string;
+  filename?: string;
   url?: string;
 }
-export interface HandleAttachmentOptions {
-  dir: string;
-}
+
+export type HandleAttachmentOptions =
+  | {
+      dir: string;
+      download: true;
+    }
+  | { download?: false };
 
 export async function handleDownloadTable(
   page: Page,
@@ -113,7 +117,10 @@ export async function handleDownloadTable(
     // if (attachmentTitle in seen) {
     // TODO
     // }
-
+    if (!options.download) {
+      attachments.push({ title });
+      continue;
+    }
     const attachmentDownloadButton = await row.$("button");
     if (!attachmentDownloadButton) continue;
     await attachmentDownloadButton.click();
