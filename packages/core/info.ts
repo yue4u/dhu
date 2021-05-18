@@ -10,6 +10,7 @@ import {
   NAV_INFO_LINK,
   INFO_GENERAL_ALL,
   INFO_GENERAL_ITEM,
+  INFO_GENERAL_ITEM_STATE,
   INFO_CLASS_ALL,
   INFO_ITEM_CLOSE,
   INFO_ALL,
@@ -27,16 +28,15 @@ export interface Info {
   attachments?: Attachment[];
 }
 
-export interface GetInfoOptions {
-  all?: boolean;
+export type GetInfoOptions = {
+  listAll?: boolean;
+  skipRead?: boolean;
   content?: boolean;
-  attachments?: boolean;
-  dir: string;
-}
+} & ({ attachments: true; dir: string } | { attachments?: false });
 
-export interface GetInfoItemOptions extends GetInfoOptions {
+export type GetInfoItemOptions = GetInfoOptions & {
   navigate?: boolean;
-}
+};
 
 export async function navigateToInfo(page: Page) {
   await page.click(NAV_INFO);
@@ -65,9 +65,11 @@ export async function getInfo(
   { page }: LoginContext,
   options: GetInfoOptions
 ): Promise<Info[]> {
+  options.skipRead ??= true;
+
   await navigateToInfo(page);
 
-  if (options.all) {
+  if (options.listAll) {
     await openAll(page);
   }
 
@@ -75,12 +77,19 @@ export async function getInfo(
   const len = infoGeneralItemLinks.length;
   let count = 0;
   const infoList: Info[] = [];
-
   while (count !== len) {
+    if (options.skipRead) {
+      const states = await page.$$(INFO_GENERAL_ITEM_STATE);
+      const state = await states[count].textContent();
+      if (state?.trim() === "未読にする") {
+        count += 1;
+        continue;
+      }
+    }
     const info = await getInfoItemByIndex(page, count, {
       ...options,
       // skip open here
-      all: false,
+      listAll: false,
       // skip navigation here
       navigate: false,
     });
@@ -102,7 +111,7 @@ export async function getInfoItemByIndex(
     await navigateToInfo(page);
   }
 
-  if (options.all) {
+  if (options.listAll) {
     await openAll(page);
   }
 
