@@ -1,6 +1,6 @@
 {
   "name": "@dhu/core",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
