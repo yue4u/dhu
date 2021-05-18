@@ -17,6 +17,7 @@ import {
   configKeys,
   getUserConfig,
   updateUserConfig,
+  GetInfoOptions,
 } from "@dhu/core";
 import {
   renderLogo,
@@ -66,13 +67,15 @@ cli
   .command("info", "Get info")
   .option("--all", "retrieve all info")
   .option("--head", "launch headfully")
+  .option("-r,--includeRead", "include read info")
   .option("-c,--content", "get content info")
   .option("-a,--attachments", "download attachments")
   .option("--dir <dir>", "path to save download attachments")
   .action(async (option) => {
-    const { all, attachments, content, dir } = option;
-    const getInfoOptions = {
-      all: Boolean(all),
+    const { all, attachments, includeRead, content, dir } = option;
+    const getInfoOptions: GetInfoOptions = {
+      listAll: Boolean(all),
+      skipRead: !includeRead,
       content: Boolean(content),
       attachments: Boolean(attachments),
       dir: dir ?? process.cwd(),

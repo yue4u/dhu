@@ -29,6 +29,7 @@ export const INFO_ALL = "#funcForm\\:tabArea\\:1\\:j_idt402";
 export const INFO_GENERAL_ALL = "#funcForm\\:tabArea > ul > li:nth-child(2) > a";
 export const INFO_CLASS_ALL = "#funcForm\\:tabArea > ul > li:nth-child(3) > a";
 
+export const INFO_GENERAL_ITEM_STATE = "#funcForm\\:tabArea\\:1\\:allScr > div > span > div:nth-child(2)";
 export const INFO_GENERAL_ITEM = "#funcForm\\:tabArea\\:1\\:allScr > div > dl > a";
 export const INFO_CLASS_ITEM = "#funcForm\\:tabArea\\:2\\:allScr > div > dl > a";
 export const INFO_ITEM_ATTACHMENT_OPEN = "#bsd00702\\:ch\\:j_idt502";
