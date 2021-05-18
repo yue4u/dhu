@@ -122,9 +122,9 @@ export async function getInfoItemByIndex(
     const [sender, category, title, content, availableTime] = await page.$$eval(
       "tr > .ui-panelgrid-cell:nth-child(2)",
       (els) => {
-        const textContentOf = (e?: Element | null) =>
-          e?.textContent?.trim() ?? "";
-        return els.map(textContentOf);
+        const innerTextOf = (e?: Element | null) =>
+          (e as HTMLElement)?.innerText?.trim() ?? "";
+        return els.map(innerTextOf);
       }
     );
     ret = { ...ret, sender, category, title, content, availableTime };
