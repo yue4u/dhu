@@ -1,6 +1,5 @@
 import { Page } from "playwright-chromium";
-import { NAV_INFO, NAV_FS_LINK, CONFIRM_BUTTON } from "./selectors";
-import { waitForClickNavigation, sleep } from "./utils";
+import { sleep, ThirdPartyAny, navigate } from "./utils";
 import { LoginContext, Result } from "./login";
 
 export type FS = {
@@ -12,9 +11,7 @@ export type FS = {
 const FS_ROW = "tr.ui-widget-content";
 
 export async function getFS({ page }: LoginContext): Promise<FS[]> {
-  await page.click(NAV_INFO);
-  await waitForClickNavigation(page, NAV_FS_LINK);
-
+  await navigate(page).to("fs");
   const FSList = await page.$$eval(FS_ROW, (rows) => {
     const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
 
@@ -110,14 +107,17 @@ type FSAnswersFrom<T extends readonly unknown[]> = Head<Tail<T>> extends never
 
 export type FSFormAnswers = FSAnswersFrom<FSForm>;
 
+declare const PrimeFaces: ThirdPartyAny;
+declare const processSave: ThirdPartyAny;
+
 export async function fillFS(
   page: Page,
   index: number,
   [answer1, answer2, answer3, answer4, answer5]: FSFormAnswers
 ): Promise<Result<"success">> {
-  await page.click(NAV_INFO);
-  await waitForClickNavigation(page, NAV_FS_LINK);
   try {
+    await navigate(page).to("fs");
+
     // log(`--- click row`);
     const rows = await page.$$("tr.ui-widget-content");
     const row = rows[index];
@@ -146,12 +146,26 @@ export async function fillFS(
 
     // log(`--- try confirm`);
     await page.click(`.btnAnswer`);
+    await page.evaluate(() => {
+      PrimeFaces.ab({
+        s: "funcForm:j_idt244:j_idt245",
+        p: "funcForm:j_idt244:j_idt245",
+        u: "@(.enqArea)",
+      });
+    });
     await sleep(1000);
-    const confirm1 = await page.$$(CONFIRM_BUTTON);
-    await confirm1[1].click();
+    await page.evaluate(() => {
+      PrimeFaces.ab({
+        s: "funcForm:j_idt249:j_idt250",
+        p: "funcForm:j_idt249:j_idt250",
+        u: "@all",
+        // @ts-ignore
+        onco: function (xhr, status, args) {
+          processSave(xhr, status, args);
+        },
+      });
+    });
     await sleep(1000);
-    const confirm2 = await page.$$(CONFIRM_BUTTON);
-    await confirm2[2].click();
     await page.waitForSelector(".msgArea");
     // log(`✅ ok fill ${title}!`);
     return { data: "success" };

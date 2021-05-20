@@ -2,6 +2,10 @@ import path from "path";
 import { Page } from "playwright-chromium";
 import { Result } from "./login";
 import { INFO_ITEM_ATTACHMENT_CLOSE } from "./selectors";
+import { syncUtils } from "./sync";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ThirdPartyAny = any;
 
 export const theWorld = () => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -14,6 +18,15 @@ export const sleep = (timeout: number) => {
 
 export const textContentOf = (e?: Element | null) =>
   e?.textContent?.trim() ?? "";
+
+export const navigateToTop = async (page: Page) => {
+  return waitForNavigation(page, async () => {
+    await page.evaluate(() => {
+      // @ts-ignore
+      confirmIfModified("headerForm:logo");
+    });
+  });
+};
 
 export const waitForNavigation = async <T>(
   page: Page,
@@ -140,8 +153,42 @@ export async function handleDownloadTable(
     // all urls are same, doesn't really make sense to store them.
     url = download.url();
     attachments.push({ title, url, filename: suggestedFilename });
+    syncUtils.log("download", suggestedFilename);
   }
   await page.click(INFO_ITEM_ATTACHMENT_CLOSE);
 
   return attachments;
+}
+
+declare const PrimeFaces: ThirdPartyAny;
+declare const syncTransition: ThirdPartyAny;
+
+export function navigate(page: Page) {
+  const navigateMap = new Map(
+    Object.entries({
+      fs: () => {
+        syncTransition("menuForm:mainMenu");
+        PrimeFaces.addSubmitParam("menuForm", {
+          "menuForm:mainMenu": "menuForm:mainMenu",
+          "menuForm:mainMenu_menuid": "4_0_0_0",
+        }).submit("menuForm");
+      },
+      info: () => {
+        syncTransition("menuForm:mainMenu");
+        PrimeFaces.addSubmitParam("menuForm", {
+          "menuForm:mainMenu": "menuForm:mainMenu",
+          "menuForm:mainMenu_menuid": "4_0_0_0",
+        }).submit("menuForm");
+      },
+    })
+  );
+  return {
+    async to(name: "fs" | "info") {
+      const fn = navigateMap.get(name);
+      if (!fn) return;
+      await waitForNavigation(page, async () => {
+        await page.evaluate(fn);
+      });
+    },
+  };
 }

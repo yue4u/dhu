@@ -1,6 +1,5 @@
 import { Page } from "playwright-chromium";
 import fs from "fs-extra";
-import path from "path";
 import { CLASS_PROFILE_MATERIALS } from "./selectors";
 import { LoginContext } from "./login";
 import {
@@ -13,6 +12,7 @@ import {
   handleDownloadTable,
   HandleAttachmentOptions,
 } from "./utils";
+import { syncUtils } from "./sync";
 
 export interface Material {
   title?: string;
@@ -30,15 +30,11 @@ export interface Material {
   attachments?: Attachment[];
 }
 
-export interface SyncMaterialsOptions {
-  dir: string;
-}
-
 export type MaterialMap = Record<string, Material[]>;
 
 export async function getMaterials(
   { page }: LoginContext,
-  options: SyncMaterialsOptions
+  options: HandleAttachmentOptions
 ): Promise<MaterialMap> {
   await navigateToClassProfile(page);
   await openClassProfileSidebar(page);
@@ -46,9 +42,9 @@ export async function getMaterials(
 
   const materialsMap: Record<string, Material[]> = {};
   await collectFromClassProfile(page, async (page, title, index) => {
-    const classDir = path.join(options.dir, title);
-    await fs.ensureDir(classDir);
-    const tasks = await collectClassMaterials(page, index, classDir);
+    if (!options.download) return;
+    const classPath = await syncUtils.getClassPath(title);
+    const tasks = await collectClassMaterials(page, index, classPath);
     materialsMap[title] = tasks;
   });
   return materialsMap;
@@ -94,16 +90,19 @@ async function collectClassMaterials(
     });
     if (material.name) {
       material.name = material.name.replaceAll("/", "-");
-      const mdPath = path.join(classDir, `${material.name}.md`);
+      const mdPath = await syncUtils.getClassMarkdownPath(
+        classDir,
+        material.name
+      );
       const exist = await fs.pathExists(mdPath);
       if (exist) {
-        console.log(`skip: ${mdPath}`);
+        syncUtils.log("material", `skip ${mdPath}`);
       } else {
         const hasDetail = await rows[i].evaluate(
           (e) => e.querySelector("a") !== null
         );
         if (hasDetail) {
-          console.log(`syncing: ${material.name}`);
+          syncUtils.log("material", material.name);
           await waitForNavigation(page, async () => {
             await rows[i].evaluate((e) => {
               e.querySelector("a")?.click();
@@ -116,9 +115,7 @@ async function collectClassMaterials(
           });
           material = { ...material, ...details };
         }
-        await fs.writeFile(mdPath, materialToMarkdown(material), {
-          encoding: "utf-8",
-        });
+        await syncUtils.writeFile(mdPath, materialToMarkdown(material));
       }
       materials.push(material);
     }

@@ -18,6 +18,7 @@ import {
   getUserConfig,
   updateUserConfig,
   GetInfoOptions,
+  syncAll,
 } from "@dhu/core";
 import {
   renderLogo,
@@ -134,15 +135,26 @@ cli
     const dir = await getDir();
     console.log(chalk`syncing data with {cyan ${dir}}`);
 
-    const result = await withLogin((ctx) => getMaterials(ctx, { dir }), {
-      headless: !option.head,
-    });
+    const result = await withLogin(
+      (ctx) => getMaterials(ctx, { download: true, dir }),
+      {
+        headless: !option.head,
+      }
+    );
 
     await match(result, {
       ok(data) {
         renderMaterialMap(data);
       },
     });
+  });
+
+cli
+  .command("sync", "Sync all")
+  .option("--head", "launch headfully")
+  .option("--dir <dir>", "path to save download attachments")
+  .action(async (option) => {
+    await syncAll(option.dir);
   });
 
 cli

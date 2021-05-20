@@ -1,21 +1,19 @@
 import { Page } from "playwright-chromium";
+import fs from "fs-extra";
 import {
   Attachment,
   sleep,
-  waitForClickNavigation,
+  navigate,
   handleDownloadTable,
   HandleAttachmentOptions,
 } from "./utils";
 import {
-  NAV_INFO,
-  NAV_INFO_LINK,
-  INFO_GENERAL_ALL,
   INFO_GENERAL_ITEM,
   INFO_GENERAL_ITEM_STATE,
-  INFO_CLASS_ALL,
   INFO_ITEM_CLOSE,
   INFO_ALL,
 } from "./selectors";
+import { syncUtils } from "./sync";
 import { LoginContext } from "./login";
 
 export interface Info {
@@ -40,14 +38,6 @@ export type GetInfoItemOptions = GetInfoOptions & {
   navigate?: boolean;
 };
 
-export async function navigateToInfo(page: Page) {
-  await page.click(NAV_INFO);
-  await waitForClickNavigation(page, NAV_INFO_LINK);
-
-  await page.$eval(INFO_GENERAL_ALL, (e) => (e as HTMLElement).click());
-  await page.waitForSelector(INFO_GENERAL_ITEM);
-}
-
 export async function openAll(page: Page) {
   await page.click(INFO_ALL);
   await sleep(3000);
@@ -69,39 +59,76 @@ export async function getInfo(
 ): Promise<Info[]> {
   options.skipRead ??= true;
 
-  await navigateToInfo(page);
+  await navigate(page).to("info");
 
-  if (options.listAll) {
-    await openAll(page);
-  }
-
+  // if (options.listAll) {
+  //   await openAll(page);
+  // }
   const infoGeneralItemLinks = await page.$$(INFO_GENERAL_ITEM);
   const len = infoGeneralItemLinks.length;
   let count = 0;
   const infoList: Info[] = [];
+
   while (count !== len) {
     if (options.skipRead) {
       const states = await page.$$(INFO_GENERAL_ITEM_STATE);
       const state = await states[count].textContent();
+
       if (state?.trim() === "未読にする") {
         count += 1;
+
         continue;
       }
     }
-    const info = await getInfoItemByIndex(page, count, {
-      ...options,
-      // skip open here
-      listAll: false,
-      // skip navigation here
-      navigate: false,
-    });
-    infoList.push(info);
+    try {
+      const info = await getInfoItemByIndex(page, count, {
+        ...options,
+        // skip open here
+        listAll: false,
+        // skip navigation here
+        navigate: false,
+      });
+
+      const infoMarkdownPath = await syncUtils.getInfoMarkdownPath(
+        info.title ?? `info-${Date.now()}`
+      );
+      if (await fs.pathExists(infoMarkdownPath)) {
+        syncUtils.log("info", `skip ${info.title}`);
+      } else {
+        syncUtils.log("info", info.title);
+        await syncUtils.writeFile(infoMarkdownPath, infoToMarkdown(info));
+      }
+      infoList.push(info);
+    } catch (e) {
+      console.log(e);
+    }
     count += 1;
   }
 
-  await page.$eval(INFO_CLASS_ALL, (e) => (e as HTMLElement).click());
-
   return infoList.filter((i) => Boolean(i.title));
+}
+
+const keyNames = [
+  ["title", "タイトル"],
+  ["url", "リンク"],
+  ["sender", "差出人"],
+  ["category", "カテゴリ"],
+  ["content", "本文"],
+  ["availableTime", "掲示期間"],
+] as const;
+
+function infoToMarkdown(info: Info) {
+  const main = keyNames.flatMap(([key, name]) => {
+    const val = info[key] ?? "";
+    return [`## ${name}`, val].filter(Boolean);
+  });
+  const attachments = (info.attachments || [])
+    .map((a) => `- [${a.title}](./${a.filename})`)
+    .join("\n");
+
+  return [`# ${info.title}"`, ...main, "## Attachments", attachments].join(
+    "\n\n"
+  );
 }
 
 export async function getInfoItemByIndex(
@@ -110,7 +137,7 @@ export async function getInfoItemByIndex(
   options: GetInfoItemOptions
 ): Promise<Info> {
   if (options.navigate) {
-    await navigateToInfo(page);
+    await navigate(page).to("info");
   }
 
   if (options.listAll) {
@@ -125,8 +152,16 @@ export async function getInfoItemByIndex(
   if (!(options.content || options.attachments)) {
     return ret;
   }
-
-  await parent.click();
+  await page.evaluate(
+    ([selector, i]) => {
+      (
+        document.querySelectorAll(selector as string)[
+          i as number
+        ] as HTMLElement
+      ).click();
+    },
+    [INFO_GENERAL_ITEM, count]
+  );
   await page.waitForSelector(INFO_ITEM_CLOSE);
 
   if (options.content) {
