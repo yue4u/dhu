@@ -6,6 +6,7 @@ import { getMaterials } from "./materials";
 import { getInfo } from "./info";
 import { getUserInfo } from "./userInfo";
 import { navigateToTop, HandleAttachmentOptions } from "./utils";
+import { getTasks } from "./task";
 
 export const syncUtils = {
   dir: process.cwd(),
@@ -18,7 +19,7 @@ export const syncUtils = {
     return classPath;
   },
   async getClassMarkdownPath(classPath: string, name: string) {
-    return path.join(classPath, `${name}.md`);
+    return path.join(classPath, `${name.replaceAll("/", "-")}.md`);
   },
   async getInfoPath() {
     const infoPath = path.join(this.dir, "info");
@@ -26,7 +27,10 @@ export const syncUtils = {
     return infoPath;
   },
   async getInfoMarkdownPath(name: string) {
-    return path.join(await this.getInfoPath(), `${name}.md`);
+    return path.join(
+      await this.getInfoPath(),
+      `${name.replaceAll("/", "-")}.md`
+    );
   },
   async getDownloadOptions(): Promise<HandleAttachmentOptions> {
     return { download: true, dir: this.dir };
@@ -35,6 +39,14 @@ export const syncUtils = {
     await fs.writeFile(path, content, {
       encoding: "utf-8",
     });
+  },
+  async skipOrWriteFile(path: string, fn: () => string) {
+    if (await fs.pathExists(path)) {
+      this.log("info", `skip ${path}`);
+    } else {
+      this.log("info", path);
+      await syncUtils.writeFile(path, fn());
+    }
   },
   log(type: "info" | "common" | "material" | "download", info?: string) {
     console.log(chalk`{yellow syncing({cyan ${type}})}: ${info}`);
@@ -50,13 +62,17 @@ export async function syncAll(dir?: string) {
   }
   const downloadOptions = await syncUtils.getDownloadOptions();
   syncUtils.log("common", chalk`syncing with {cyan ${syncDir}}`);
+  await fs.ensureDir(await syncUtils.getInfoPath());
   await withLogin(
     async (ctx) => {
+      await getTasks(ctx, 1, true);
+      await navigateToTop(ctx.page);
       await getMaterials(ctx, downloadOptions);
       await navigateToTop(ctx.page);
       await getInfo(ctx, {
         content: true,
         skipRead: false,
+        sync: true,
         attachments: downloadOptions,
       });
     },

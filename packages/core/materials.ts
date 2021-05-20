@@ -89,7 +89,6 @@ async function collectClassMaterials(
       };
     });
     if (material.name) {
-      material.name = material.name.replaceAll("/", "-");
       const mdPath = await syncUtils.getClassMarkdownPath(
         classDir,
         material.name

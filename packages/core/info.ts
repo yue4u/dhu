@@ -32,6 +32,7 @@ export type GetInfoOptions = {
   skipRead?: boolean;
   content?: boolean;
   attachments?: HandleAttachmentOptions;
+  sync?: boolean;
 };
 
 export type GetInfoItemOptions = GetInfoOptions & {
@@ -61,9 +62,6 @@ export async function getInfo(
 
   await navigate(page).to("info");
 
-  // if (options.listAll) {
-  //   await openAll(page);
-  // }
   const infoGeneralItemLinks = await page.$$(INFO_GENERAL_ITEM);
   const len = infoGeneralItemLinks.length;
   let count = 0;
@@ -88,17 +86,11 @@ export async function getInfo(
         // skip navigation here
         navigate: false,
       });
-
-      const infoMarkdownPath = await syncUtils.getInfoMarkdownPath(
-        info.title ?? `info-${Date.now()}`
-      );
-      if (await fs.pathExists(infoMarkdownPath)) {
-        syncUtils.log("info", `skip ${info.title}`);
-      } else {
-        syncUtils.log("info", info.title);
-        await syncUtils.writeFile(infoMarkdownPath, infoToMarkdown(info));
-      }
       infoList.push(info);
+
+      if (options.sync) {
+        await syncInfo(info);
+      }
     } catch (e) {
       console.log(e);
     }
@@ -106,6 +98,13 @@ export async function getInfo(
   }
 
   return infoList.filter((i) => Boolean(i.title));
+}
+
+async function syncInfo(info: Info) {
+  const infoMarkdownPath = await syncUtils.getInfoMarkdownPath(
+    info.title ?? `info-${Date.now()}`
+  );
+  await syncUtils.skipOrWriteFile(infoMarkdownPath, () => infoToMarkdown(info));
 }
 
 const keyNames = [
