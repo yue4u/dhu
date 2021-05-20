@@ -27,13 +27,7 @@ export {
   configKeys,
 } from "./userInfo";
 
-export {
-  getInfo,
-  getInfoItemByIndex,
-  navigateToInfo,
-  Info,
-  GetInfoOptions,
-} from "./info";
+export { getInfo, getInfoItemByIndex, Info, GetInfoOptions } from "./info";
 
 export {
   getFS,
@@ -65,8 +59,7 @@ export {
   Course,
   Textbook,
 } from "./syllabus";
-
-export { waitForClickNavigation, sleep, match } from "./utils";
+export { waitForClickNavigation, sleep, match, navigate } from "./utils";
 export * as SELECTORS from "./selectors";
 
 export * from "playwright-chromium";
