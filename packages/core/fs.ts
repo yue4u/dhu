@@ -146,25 +146,12 @@ export async function fillFS(
 
     // log(`--- try confirm`);
     await page.click(`.btnAnswer`);
-    await page.evaluate(() => {
-      PrimeFaces.ab({
-        s: "funcForm:j_idt244:j_idt245",
-        p: "funcForm:j_idt244:j_idt245",
-        u: "@(.enqArea)",
-      });
-    });
+    const confirms = await page.$$(
+      `.ui-helper-clearfix > button[type="submit"]`
+    );
+    confirms[0].click();
     await sleep(1000);
-    await page.evaluate(() => {
-      PrimeFaces.ab({
-        s: "funcForm:j_idt249:j_idt250",
-        p: "funcForm:j_idt249:j_idt250",
-        u: "@all",
-        // @ts-ignore
-        onco: function (xhr, status, args) {
-          processSave(xhr, status, args);
-        },
-      });
-    });
+    confirms[1].click();
     await sleep(1000);
     await page.waitForSelector(".msgArea");
     // log(`✅ ok fill ${title}!`);
