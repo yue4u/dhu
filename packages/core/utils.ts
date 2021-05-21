@@ -159,7 +159,7 @@ export function navigate(page: Page) {
         syncTransition("menuForm:mainMenu");
         PrimeFaces.addSubmitParam("menuForm", {
           "menuForm:mainMenu": "menuForm:mainMenu",
-          "menuForm:mainMenu_menuid": "4_0_0_0",
+          "menuForm:mainMenu_menuid": "4_3_0_0",
         }).submit("menuForm");
       },
       info: () => {
