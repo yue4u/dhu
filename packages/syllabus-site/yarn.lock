@@ -958,11 +958,12 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@dhu/core@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@dhu/core/-/core-0.2.2.tgz#ee608bd276ceb42325fa03490a0b39a873fe4c05"
-  integrity sha512-NMIF0CO08qRpnB1YNheMos0X/gvou+ivFIdZ6oXeM/SbJHd/nAgcijyQ/UxVRa7uzr6XAwNxCZALrG/dBdwNsg==
+"@dhu/core@^0.3.12":
+  version "0.3.12"
+  resolved "https://registry.yarnpkg.com/@dhu/core/-/core-0.3.12.tgz#2fc9b0f71a833e510050f39f5cabbb21c532dec2"
+  integrity sha512-oNhudGAl/iZPNYPerNoi2Zl1xMUS7by1GDT+SCGDK3SC7Sut9FZD8F+UlT3HOc+/E//bNWTTjEpiMEWPDNA9AQ==
   dependencies:
+    chalk "^4.1.1"
     fs-extra "^10.0.0"
     json2csv "^5.0.6"
     playwright-chromium "^1.10.0"
@@ -2253,6 +2254,14 @@ chalk@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-3.0.0.tgz#3f73c2bf526591f574cc492c51e2456349f844e4"
   integrity sha512-4D3B6Wf41KOYRFdszmDqMCGq5VV/uMAB273JILmO+3jAlh8X4qDtdtgCR3fxtbLEMzSx22QdhnDcJvu2u1fVwg==
+  dependencies:
+    ansi-styles "^4.1.0"
+    supports-color "^7.1.0"
+
+chalk@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.1.tgz#c80b3fab28bf6371e6863325eee67e618b77e6ad"
+  integrity sha512-diHzdDKxcU+bAsUboHLPEDQiw0qEe0qd7SYUn3HgcFlWgbDcfLGswOHYeGrHKzG9z6UYf01d9VFMfZxPM1xZSg==
   dependencies:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
@@ -9090,9 +9099,9 @@ write-file-atomic@^3.0.0:
     typedarray-to-buffer "^3.1.5"
 
 ws@^7.3.1:
-  version "7.4.5"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.5.tgz#a484dd851e9beb6fdb420027e3885e8ce48986c1"
-  integrity sha512-xzyu3hFvomRfXKH8vOFMU3OguG6oOvhXMo3xsGy3xWExqaM2dxBbVxuD99O7m3ZUFMvvscsZDqxfgMaRr/Nr1g==
+  version "7.4.6"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.6.tgz#5654ca8ecdeee47c33a9a4bf6d28e2be2980377c"
+  integrity sha512-YmhHDO4MzaDLB+M9ym/mDA5z0naX8j7SIlT8f8z+I0VtzsRbekxEutHSme7NPS2qE8StCYQNUnfWdXta/Yu85A==
 
 xdg-basedir@^4.0.0:
   version "4.0.0"
