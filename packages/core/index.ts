@@ -60,7 +60,8 @@ export {
   Textbook,
 } from "./syllabus";
 export { syncAll } from "./sync";
-export { waitForClickNavigation, sleep, match, navigate } from "./utils";
+export { sleep, match } from "./utils";
+export { navigate } from "./navigate";
 export * as SELECTORS from "./selectors";
 
 export * from "playwright-chromium";

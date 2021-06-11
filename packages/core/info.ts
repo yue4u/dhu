@@ -1,9 +1,7 @@
 import { Page } from "playwright-chromium";
-import fs from "fs-extra";
 import {
   Attachment,
   sleep,
-  navigate,
   handleDownloadTable,
   HandleAttachmentOptions,
 } from "./utils";
@@ -15,6 +13,7 @@ import {
 } from "./selectors";
 import { syncUtils } from "./sync";
 import { LoginContext } from "./login";
+import { navigate } from "./navigate";
 
 export interface Info {
   title?: string;
@@ -42,16 +41,6 @@ export type GetInfoItemOptions = GetInfoOptions & {
 export async function openAll(page: Page) {
   await page.click(INFO_ALL);
   await sleep(3000);
-
-  // const lenText = await page.$eval(
-  //   "#funcForm\\:tabArea\\:1\\:j_idt215 .keijiKensu",
-  //   (e) => {
-  //     const textContentOf = (e?: Element | null) =>
-  //       e?.textContent?.trim() ?? "";
-  //     return textContentOf(e);
-  //   }
-  // );
-  // console.log(lenText);
 }
 
 export async function getInfo(

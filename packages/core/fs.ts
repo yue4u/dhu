@@ -1,5 +1,6 @@
 import { Page } from "playwright-chromium";
-import { sleep, ThirdPartyAny, navigate } from "./utils";
+import { sleep } from "./utils";
+import { navigate } from "./navigate";
 import { LoginContext, Result } from "./login";
 
 export type FS = {
@@ -106,9 +107,6 @@ type FSAnswersFrom<T extends readonly unknown[]> = Head<Tail<T>> extends never
   : [FSAnswer<Head<T>>, ...FSAnswersFrom<Tail<T>>];
 
 export type FSFormAnswers = FSAnswersFrom<FSForm>;
-
-declare const PrimeFaces: ThirdPartyAny;
-declare const processSave: ThirdPartyAny;
 
 export async function fillFS(
   page: Page,

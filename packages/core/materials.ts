@@ -3,15 +3,13 @@ import fs from "fs-extra";
 import { CLASS_PROFILE_MATERIALS } from "./selectors";
 import { LoginContext } from "./login";
 import {
-  navigateToClassProfile,
   openClassProfileSidebar,
   collectFromClassProfile,
-  waitForClickNavigation,
-  waitForNavigation,
   Attachment,
   handleDownloadTable,
   HandleAttachmentOptions,
 } from "./utils";
+import { navigate } from "./navigate";
 import { syncUtils } from "./sync";
 
 export interface Material {
@@ -36,9 +34,9 @@ export async function getMaterials(
   { page }: LoginContext,
   options: HandleAttachmentOptions
 ): Promise<MaterialMap> {
-  await navigateToClassProfile(page);
+  await navigate(page).to("classProfile");
   await openClassProfileSidebar(page);
-  await waitForClickNavigation(page, CLASS_PROFILE_MATERIALS);
+  await navigate(page).byClick(CLASS_PROFILE_MATERIALS);
 
   const materialsMap: Record<string, Material[]> = {};
   await collectFromClassProfile(page, async (page, title, index) => {
@@ -102,7 +100,7 @@ async function collectClassMaterials(
         );
         if (hasDetail) {
           syncUtils.log("material", material.name);
-          await waitForNavigation(page, async () => {
+          await navigate(page).by(async () => {
             await rows[i].evaluate((e) => {
               e.querySelector("a")?.click();
             });
@@ -146,7 +144,7 @@ async function collectClassMaterialsDetails(
 
   // go back
   const handles = await page.$$(".classList a");
-  await waitForNavigation(page, async () => {
+  await navigate(page).by(async () => {
     await handles[classIndex].click();
   });
 

@@ -12,7 +12,7 @@ import {
   URL_TOP,
 } from "./selectors";
 import { getUserInfo, LoginInfo, removeUserInfo } from "./userInfo";
-import { waitForClickNavigation, waitForNavigation } from "./utils";
+import { navigate } from "./navigate";
 
 export type LoginContext = {
   ctx: BrowserContext;
@@ -37,7 +37,7 @@ export async function login(
   const ctx = await browser.newContext({ acceptDownloads: true });
   const page = await ctx.newPage();
   try {
-    await waitForNavigation(page, () => page.goto(URL_TOP));
+    await navigate(page).by(() => page.goto(URL_TOP));
 
     const maintenanceMessage = await page.evaluate(() => {
       const e = document.querySelector("#funcContent > div > p");
@@ -52,7 +52,7 @@ export async function login(
 
     await page.type(LOGIN_ID, id);
     await page.type(LOGIN_PASSWORD, password);
-    await waitForClickNavigation(page, LOGIN_SUBMIT_BUTTON);
+    await navigate(page).byClick(LOGIN_SUBMIT_BUTTON);
 
     const loginErrorMessage = await page.evaluate(() => {
       const e = document.querySelector(".ui-messages-error-detail");

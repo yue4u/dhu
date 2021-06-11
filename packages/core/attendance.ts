@@ -1,6 +1,7 @@
 import { LoginContext } from "./login";
 import { NAV_ATTENDANCE, NAV_ATTENDANCE_LINK } from "./selectors";
-import { waitForClickNavigation, sleep } from "./utils";
+import { sleep } from "./utils";
+import { navigate } from "./navigate";
 export type Attendance = {
   code: string;
   title: string;
@@ -31,7 +32,7 @@ export async function getAttendance(
   q = 1
 ): Promise<Attendance[]> {
   await page.click(NAV_ATTENDANCE);
-  await waitForClickNavigation(page, NAV_ATTENDANCE_LINK);
+  await navigate(page).byClick(NAV_ATTENDANCE_LINK);
   if (q != 1) {
     await page.selectOption(
       "#funcForm\\:kaikoNendoGakki_input",

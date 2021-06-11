@@ -1,10 +1,10 @@
 import { Page } from "playwright-chromium";
 import {
   sleep,
-  navigateToClassProfile,
   openClassProfileSidebar,
   collectFromClassProfile,
 } from "./utils";
+import { navigate } from "./navigate";
 import { CLASS_PROFILE_TASK } from "./selectors";
 import { LoginContext } from "./login";
 import { syncUtils } from "./sync";
@@ -42,7 +42,7 @@ export async function getTasks(
   q = 1,
   sync = false
 ): Promise<TaskMap> {
-  await navigateToClassProfile(page);
+  await navigate(page).to("classProfile");
 
   let pageIndex = 0;
   while (pageIndex < q - 1) {

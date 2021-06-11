@@ -1,11 +1,13 @@
 import fs from "fs-extra";
 import path from "path";
 import chalk from "chalk";
+import { LaunchOptions } from "playwright-chromium";
 import { withLogin } from "./login";
 import { getMaterials } from "./materials";
 import { getInfo } from "./info";
 import { getUserInfo } from "./userInfo";
-import { navigateToTop, HandleAttachmentOptions } from "./utils";
+import { HandleAttachmentOptions } from "./utils";
+import { navigate } from "./navigate";
 import { getTasks } from "./task";
 
 export const syncUtils = {
@@ -53,7 +55,7 @@ export const syncUtils = {
   },
 };
 
-export async function syncAll(dir?: string) {
+export async function syncAll(dir?: string, options?: LaunchOptions) {
   const userInfo = await getUserInfo();
   if (!userInfo) return;
   const syncDir = dir ?? userInfo.config?.syncDir;
@@ -66,9 +68,9 @@ export async function syncAll(dir?: string) {
   await withLogin(
     async (ctx) => {
       await getTasks(ctx, 1, true);
-      await navigateToTop(ctx.page);
+      await navigate(ctx.page).to("top");
       await getMaterials(ctx, downloadOptions);
-      await navigateToTop(ctx.page);
+      await navigate(ctx.page).to("top");
       await getInfo(ctx, {
         content: true,
         skipRead: false,
@@ -76,6 +78,6 @@ export async function syncAll(dir?: string) {
         attachments: downloadOptions,
       });
     },
-    { headless: false }
+    { headless: true, ...options }
   );
 }

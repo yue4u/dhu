@@ -154,7 +154,7 @@ cli
   .option("--head", "launch headfully")
   .option("--dir <dir>", "path to save download attachments")
   .action(async (option) => {
-    await syncAll(option.dir);
+    await syncAll(option.dir, { headless: !option.head });
   });
 
 cli
