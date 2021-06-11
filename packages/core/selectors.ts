@@ -29,8 +29,8 @@ export const INFO_ALL = "#funcForm\\:tabArea\\:1\\:j_idt402";
 export const INFO_GENERAL_ALL = "#funcForm\\:tabArea > ul > li:nth-child(2) > a";
 export const INFO_CLASS_ALL = ".ui-state-default.ui-corner-top:nth-child(2) > a";
 
-export const INFO_GENERAL_ITEM_STATE = "#funcForm\\:tabArea\\:0\\:j_idt226\\:0\\:j_idt227 > div > .alignRight > span > div:nth-child(2)";
-export const INFO_GENERAL_ITEM = "#funcForm\\:tabArea\\:0\\:j_idt226\\:0\\:j_idt227 > div > .alignRight > dl > a";
+export const INFO_GENERAL_ITEM_STATE = "#funcForm\\:tabArea\\:1\\:allScr > div > span > div:nth-child(2)";
+export const INFO_GENERAL_ITEM = "#funcForm\\:tabArea\\:1\\:allScr > div > dl > a";
 export const INFO_CLASS_ITEM = "#funcForm\\:tabArea\\:2\\:allScr > div > dl > a";
 export const INFO_ITEM_ATTACHMENT_OPEN = "#bsd00702\\:ch\\:j_idt502";
 export const INFO_ITEM_ATTACHMENT_CLOSE = "#pkx02201\\:dialog > div.ui-dialog-titlebar.ui-widget-header.ui-helper-clearfix.ui-corner-top.ui-draggable-handle > a.ui-dialog-titlebar-icon.ui-dialog-titlebar-close.ui-corner-all";
