@@ -7,7 +7,7 @@ import {
 import { navigate } from "./navigate";
 import { CLASS_PROFILE_TASK } from "./selectors";
 import { LoginContext } from "./login";
-import { syncUtils } from "./sync";
+import { sync } from "./sync";
 
 export type Task = {
   groupName?: string; //課題グループ名;
@@ -40,7 +40,7 @@ export type Attachment = {
 export async function getTasks(
   { page }: LoginContext,
   q = 1,
-  sync = false
+  options?: { sync?: boolean }
 ): Promise<TaskMap> {
   await navigate(page).to("classProfile");
 
@@ -62,17 +62,18 @@ export async function getTasks(
     const tasks = await collectClassTasks(page);
     tasksMap[title] = tasks;
 
-    if (!sync) return;
+    if (!options?.sync) return;
 
     await Promise.all(
       tasks.map(async (task) => {
-        const taskMarkdownPath = await syncUtils.getClassMarkdownPath(
-          await syncUtils.getClassPath(title),
-          task.name ?? `task-${Date.now()}`
-        );
-        await syncUtils.skipOrWriteFile(taskMarkdownPath, () =>
-          taskToMarkdown(task)
-        );
+        await sync.file.skipOrWrite({
+          dir: ["class", title],
+          name: task.name,
+          ext: ".md",
+          content: () => {
+            return taskToMarkdown(task);
+          },
+        });
       })
     );
   });

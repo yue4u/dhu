@@ -2,7 +2,15 @@ import path from "path";
 import { Page } from "playwright-chromium";
 import { Result } from "./login";
 import { INFO_ITEM_ATTACHMENT_CLOSE } from "./selectors";
-import { syncUtils } from "./sync";
+import { sync } from "./sync";
+
+export type Head<T extends readonly unknown[]> = T extends [] ? never : T[0];
+export type Tail<T extends readonly unknown[]> = T extends readonly [
+  head: unknown,
+  ...tail: infer Rest
+]
+  ? Rest
+  : never;
 
 export const sleep = (timeout: number) => {
   return new Promise((done) => setTimeout(done, timeout));
@@ -112,7 +120,7 @@ export async function handleDownloadTable(
     // all urls are same, doesn't really make sense to store them.
     url = download.url();
     attachments.push({ title, url, filename: suggestedFilename });
-    syncUtils.log("download", suggestedFilename);
+    sync.log("download", suggestedFilename);
   }
   await page.click(INFO_ITEM_ATTACHMENT_CLOSE);
 

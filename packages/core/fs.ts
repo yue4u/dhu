@@ -1,5 +1,5 @@
 import { Page } from "playwright-chromium";
-import { sleep } from "./utils";
+import { sleep, Head, Tail } from "./utils";
 import { navigate } from "./navigate";
 import { LoginContext, Result } from "./login";
 
@@ -85,14 +85,6 @@ export type FSQuestionSchema = { text: string } & (
     }
 );
 export type FSQuestion = FSForm[number];
-
-type Head<T extends readonly unknown[]> = T extends [] ? never : T[0];
-type Tail<T extends readonly unknown[]> = T extends readonly [
-  head: unknown,
-  ...tail: infer Rest
-]
-  ? Rest
-  : never;
 
 export type FSAnswer<T> = T extends FSQuestion
   ? T extends {

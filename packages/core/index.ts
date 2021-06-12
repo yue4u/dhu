@@ -59,7 +59,7 @@ export {
   Course,
   Textbook,
 } from "./syllabus";
-export { syncAll } from "./sync";
+export { sync, syncAll } from "./sync";
 export { sleep, match } from "./utils";
 export { navigate } from "./navigate";
 export * as SELECTORS from "./selectors";

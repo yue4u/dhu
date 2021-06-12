@@ -11,7 +11,7 @@ import {
   INFO_ITEM_CLOSE,
   INFO_ALL,
 } from "./selectors";
-import { syncUtils } from "./sync";
+import { sync } from "./sync";
 import { LoginContext } from "./login";
 import { navigate } from "./navigate";
 
@@ -78,7 +78,16 @@ export async function getInfo(
       infoList.push(info);
 
       if (options.sync) {
-        await syncInfo(info);
+        const ok = await sync.file.skipOrWrite({
+          dir: ["info"],
+          name: info.title,
+          ext: ".md",
+          content: () => infoToMarkdown(info),
+        });
+        if (!ok) {
+          sync.log("info", "skip rest info due to exist file");
+          break;
+        }
       }
     } catch (e) {
       console.log(e);
@@ -87,13 +96,6 @@ export async function getInfo(
   }
 
   return infoList.filter((i) => Boolean(i.title));
-}
-
-async function syncInfo(info: Info) {
-  const infoMarkdownPath = await syncUtils.getInfoMarkdownPath(
-    info.title ?? `info-${Date.now()}`
-  );
-  await syncUtils.skipOrWriteFile(infoMarkdownPath, () => infoToMarkdown(info));
 }
 
 const keyNames = [

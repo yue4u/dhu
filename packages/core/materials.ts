@@ -10,7 +10,7 @@ import {
   HandleAttachmentOptions,
 } from "./utils";
 import { navigate } from "./navigate";
-import { syncUtils } from "./sync";
+import { sync } from "./sync";
 
 export interface Material {
   title?: string;
@@ -41,8 +41,7 @@ export async function getMaterials(
   const materialsMap: Record<string, Material[]> = {};
   await collectFromClassProfile(page, async (page, title, index) => {
     if (!options.download) return;
-    const classPath = await syncUtils.getClassPath(title);
-    const tasks = await collectClassMaterials(page, index, classPath);
+    const tasks = await collectClassMaterials(page, title, index);
     materialsMap[title] = tasks;
   });
   return materialsMap;
@@ -50,8 +49,8 @@ export async function getMaterials(
 
 async function collectClassMaterials(
   page: Page,
-  classIndex: number,
-  classDir: string
+  className: string,
+  classIndex: number
 ) {
   const materialsRows = await page.$$("#funcForm\\:jgdocList_data > tr");
   const materials: Material[] = [];
@@ -87,33 +86,35 @@ async function collectClassMaterials(
       };
     });
     if (material.name) {
-      const mdPath = await syncUtils.getClassMarkdownPath(
-        classDir,
-        material.name
-      );
-      const exist = await fs.pathExists(mdPath);
-      if (exist) {
-        syncUtils.log("material", `skip ${mdPath}`);
-      } else {
-        const hasDetail = await rows[i].evaluate(
-          (e) => e.querySelector("a") !== null
-        );
-        if (hasDetail) {
-          syncUtils.log("material", material.name);
-          await navigate(page).by(async () => {
-            await rows[i].evaluate((e) => {
-              e.querySelector("a")?.click();
+      await sync.file.skipOrWrite({
+        dir: ["class", className],
+        name: material.name,
+        ext: ".md",
+        async content() {
+          const hasDetail = await rows[i].evaluate(
+            (e) => e.querySelector("a") !== null
+          );
+          if (hasDetail) {
+            sync.log("material", material.name);
+            await navigate(page).by(async () => {
+              await rows[i].evaluate((e) => {
+                e.querySelector("a")?.click();
+              });
             });
-          });
 
-          const details = await collectClassMaterialsDetails(page, classIndex, {
-            download: true,
-            dir: classDir,
-          });
-          material = { ...material, ...details };
-        }
-        await syncUtils.writeFile(mdPath, materialToMarkdown(material));
-      }
+            const details = await collectClassMaterialsDetails(
+              page,
+              classIndex,
+              {
+                download: true,
+                dir: sync.class.getPath(className),
+              }
+            );
+            material = { ...material, ...details };
+          }
+          return materialToMarkdown(material);
+        },
+      });
       materials.push(material);
     }
     i++;
