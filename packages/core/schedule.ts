@@ -1,6 +1,6 @@
 import { NAV_ATTENDANCE, NAV_SCHEDULE_LINK } from "./selectors";
 import { parseAsync } from "json2csv";
-import { waitForClickNavigation } from "./utils";
+import { navigate } from "./navigate";
 import { LoginContext } from "./login";
 
 export const timeMap = {
@@ -41,7 +41,7 @@ export async function getSchedule(
   q = 1
 ): Promise<Lecture[]> {
   await page.click(NAV_ATTENDANCE);
-  await waitForClickNavigation(page, NAV_SCHEDULE_LINK);
+  await navigate(page).byClick(NAV_SCHEDULE_LINK);
   const schedule = await page.$eval(
     `(//table[contains(@class,"classTable")])[${q}]`,
     (table) => {

@@ -2,7 +2,6 @@ import { Page } from "playwright-chromium";
 import {
   Attachment,
   sleep,
-  navigate,
   handleDownloadTable,
   HandleAttachmentOptions,
 } from "./utils";
@@ -12,7 +11,9 @@ import {
   INFO_ITEM_CLOSE,
   INFO_ALL,
 } from "./selectors";
+import { sync } from "./sync";
 import { LoginContext } from "./login";
+import { navigate } from "./navigate";
 
 export interface Info {
   title?: string;
@@ -30,6 +31,7 @@ export type GetInfoOptions = {
   skipRead?: boolean;
   content?: boolean;
   attachments?: HandleAttachmentOptions;
+  sync?: boolean;
 };
 
 export type GetInfoItemOptions = GetInfoOptions & {
@@ -39,16 +41,6 @@ export type GetInfoItemOptions = GetInfoOptions & {
 export async function openAll(page: Page) {
   await page.click(INFO_ALL);
   await sleep(3000);
-
-  // const lenText = await page.$eval(
-  //   "#funcForm\\:tabArea\\:1\\:j_idt215 .keijiKensu",
-  //   (e) => {
-  //     const textContentOf = (e?: Element | null) =>
-  //       e?.textContent?.trim() ?? "";
-  //     return textContentOf(e);
-  //   }
-  // );
-  // console.log(lenText);
 }
 
 export async function getInfo(
@@ -58,10 +50,6 @@ export async function getInfo(
   options.skipRead ??= true;
 
   await navigate(page).to("info");
-
-  if (options.listAll) {
-    await openAll(page);
-  }
 
   const infoGeneralItemLinks = await page.$$(INFO_GENERAL_ITEM);
   const len = infoGeneralItemLinks.length;
@@ -75,23 +63,62 @@ export async function getInfo(
 
       if (state?.trim() === "未読にする") {
         count += 1;
+
         continue;
       }
     }
+    try {
+      const info = await getInfoItemByIndex(page, count, {
+        ...options,
+        // skip open here
+        listAll: false,
+        // skip navigation here
+        navigate: false,
+      });
+      infoList.push(info);
 
-    const info = await getInfoItemByIndex(page, count, {
-      ...options,
-      // skip open here
-      listAll: false,
-      // skip navigation here
-      navigate: false,
-    });
-    infoList.push(info);
-
+      if (options.sync) {
+        const ok = await sync.file.skipOrWrite({
+          dir: ["info"],
+          name: info.title,
+          ext: ".md",
+          content: () => infoToMarkdown(info),
+        });
+        if (!ok) {
+          sync.log("info", "skip rest info due to exist file");
+          break;
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
     count += 1;
   }
 
   return infoList.filter((i) => Boolean(i.title));
+}
+
+const keyNames = [
+  ["title", "タイトル"],
+  ["url", "リンク"],
+  ["sender", "差出人"],
+  ["category", "カテゴリ"],
+  ["content", "本文"],
+  ["availableTime", "掲示期間"],
+] as const;
+
+function infoToMarkdown(info: Info) {
+  const main = keyNames.flatMap(([key, name]) => {
+    const val = info[key] ?? "";
+    return [`## ${name}`, val].filter(Boolean);
+  });
+  const attachments = (info.attachments || [])
+    .map((a) => `- [${a.title}](./${a.filename})`)
+    .join("\n");
+
+  return [`# ${info.title}"`, ...main, "## Attachments", attachments].join(
+    "\n\n"
+  );
 }
 
 export async function getInfoItemByIndex(

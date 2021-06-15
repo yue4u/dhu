@@ -2,14 +2,15 @@ import path from "path";
 import { Page } from "playwright-chromium";
 import { Result } from "./login";
 import { INFO_ITEM_ATTACHMENT_CLOSE } from "./selectors";
+import { sync } from "./sync";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ThirdPartyAny = any;
-
-export const theWorld = () => {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  return new Promise(() => {});
-};
+export type Head<T extends readonly unknown[]> = T extends [] ? never : T[0];
+export type Tail<T extends readonly unknown[]> = T extends readonly [
+  head: unknown,
+  ...tail: infer Rest
+]
+  ? Rest
+  : never;
 
 export const sleep = (timeout: number) => {
   return new Promise((done) => setTimeout(done, timeout));
@@ -17,17 +18,6 @@ export const sleep = (timeout: number) => {
 
 export const textContentOf = (e?: Element | null) =>
   e?.textContent?.trim() ?? "";
-
-export const waitForNavigation = async <T>(
-  page: Page,
-  fn: () => Promise<T>
-) => {
-  return Promise.all([page.waitForNavigation(), fn()]);
-};
-
-export const waitForClickNavigation = async (page: Page, selector: string) => {
-  return Promise.all([page.waitForNavigation(), page.click(selector)]);
-};
 
 interface Matcher<T, E> {
   ok: (data: T) => void | Promise<void>;
@@ -46,19 +36,6 @@ export const match = async <T, E = string>(
   }
   return handleOK(data);
 };
-
-export async function navigateToClassProfile(page: Page) {
-  await sleep(500);
-  await waitForNavigation(page, async () => {
-    return page.evaluate(() => {
-      document
-        .querySelector<HTMLElement>(
-          "#funcForm\\:j_idt361\\:j_idt2241\\:j_idt2247"
-        )
-        ?.click();
-    });
-  });
-}
 
 export async function openClassProfileSidebar(page: Page) {
   await page.evaluate(() => {
@@ -143,41 +120,9 @@ export async function handleDownloadTable(
     // all urls are same, doesn't really make sense to store them.
     url = download.url();
     attachments.push({ title, url, filename: suggestedFilename });
+    sync.log("download", suggestedFilename);
   }
   await page.click(INFO_ITEM_ATTACHMENT_CLOSE);
 
   return attachments;
-}
-
-declare const PrimeFaces: ThirdPartyAny;
-declare const syncTransition: ThirdPartyAny;
-
-export function navigate(page: Page) {
-  const navigateMap = new Map(
-    Object.entries({
-      fs: () => {
-        syncTransition("menuForm:mainMenu");
-        PrimeFaces.addSubmitParam("menuForm", {
-          "menuForm:mainMenu": "menuForm:mainMenu",
-          "menuForm:mainMenu_menuid": "4_3_0_0",
-        }).submit("menuForm");
-      },
-      info: () => {
-        syncTransition("menuForm:mainMenu");
-        PrimeFaces.addSubmitParam("menuForm", {
-          "menuForm:mainMenu": "menuForm:mainMenu",
-          "menuForm:mainMenu_menuid": "4_0_0_0",
-        }).submit("menuForm");
-      },
-    })
-  );
-  return {
-    async to(name: "fs" | "info") {
-      const fn = navigateMap.get(name);
-      if (!fn) return;
-      await waitForNavigation(page, async () => {
-        await page.evaluate(fn);
-      });
-    },
-  };
 }

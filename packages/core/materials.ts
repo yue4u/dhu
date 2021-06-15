@@ -1,18 +1,16 @@
 import { Page } from "playwright-chromium";
 import fs from "fs-extra";
-import path from "path";
 import { CLASS_PROFILE_MATERIALS } from "./selectors";
 import { LoginContext } from "./login";
 import {
-  navigateToClassProfile,
   openClassProfileSidebar,
   collectFromClassProfile,
-  waitForClickNavigation,
-  waitForNavigation,
   Attachment,
   handleDownloadTable,
   HandleAttachmentOptions,
 } from "./utils";
+import { navigate } from "./navigate";
+import { sync } from "./sync";
 
 export interface Material {
   title?: string;
@@ -30,25 +28,20 @@ export interface Material {
   attachments?: Attachment[];
 }
 
-export interface SyncMaterialsOptions {
-  dir: string;
-}
-
 export type MaterialMap = Record<string, Material[]>;
 
 export async function getMaterials(
   { page }: LoginContext,
-  options: SyncMaterialsOptions
+  options: HandleAttachmentOptions
 ): Promise<MaterialMap> {
-  await navigateToClassProfile(page);
+  await navigate(page).to("classProfile");
   await openClassProfileSidebar(page);
-  await waitForClickNavigation(page, CLASS_PROFILE_MATERIALS);
+  await navigate(page).byClick(CLASS_PROFILE_MATERIALS);
 
   const materialsMap: Record<string, Material[]> = {};
   await collectFromClassProfile(page, async (page, title, index) => {
-    const classDir = path.join(options.dir, title);
-    await fs.ensureDir(classDir);
-    const tasks = await collectClassMaterials(page, index, classDir);
+    if (!options.download) return;
+    const tasks = await collectClassMaterials(page, title, index);
     materialsMap[title] = tasks;
   });
   return materialsMap;
@@ -56,8 +49,8 @@ export async function getMaterials(
 
 async function collectClassMaterials(
   page: Page,
-  classIndex: number,
-  classDir: string
+  className: string,
+  classIndex: number
 ) {
   const materialsRows = await page.$$("#funcForm\\:jgdocList_data > tr");
   const materials: Material[] = [];
@@ -93,33 +86,35 @@ async function collectClassMaterials(
       };
     });
     if (material.name) {
-      material.name = material.name.replaceAll("/", "-");
-      const mdPath = path.join(classDir, `${material.name}.md`);
-      const exist = await fs.pathExists(mdPath);
-      if (exist) {
-        console.log(`skip: ${mdPath}`);
-      } else {
-        const hasDetail = await rows[i].evaluate(
-          (e) => e.querySelector("a") !== null
-        );
-        if (hasDetail) {
-          console.log(`syncing: ${material.name}`);
-          await waitForNavigation(page, async () => {
-            await rows[i].evaluate((e) => {
-              e.querySelector("a")?.click();
+      await sync.file.skipOrWrite({
+        dir: ["class", className],
+        name: material.name,
+        ext: ".md",
+        async content() {
+          const hasDetail = await rows[i].evaluate(
+            (e) => e.querySelector("a") !== null
+          );
+          if (hasDetail) {
+            sync.log("material", material.name);
+            await navigate(page).by(async () => {
+              await rows[i].evaluate((e) => {
+                e.querySelector("a")?.click();
+              });
             });
-          });
 
-          const details = await collectClassMaterialsDetails(page, classIndex, {
-            download: true,
-            dir: classDir,
-          });
-          material = { ...material, ...details };
-        }
-        await fs.writeFile(mdPath, materialToMarkdown(material), {
-          encoding: "utf-8",
-        });
-      }
+            const details = await collectClassMaterialsDetails(
+              page,
+              classIndex,
+              {
+                download: true,
+                dir: sync.class.getPath(className),
+              }
+            );
+            material = { ...material, ...details };
+          }
+          return materialToMarkdown(material);
+        },
+      });
       materials.push(material);
     }
     i++;
@@ -150,7 +145,7 @@ async function collectClassMaterialsDetails(
 
   // go back
   const handles = await page.$$(".classList a");
-  await waitForNavigation(page, async () => {
+  await navigate(page).by(async () => {
     await handles[classIndex].click();
   });
 

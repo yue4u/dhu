@@ -1,6 +1,7 @@
 import { Page, ElementHandle } from "playwright-chromium";
-import { sleep, waitForClickNavigation, waitForNavigation } from "../utils";
+import { sleep } from "../utils";
 import { NAV_COURSE, NAV_SYLLABUS_LINK, COURSE_ITEM_CLOSE } from "../selectors";
+import { navigate } from "../navigate";
 
 export type Course = {
   code: string;
@@ -43,7 +44,7 @@ export type Textbook = {
 const SYLLABUS_OPEN_URL = "https://portal.dhw.ac.jp/uprx/up/pk/pky001/Pky00101.xhtml?guestlogin=Kmh006";
 
 export async function getTotalCourseNumber(page: Page) {
-  await waitForNavigation(page, () => page.goto(SYLLABUS_OPEN_URL));
+  await navigate(page).byGoto(SYLLABUS_OPEN_URL);
   await page.selectOption("#funcForm\\:kaikoGakki_input", "");
   await page.selectOption("#funcForm\\:kaikoGakki_input", "");
   await page.click("#funcForm\\:search");
@@ -55,7 +56,7 @@ export async function getTotalCourseNumber(page: Page) {
 }
 
 export async function getOpenSyllabus(page: Page): Promise<Course[]> {
-  await waitForNavigation(page, () => page.goto(SYLLABUS_OPEN_URL));
+  await navigate(page).byGoto(SYLLABUS_OPEN_URL);
   console.log("setting options...");
   await sleep(200);
   await page.selectOption("#funcForm\\:kaikoGakki_input", "");
@@ -67,7 +68,7 @@ export async function getOpenSyllabus(page: Page): Promise<Course[]> {
 
 export async function getSyllabus(page: Page): Promise<Course[]> {
   await page.click(NAV_COURSE);
-  await waitForClickNavigation(page, NAV_SYLLABUS_LINK);
+  await navigate(page).byClick(NAV_SYLLABUS_LINK);
   console.log("setting options...");
   await page.selectOption("#funcForm\\:cgksSearchType0_input", "");
   await page.selectOption("#funcForm\\:kaikoGakki_input", "");
