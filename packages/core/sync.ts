@@ -98,15 +98,13 @@ export const sync = {
     }): Promise<boolean> {
       const normalizedName = sync.file.name.normalize(name);
       const checkName = path.join(...dir, normalizedName);
-      sync.log("info", `checking ${checkName}`);
       if (sync.manifest.data?.[checkName]) {
         sync.log("info", `skipping ${checkName}`);
         return false;
       }
 
       sync.log("download", checkName);
-      sync.manifest.data ??= {};
-      sync.manifest.data[checkName] = { update: new Date().toISOString() };
+      sync.manifest.addCheckEntry(checkName);
       await sync.file.write(
         path.join(
           ...dir,
@@ -131,6 +129,7 @@ export const sync = {
 
   manifest: {
     data: null as SyncManifest | null,
+    updates: {} as SyncManifest,
     async load() {
       sync.manifest.data = await sync.manifest.read();
     },
@@ -144,9 +143,24 @@ export const sync = {
     },
 
     async write() {
+      sync.log(
+        "info",
+        `updates: ${JSON.stringify(sync.manifest.updates, null, 4)}`
+      );
       const syncManifestPath = sync.manifest.getPath();
       await fs.ensureFile(syncManifestPath);
-      return fs.writeJSON(syncManifestPath, sync.manifest.data);
+      const manifest = {
+        ...sync.manifest.data,
+        ...sync.manifest.updates,
+      };
+
+      return fs.writeFile(syncManifestPath, JSON.stringify(manifest, null, 4), {
+        encoding: "utf-8",
+      });
+    },
+
+    addCheckEntry(name: string) {
+      sync.manifest.updates[name] = { update: new Date().toISOString() };
     },
 
     async generateFromLocal(): Promise<SyncManifest> {
@@ -170,7 +184,6 @@ export const sync = {
                 const stat = await fs.stat(path.join(classPath, filename));
                 return [
                   `${className}/${sync.file.name.getOrigin(filename)}`,
-                  // sync.file.name.getOrigin(filename),
                   { update: stat.ctime.toISOString() },
                 ];
               })
