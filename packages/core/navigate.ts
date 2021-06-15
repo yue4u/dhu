@@ -66,5 +66,9 @@ export function navigate(page: Page) {
     async byClick(selector: string) {
       return Promise.all([page.waitForNavigation(), page.click(selector)]);
     },
+
+    async byGoto(url: string) {
+      return Promise.all([page.waitForNavigation(), page.goto(url)]);
+    },
   };
 }

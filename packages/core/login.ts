@@ -37,7 +37,7 @@ export async function login(
   const ctx = await browser.newContext({ acceptDownloads: true });
   const page = await ctx.newPage();
   try {
-    await navigate(page).by(() => page.goto(URL_TOP));
+    await navigate(page).byGoto(URL_TOP);
 
     const maintenanceMessage = await page.evaluate(() => {
       const e = document.querySelector("#funcContent > div > p");

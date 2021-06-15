@@ -44,7 +44,7 @@ export type Textbook = {
 const SYLLABUS_OPEN_URL = "https://portal.dhw.ac.jp/uprx/up/pk/pky001/Pky00101.xhtml?guestlogin=Kmh006";
 
 export async function getTotalCourseNumber(page: Page) {
-  await navigate(page).by(() => page.goto(SYLLABUS_OPEN_URL));
+  await navigate(page).byGoto(SYLLABUS_OPEN_URL);
   await page.selectOption("#funcForm\\:kaikoGakki_input", "");
   await page.selectOption("#funcForm\\:kaikoGakki_input", "");
   await page.click("#funcForm\\:search");
@@ -56,7 +56,7 @@ export async function getTotalCourseNumber(page: Page) {
 }
 
 export async function getOpenSyllabus(page: Page): Promise<Course[]> {
-  await navigate(page).by(() => page.goto(SYLLABUS_OPEN_URL));
+  await navigate(page).byGoto(SYLLABUS_OPEN_URL);
   console.log("setting options...");
   await sleep(200);
   await page.selectOption("#funcForm\\:kaikoGakki_input", "");
