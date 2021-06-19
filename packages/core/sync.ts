@@ -251,7 +251,7 @@ export async function syncAll(dir?: string, options?: LaunchOptions) {
         content: true,
         skipRead: false,
         sync: true,
-        attachments: downloadOptions,
+        attachmentsOptions: downloadOptions,
       });
     },
     { headless: true, ...options }
