@@ -232,7 +232,7 @@ export async function syncAll(dir?: string, options?: LaunchOptions) {
         content: true,
         skipRead: false,
         sync: true,
-        attachmentsOptions: { download: true, dir: sync.info.getPath() },
+        attachmentOptions: { download: true, dir: sync.info.getPath() },
       });
     },
     { headless: true, ...options }
