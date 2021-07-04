@@ -166,11 +166,7 @@ export async function getInfoItemByIndex(
     ret = { ...ret, sender, category, title, content, availableTime };
   }
 
-  if (options.attachmentsOptions) {
-    if (options.attachmentsOptions.download) {
-      // update this to info dir
-      options.attachmentsOptions.dir = sync.info.getPath();
-    }
+  if (options.attachmentsOptions?.download) {
     const hasAttachments = await page.evaluate(
       () => document.querySelector(`#bsd00702\\:ch\\:j_idt502`) !== null
     );
