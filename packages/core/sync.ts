@@ -7,7 +7,7 @@ import { withLogin } from "./login";
 import { getMaterials } from "./materials";
 import { getInfo } from "./info";
 import { getUserInfo } from "./userInfo";
-import { HandleAttachmentOptions, Head, Tail } from "./utils";
+import { Head, Tail } from "./utils";
 import { navigate } from "./navigate";
 import { getTasks } from "./task";
 
@@ -29,28 +29,14 @@ type SyncPathFrom<T extends readonly unknown[]> = Head<Tail<T>> extends never
 
 export const sync = {
   dir: null as null | string,
-  setDir(dir: string) {
-    sync.dir = dir;
-  },
-  async updateDir() {
-    const userInfo = await getUserInfo();
-    if (!userInfo) return;
-
-    const syncDir = userInfo.config?.syncDir ?? process.cwd();
-    if (syncDir) {
-      sync.setDir(syncDir);
-      sync.log("common", chalk`syncing with {cyan ${sync.dir}}`);
-    }
+  // use dir if provided, or use user info, or fallback to current dir
+  async updateDir(dir?: string) {
+    sync.dir = dir ?? (await getUserInfo())?.config?.syncDir ?? process.cwd();
+    sync.log("common", chalk`syncing with {cyan ${sync.dir}}`);
   },
 
   log(type: "info" | "common" | "material" | "download", info?: string) {
     console.log(chalk`{yellow syncing({cyan ${type}})}: ${info}`);
-  },
-
-  download: {
-    getOptions(): HandleAttachmentOptions {
-      return { download: true, dir: sync.dir ?? process.cwd() };
-    },
   },
 
   file: {
@@ -231,27 +217,22 @@ export const sync = {
 };
 
 export async function syncAll(dir?: string, options?: LaunchOptions) {
-  if (dir) {
-    sync.setDir(dir);
-  } else {
-    await sync.updateDir();
-  }
-
+  await sync.updateDir(dir);
   await sync.manifest.load();
-
-  const downloadOptions = sync.download.getOptions();
 
   await withLogin(
     async (ctx) => {
       await getTasks(ctx, 1, { sync: true });
       await navigate(ctx.page).to("top");
-      await getMaterials(ctx, downloadOptions);
+      // dir has been set
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      await getMaterials(ctx, { download: true, dir: sync.dir! });
       await navigate(ctx.page).to("top");
       await getInfo(ctx, {
         content: true,
         skipRead: false,
         sync: true,
-        attachments: downloadOptions,
+        attachmentOptions: { download: true, dir: sync.info.getPath() },
       });
     },
     { headless: true, ...options }

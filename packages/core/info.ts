@@ -30,7 +30,7 @@ export type GetInfoOptions = {
   listAll?: boolean;
   skipRead?: boolean;
   content?: boolean;
-  attachments?: HandleAttachmentOptions;
+  attachmentOptions?: HandleAttachmentOptions;
   sync?: boolean;
 };
 
@@ -139,7 +139,7 @@ export async function getInfoItemByIndex(
 
   const title = (await parent.textContent()) ?? "";
   let ret: Info = { title };
-  if (!(options.content || options.attachments)) {
+  if (!(options.content || options.attachmentOptions)) {
     return ret;
   }
   await page.evaluate(
@@ -166,14 +166,14 @@ export async function getInfoItemByIndex(
     ret = { ...ret, sender, category, title, content, availableTime };
   }
 
-  if (options.attachments) {
+  if (options.attachmentOptions?.download) {
     const hasAttachments = await page.evaluate(
       () => document.querySelector(`#bsd00702\\:ch\\:j_idt502`) !== null
     );
     let attachments: Attachment[] = [];
     if (hasAttachments) {
       await page.click(`#bsd00702\\:ch\\:j_idt502`);
-      attachments = await handleDownloadTable(page, options.attachments);
+      attachments = await handleDownloadTable(page, options.attachmentOptions);
     }
     ret = { ...ret, attachments };
   }
