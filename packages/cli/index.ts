@@ -78,7 +78,7 @@ cli
       listAll: Boolean(all),
       skipRead: !includeRead,
       content: Boolean(content),
-      attachments: {
+      attachmentOptions: {
         download: Boolean(download),
         dir: dir ?? process.cwd(),
       },
