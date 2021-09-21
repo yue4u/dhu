@@ -958,10 +958,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@dhu/core@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@dhu/core/-/core-0.4.0.tgz#1afa1ffc6ddb79040c5fabf43fde380488690382"
-  integrity sha512-PbaBd6qfDCmjBzU6AsisPGSYiQCyCKhH0mTYr3Wsa05oykUH+gCq2vNSqXVxV8Zy6VyWS8nxITXY5tyIhHLl1Q==
+"@dhu/core@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@dhu/core/-/core-0.4.1.tgz#8e7a00a87d851ab91dd66371d8a905a910bb0290"
+  integrity sha512-2NJCKxgAAXiBJHFMYolG2j1OadcGr/i9cW3Goptd8lpv52iNXFB0CURPKNF8Ek37f/t9ID6DSm6VcKWgX02N6Q==
   dependencies:
     chalk "^4.1.1"
     date-fns "^2.22.1"
@@ -6197,9 +6197,9 @@ object-keys@^1.0.11, object-keys@^1.0.12:
   integrity sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==
 
 object-path@^0.11.4:
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/object-path/-/object-path-0.11.4.tgz#370ae752fbf37de3ea70a861c23bba8915691949"
-  integrity sha1-NwrnUvvzfePqcKhhwju6iRVpGUk=
+  version "0.11.8"
+  resolved "https://registry.yarnpkg.com/object-path/-/object-path-0.11.8.tgz#ed002c02bbdd0070b78a27455e8ae01fc14d4742"
+  integrity sha512-YJjNZrlXJFM42wTBn6zgOJVar9KFJvzx6sTWDte8sWZF//cnjl0BxHNpfZx+ZffXX63A9q0b1zsFiBX4g4X5KA==
 
 object-visit@^1.0.0:
   version "1.0.1"
