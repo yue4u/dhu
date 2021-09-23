@@ -1,6 +1,6 @@
 import React from "react";
 import { render, Text, Box } from "ink";
-import { saveUserInfo } from "@dhu/core";
+import { updateUserData } from "@dhu/core";
 import { useSteps, useStepInput, StepProps } from "./hooks/useSteps";
 
 interface QuestionProps extends StepProps {
@@ -36,9 +36,11 @@ interface Question {
 function Questions({ questions }: { questions: Question[] }) {
   const { step, advance } = useSteps<Question[], string[]>({
     stepData: questions,
-    onFinish(data) {
+    async onFinish(data) {
       const [id, password] = data;
-      saveUserInfo({ id, password });
+      await updateUserData((data) => {
+        data.user = { id, password };
+      });
     },
   });
 

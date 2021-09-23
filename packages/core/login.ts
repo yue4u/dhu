@@ -11,7 +11,7 @@ import {
   LOGIN_SUBMIT_BUTTON,
   URL_TOP,
 } from "./selectors";
-import { getUserInfo, LoginInfo, removeUserInfo } from "./userInfo";
+import { getUserData, LoginInfo, removeUserInfo } from "./userData";
 import { navigate } from "./navigate";
 
 export type LoginContext = {
@@ -83,12 +83,13 @@ export async function withLogin<T>(
   fn: (ctx: LoginContext) => Promise<T>,
   option?: LaunchOptions
 ): Promise<Result<T>> {
-  const info = await getUserInfo().catch(console.error);
-  if (!info) {
+  const info = await getUserData();
+  const userInfo = info?.user;
+  if (!userInfo) {
     return { error: "please provide login info, try `dhu login`" };
   }
   return withBrowser(async (browser) => {
-    const { error, data: loginContext } = await login(browser, info, {
+    const { error, data: loginContext } = await login(browser, userInfo, {
       removeUserInfoOnError: true,
     });
     if (error) {

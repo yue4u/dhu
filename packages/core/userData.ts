@@ -1,14 +1,17 @@
 import os from "os";
 import path from "path";
 import fs from "fs-extra";
+import type { ZoomInfo } from "./zoom";
 
 export type LoginInfo = {
   id: string;
   password: string;
 };
 
-export interface SavedInfo extends LoginInfo {
+export interface UserData {
+  user?: LoginInfo;
   config?: Config;
+  zoom?: ZoomInfo[];
 }
 
 export const configKeys = new Set(["syncDir"]);
@@ -25,7 +28,7 @@ function getUserDataPath() {
   return path.join(dataPath, "dhu", "config.json");
 }
 
-export async function saveUserInfo(info: SavedInfo) {
+async function saveUserData(info: UserData) {
   const userDataPath = getUserDataPath();
   const userDataPathDir = path.dirname(userDataPath);
 
@@ -37,38 +40,27 @@ export async function saveUserInfo(info: SavedInfo) {
   console.log(`user info saved to ${userDataPath}`);
 }
 
-export async function getUserInfo(): Promise<SavedInfo | null> {
-  try {
-    return readUserInfo();
-  } catch {
-    return null;
-  }
+export async function getUserData(): Promise<UserData | null> {
+  return fs.readJSON(getUserDataPath()).catch(() => null);
 }
 
-export async function getUserConfig(): Promise<Config | undefined | null> {
-  const userInfo = await getUserInfo();
-  return userInfo?.config;
+export async function updateUserData(
+  updateFn: (data: Partial<UserData>) => void
+) {
+  const saved = (await getUserData()) || {};
+  updateFn(saved);
+  console.log(saved);
+  return saveUserData(saved as Partial<UserData>);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateUserConfig(key: string, value: any) {
-  const userInfo = await getUserInfo();
-  if (!userInfo) {
-    console.log("userInfo not found, try `dhu login first`");
-    return;
-  }
-  return saveUserInfo({
-    ...userInfo,
-    config: {
-      ...userInfo.config,
+  return updateUserData((data) => {
+    data.config = {
+      ...data.config,
       [key]: value,
-    },
+    };
   });
-}
-
-export async function readUserInfo(): Promise<SavedInfo> {
-  const content = await fs.readFile(getUserDataPath(), { encoding: "utf8" });
-  return JSON.parse(content) as SavedInfo;
 }
 
 export async function removeUserInfo(): Promise<void> {

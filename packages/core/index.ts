@@ -18,14 +18,12 @@ export {
 } from "./attendance";
 
 export {
-  saveUserInfo,
-  getUserInfo,
-  readUserInfo,
+  updateUserData,
+  getUserData,
   removeUserInfo,
-  getUserConfig,
   updateUserConfig,
   configKeys,
-} from "./userInfo";
+} from "./userData";
 
 export { getInfo, getInfoItemByIndex, Info, GetInfoOptions } from "./info";
 
@@ -62,6 +60,7 @@ export {
 export { sync, syncAll } from "./sync";
 export { sleep, match } from "./utils";
 export { navigate } from "./navigate";
+export { zoom, ZoomInfo } from "./zoom";
 export * as SELECTORS from "./selectors";
 
 export * from "playwright-chromium";

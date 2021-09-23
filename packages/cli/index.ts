@@ -15,7 +15,8 @@ import {
   saveGoogleCalendarCSV,
   withLogin,
   configKeys,
-  getUserConfig,
+  getUserData,
+  zoom,
   updateUserConfig,
   GetInfoOptions,
   syncAll,
@@ -28,6 +29,7 @@ import {
   renderTaskMap,
   renderMaterialMap,
   renderFS,
+  renderZoom,
 } from "./view";
 import pkg from "@dhu/cli/package.json";
 
@@ -127,8 +129,8 @@ cli
   .action(async (option) => {
     const getDir = async () => {
       if (option.dir) return option.dir;
-      const config = await getUserConfig();
-      if (config?.syncDir) return config.syncDir;
+      const data = await getUserData();
+      if (data?.config?.syncDir) return data.config.syncDir;
       return path.join(process.cwd(), ".dhu-sync");
     };
 
@@ -178,9 +180,8 @@ cli
     }
 
     if (option.show) {
-      const config = await getUserConfig();
-      // @ts-ignore
-      console.log(config?.[k]);
+      const data = await getUserData();
+      console.log(data?.config?.[k as keyof typeof data["config"]]);
       return;
     }
 
@@ -217,6 +218,22 @@ cli
       }
     );
     console.log("✨done");
+  });
+
+cli
+  .command("zoom", "Open zoom")
+  .option("--import-url", "Import zoom info by url from web")
+  .option("--import-file", "Import zoom info by local file")
+  .action(async (option) => {
+    if (option.importUrl) {
+      return zoom.importFromUrl(option.importUrl);
+    }
+
+    if (option.importFile) {
+      return zoom.importFromFile(option.importFile);
+    }
+
+    await renderZoom();
   });
 
 cli.help();

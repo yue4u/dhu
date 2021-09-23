@@ -5,3 +5,4 @@ export { renderMaterialMap } from "./materials";
 export { renderFS } from "./fs";
 export { renderLogo } from "./logo";
 export { renderLogin } from "./login";
+export { renderZoom } from "./zoom";

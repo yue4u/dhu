@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node --files --transpile-only index.ts",
+    "dev": "esno index.ts",
     "clean": "rm -rf ./bin"
   },
   "dependencies": {

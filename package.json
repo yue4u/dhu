@@ -4,7 +4,7 @@
   "scripts": {
     "test": "lerna test",
     "lint": "eslint --cache --cache-location node_modules/.cache/.eslintcache --ext .js,.ts,.tsx packages",
-    "build": "lerna build",
+    "build": "lerna run build",
     "release": "lerna publish --no-verify-access",
     "version": "lerna version",
     "dev:cli": "yarn workspace @dhu/cli dev",
@@ -23,6 +23,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.23.2",
+    "esno": "^0.9.1",
     "husky": "^6.0.0",
     "lerna": "^4.0.0",
     "prettier": "^2.2.1"
@@ -30,7 +31,6 @@
   "dependencies": {
     "@types/dotenv": "^8.2.0",
     "chalk": "^4.1.0",
-    "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
   }
 }

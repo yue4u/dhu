@@ -6,7 +6,7 @@ import { LaunchOptions } from "playwright-chromium";
 import { withLogin } from "./login";
 import { getMaterials } from "./materials";
 import { getInfo } from "./info";
-import { getUserInfo } from "./userInfo";
+import { getUserData } from "./userData";
 import { Head, Tail } from "./utils";
 import { navigate } from "./navigate";
 import { getTasks } from "./task";
@@ -31,7 +31,7 @@ export const sync = {
   dir: null as null | string,
   // use dir if provided, or use user info, or fallback to current dir
   async updateDir(dir?: string) {
-    sync.dir = dir ?? (await getUserInfo())?.config?.syncDir ?? process.cwd();
+    sync.dir = dir ?? (await getUserData())?.config?.syncDir ?? process.cwd();
     sync.log("common", chalk`syncing with {cyan ${sync.dir}}`);
   },
 

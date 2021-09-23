@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "gridsome develop",
     "explore": "gridsome explore",
-    "fetch-data": "ts-node ./scripts/fetchData.ts",
-    "sort-data": "ts-node ./scripts/sortData.ts",
-    "build-search-data": "ts-node ./scripts/buildSearchData.ts",
-    "check-data": "ts-node ./scripts/checkData.ts",
+    "fetch-data": "esno ./scripts/fetchData.ts",
+    "sort-data": "esno ./scripts/sortData.ts",
+    "build-search-data": "esno ./scripts/buildSearchData.ts",
+    "check-data": "esno ./scripts/checkData.ts",
     "gen": "cp ./data/search.json ./functions/search.json && gridsome build"
   },
   "devDependencies": {
