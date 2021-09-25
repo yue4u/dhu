@@ -2,10 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "test": "lerna test",
     "lint": "eslint --cache --cache-location node_modules/.cache/.eslintcache --ext .js,.ts,.tsx packages",
-    "release": "lerna publish --no-verify-access",
-    "version": "lerna version",
     "dev:cli": "pnpm dev --filter @dhu/cli",
     "test:tsc": "tsc -p . --noEmit",
     "prepare": "husky install",
