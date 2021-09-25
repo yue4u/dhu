@@ -1,11 +1,12 @@
 {
   "name": "@dhu/core",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
-    "clean": "rm -rf ./dist"
+    "build": "pnpm run clean && tsc",
+    "clean": "rm -rf ./dist",
+    "prepublishOnly": "pnpm run build"
   },
   "publishConfig": {
     "access": "public"
