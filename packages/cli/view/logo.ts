@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import pkg from "@dhu/cli/package.json";
+import pkg from "../package.json";
 
 const w = chalk.white;
 const y = chalk.yellow;

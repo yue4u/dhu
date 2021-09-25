@@ -6,7 +6,7 @@
 
 [![npm version](https://badge.fury.io/js/%40dhu%2Fcli.svg)](https://badge.fury.io/js/%40dhu%2Fcli)
 
-`yarn global add @dhu/cli`
+`pnpm add @dhu/cli --global`
 
 [details](./packages/cli/README.md)
 
@@ -14,7 +14,7 @@
 
 [![npm version](https://badge.fury.io/js/%40dhu%2Fcore.svg)](https://badge.fury.io/js/%40dhu%2Fcore)
 
-`yarn add @dhu/core`
+`pnpm add @dhu/core`
 
 
 ## @dhu/syllabus-site

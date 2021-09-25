@@ -31,7 +31,7 @@ import {
   renderFS,
   renderZoom,
 } from "./view";
-import pkg from "@dhu/cli/package.json";
+import pkg from "./package.json";
 
 const cli = cac();
 
@@ -244,7 +244,7 @@ async function checkVersion() {
   if (ver === pkg.version) return;
   console.log(
     chalk.yellow
-      .bold`A new version of ${pkg.name} {cyan.bold ${ver}} (currently ${pkg.version}) has been released, try run {cyan.bold \`yarn global add @dhu/cli\`} to upgrade.`
+      .bold`A new version of ${pkg.name} {cyan.bold ${ver}} (currently ${pkg.version}) has been released, try run {cyan.bold \`pnpm add @dhu/cli --global\`} to upgrade.`
   );
 }
 

@@ -67,7 +67,8 @@ export async function login(
       }
       throw new Error(loginErrorMessage);
     }
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     await ctx.close();
 
     return { error };
@@ -111,7 +112,8 @@ export async function withBrowser<T>(
   try {
     const data = await fn(browser);
     result = { data };
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     result = { error };
   }
   await browser.close();

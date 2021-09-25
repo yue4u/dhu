@@ -65,5 +65,5 @@
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
     "resolveJsonModule": true
   },
-  "exclude": ["./packages/core/dist", "./packages/cli/bin"]
+  "exclude": ["./packages/core/dist", "./packages/cli/bin", "./tmp"]
 }
