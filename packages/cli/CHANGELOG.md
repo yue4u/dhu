@@ -1,5 +1,13 @@
 # @dhu/cli
 
+## 0.2.0-alpha.1
+
+### Patch Changes
+
+- fix publishing
+- Updated dependencies [undefined]
+  - @dhu/core@0.6.0-alpha.1
+
 ## 0.2.0-alpha.0
 
 ### Minor Changes

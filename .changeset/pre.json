@@ -7,6 +7,7 @@
     "@dhu/syllabus-site": "0.0.0"
   },
   "changesets": [
-    "angry-guests-sniff"
+    "angry-guests-sniff",
+    "chatty-snakes-provide"
   ]
 }
