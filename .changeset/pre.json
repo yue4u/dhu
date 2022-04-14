@@ -1,0 +1,12 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "@dhu/cli": "0.1.25",
+    "@dhu/core": "0.5.2",
+    "@dhu/syllabus-site": "0.0.0"
+  },
+  "changesets": [
+    "angry-guests-sniff"
+  ]
+}
