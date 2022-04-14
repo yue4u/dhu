@@ -1,10 +1,10 @@
 # @dhu/cli
 
 ```
-dhu/0.1.5
+dhu/0.1.25
 
 Usage:
-  $ dhu
+  $ dhu 
 
 Commands:
                   Log logo
@@ -16,8 +16,11 @@ Commands:
   fs              Get fs
   task            Get tasks
   matl            Get Materials
+  sync            Sync all
   config [...kv]  Set config
   timetable       Download timetable csv
+  zoom            Open zoom
+  attend <code>   Attend with code
 
 For more info, run any command with the `--help` flag:
   $ dhu --help
@@ -29,6 +32,13 @@ For more info, run any command with the `--help` flag:
   $ dhu fs --help
   $ dhu task --help
   $ dhu matl --help
+  $ dhu sync --help
   $ dhu config --help
   $ dhu timetable --help
+  $ dhu zoom --help
+  $ dhu attend --help
+
+Options:
+  -h, --help     Display this message 
+  -v, --version  Display version number 
 ```
