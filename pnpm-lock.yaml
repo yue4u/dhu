@@ -35,7 +35,7 @@ importers:
 
   packages/cli:
     specifiers:
-      '@dhu/core': workspace:*
+      '@dhu/core': 0.6.0-alpha.3
       '@types/react': ^17.0.4
       cac: ^6.7.3
       chalk: ^4.1.1
