@@ -1,5 +1,11 @@
 # @dhu/core
 
+## 0.6.0-alpha.2
+
+### Patch Changes
+
+- try fix publish by downgrading npm
+
 ## 0.6.0-alpha.1
 
 ### Patch Changes
