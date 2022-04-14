@@ -9,6 +9,10 @@ import {
   LOGIN_ID,
   LOGIN_PASSWORD,
   LOGIN_SUBMIT_BUTTON,
+  MOBILE_LOGIN_ID,
+  MOBILE_LOGIN_PASSWORD,
+  MOBILE_LOGIN_SUBMIT_BUTTON,
+  MOBILE_URL_TOP,
   URL_TOP,
 } from "./selectors";
 import { getUserData, LoginInfo, removeUserInfo } from "./userData";
@@ -25,7 +29,32 @@ export type Result<T, E = string> = {
 };
 
 export type LoginOptions = {
+  target?: LoginTarget;
   removeUserInfoOnError?: boolean;
+};
+
+export type LoginTarget = "pc" | "mobile";
+export const LOGIN_SELECTORS: Record<
+  LoginTarget,
+  {
+    URL: string;
+    ID: string;
+    PASSWORD: string;
+    SUBMIT: string;
+  }
+> = {
+  pc: {
+    URL: URL_TOP,
+    ID: LOGIN_ID,
+    PASSWORD: LOGIN_PASSWORD,
+    SUBMIT: LOGIN_SUBMIT_BUTTON,
+  },
+  mobile: {
+    URL: MOBILE_URL_TOP,
+    ID: MOBILE_LOGIN_ID,
+    PASSWORD: MOBILE_LOGIN_PASSWORD,
+    SUBMIT: MOBILE_LOGIN_SUBMIT_BUTTON,
+  },
 };
 
 export async function login(
@@ -33,11 +62,14 @@ export async function login(
   info: LoginInfo,
   loginOptions: LoginOptions = {}
 ): Promise<Result<LoginContext>> {
+  const target = loginOptions.target ?? "pc";
+  const loginSelectors = LOGIN_SELECTORS[target];
+
   const { id, password } = info;
   const ctx = await browser.newContext({ acceptDownloads: true });
   const page = await ctx.newPage();
   try {
-    await navigate(page).byGoto(URL_TOP);
+    await navigate(page).byGoto(loginSelectors.URL);
 
     const maintenanceMessage = await page.evaluate(() => {
       const e = document.querySelector("#funcContent > div > p");
@@ -50,9 +82,9 @@ export async function login(
       throw new Error(maintenanceMessage);
     }
 
-    await page.type(LOGIN_ID, id);
-    await page.type(LOGIN_PASSWORD, password);
-    await navigate(page).byClick(LOGIN_SUBMIT_BUTTON);
+    await page.type(loginSelectors.ID, id);
+    await page.type(loginSelectors.PASSWORD, password);
+    await navigate(page).byClick(loginSelectors.SUBMIT);
 
     const loginErrorMessage = await page.evaluate(() => {
       const e = document.querySelector(".ui-messages-error-detail");
@@ -82,7 +114,8 @@ export async function exposeGlobalHelper(ctx: BrowserContext) {}
 
 export async function withLogin<T>(
   fn: (ctx: LoginContext) => Promise<T>,
-  option?: LaunchOptions
+  option?: LaunchOptions,
+  loginOptions?: LoginOptions
 ): Promise<Result<T>> {
   const info = await getUserData();
   const userInfo = info?.user;
@@ -90,9 +123,11 @@ export async function withLogin<T>(
     return { error: "please provide login info, try `dhu login`" };
   }
   return withBrowser(async (browser) => {
-    const { error, data: loginContext } = await login(browser, userInfo, {
-      removeUserInfoOnError: true,
-    });
+    const { error, data: loginContext } = await login(
+      browser,
+      userInfo,
+      loginOptions
+    );
     if (error) {
       throw error;
     }

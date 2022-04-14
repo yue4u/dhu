@@ -20,6 +20,7 @@ import {
   updateUserConfig,
   GetInfoOptions,
   syncAll,
+  attend,
 } from "@dhu/core";
 import {
   renderLogo,
@@ -234,6 +235,19 @@ cli
     }
 
     await renderZoom();
+  });
+
+cli
+  .command("attend <code>", "Attend with code")
+  .option("--head", "launch headfully")
+  .action(async (code, option) => {
+    const { error } = await attend(code, {
+      headless: !option.head,
+    });
+    if (error) {
+      console.error(error);
+      process.exit(1);
+    }
   });
 
 cli.help();
