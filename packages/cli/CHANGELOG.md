@@ -1,5 +1,13 @@
 # @dhu/cli
 
+## 0.2.0-alpha.3
+
+### Patch Changes
+
+- try publish by downgrading npm again
+- Updated dependencies [undefined]
+  - @dhu/core@0.6.0-alpha.3
+
 ## 0.2.0-alpha.2
 
 ### Patch Changes
