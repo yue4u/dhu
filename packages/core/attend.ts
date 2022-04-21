@@ -16,14 +16,14 @@ export async function attend(code: string, options?: LaunchOptions) {
 
   return withLogin(
     async ({ page }) => {
-      // FIXME wait for input or focus selector
-      await sleep(2000);
-
       const done = await page.isVisible(MOBILE_ATTEND_CHECK_BUTTON);
       if (done) {
-        // aleady submitted
+        // already submitted
         await navigate(page).byClick(MOBILE_ATTEND_CHECK_BUTTON);
       } else {
+        // FIXME wait for input or focus selector
+        await sleep(2000);
+
         // TODO: check is code input view
         for (const c of code) {
           const handle = await page.evaluateHandle(
