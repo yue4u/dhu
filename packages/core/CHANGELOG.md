@@ -1,5 +1,11 @@
 # @dhu/core
 
+## 0.6.0-alpha.4
+
+### Patch Changes
+
+- print attend result after submit
+
 ## 0.6.0-alpha.3
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @dhu/cli
 
+## 0.2.0-alpha.5
+
+### Patch Changes
+
+- print attend result after submit
+- Updated dependencies [undefined]
+  - @dhu/core@0.6.0-alpha.4
+
 ## 0.2.0-alpha.3
 
 ### Patch Changes
