@@ -47,3 +47,4 @@ export const MOBILE_LOGIN_ID = "#pmPage\\:loginForm\\:userId_input";
 export const MOBILE_LOGIN_PASSWORD = "input#pmPage\\:loginForm\\:password";
 export const MOBILE_LOGIN_SUBMIT_BUTTON = "#pmPage\\:loginForm\\:j_idt38";
 export const MOBILE_ATTEND_SUBMIT_BUTTON = "#pmPage\\:funcForm\\:j_idt140";
+export const MOBILE_ATTEND_CHECK_BUTTON = "#pmPage\\:funcForm\\:j_idt175\\:0\\:choice";
