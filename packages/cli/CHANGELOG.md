@@ -1,5 +1,13 @@
 # @dhu/cli
 
+## 0.2.0-alpha.7
+
+### Patch Changes
+
+- check focusId and fix result selector
+- Updated dependencies [undefined]
+  - @dhu/core@0.6.0-alpha.5
+
 ## 0.2.0-alpha.6
 
 ### Patch Changes

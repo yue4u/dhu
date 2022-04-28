@@ -1,5 +1,11 @@
 # @dhu/core
 
+## 0.6.0-alpha.5
+
+### Patch Changes
+
+- check focusId and fix result selector
+
 ## 0.6.0-alpha.4
 
 ### Patch Changes
