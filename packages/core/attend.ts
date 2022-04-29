@@ -8,43 +8,47 @@ import {
 import { sleep } from "./utils";
 import { navigate } from "./navigate";
 
-export async function attend(code: string, options?: LaunchOptions) {
-  if (code.length !== 4) {
-    return {
-      error: `expect code length to be 4, but \`${code}\`'s length is ${code.length}`,
-    };
-  }
+export type AttendOptions = {
+  code?: string;
+  onMessage?: (msg: string) => void;
+};
 
+export async function attend(
+  attendOptions: AttendOptions,
+  launchOptions?: LaunchOptions
+) {
   return withLogin(
     async ({ page }) => {
       const submitted = await page.isVisible(MOBILE_ATTEND_CHECK_BUTTON);
-      if (submitted) {
-        await navigate(page).byClick(MOBILE_ATTEND_CHECK_BUTTON);
-      } else {
-        await submitAttendCode(page, code);
-      }
+      attendOptions.onMessage?.(`submitted: ${submitted}`);
+      submitted
+        ? await navigate(page).byClick(MOBILE_ATTEND_CHECK_BUTTON)
+        : await submitAttendCode(page, attendOptions);
 
-      const result = await page.evaluate(() => {
-        const e = document.querySelector(".signFlging")?.nextElementSibling;
-        const textContentOf = (e?: Element | null) =>
-          e?.textContent?.trim() ?? "";
-        return e === null ? e : textContentOf(e);
-      });
-
-      return result;
+      return getAttendResult(page);
     },
-    options,
+    launchOptions,
     { target: "mobile" }
   );
 }
 
-async function submitAttendCode(page: Page, code: string) {
-  const isChecking = await page.$(MOBILE_ATTEND_CHECKING_LABEL);
-  if (!isChecking) {
-    throw new Error("attend not checking");
+async function submitAttendCode(
+  page: Page,
+  { code, onMessage }: AttendOptions
+) {
+  if (!code) throw new Error("no code is provided");
+  if (code.length !== 4) {
+    throw new Error(
+      `expect code length to be 4, but \`${code}\`'s length is ${code.length}`
+    );
   }
-  // TODO: move this to debug log?
-  console.log(await isChecking?.textContent());
+
+  const isChecking = await page.$(MOBILE_ATTEND_CHECKING_LABEL);
+  if (!isChecking) throw new Error("attend not checking");
+
+  const isCheckingText = await isChecking?.textContent();
+  if (isCheckingText) onMessage?.(isCheckingText);
+
   // TODO: find better way to check current focus is correct
   let retry = 0;
   // eslint-disable-next-line no-constant-condition
@@ -70,4 +74,14 @@ async function submitAttendCode(page: Page, code: string) {
   }
 
   await navigate(page).byClick(MOBILE_ATTEND_SUBMIT_BUTTON);
+}
+
+async function getAttendResult(page: Page) {
+  const result = await page.evaluate(() => {
+    const e = document.querySelector(".signFlging")?.nextElementSibling;
+    const textContentOf = (e?: Element | null) => e?.textContent?.trim() ?? "";
+    return e === null ? e : textContentOf(e);
+  });
+
+  return result;
 }

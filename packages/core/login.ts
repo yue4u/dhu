@@ -149,7 +149,7 @@ export async function withBrowser<T>(
     result = { data };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    result = { error };
+    result = { error: error.message ?? error };
   }
   await browser.close();
   return result;

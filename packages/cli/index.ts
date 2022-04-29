@@ -241,9 +241,12 @@ cli
   .command("attend <code>", "Attend with code")
   .option("--head", "launch headfully")
   .action(async (code, option) => {
-    const { data, error } = await attend(code, {
-      headless: !option.head,
-    });
+    const { data, error } = await attend(
+      { code, onMessage: console.log },
+      {
+        headless: !option.head,
+      }
+    );
     if (error) {
       console.error(error);
       process.exit(1);
