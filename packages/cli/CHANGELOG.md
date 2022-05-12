@@ -1,5 +1,27 @@
 # @dhu/cli
 
+## 0.2.0
+
+### Minor Changes
+
+- 6144ab6: Add attend code feature
+
+### Patch Changes
+
+- e22f031: try publish by downgrading npm again
+- 6387071: fix publishing
+- 211f6a3: print attend result after submit
+- 0bd9fd0: check focusId and fix result selector
+- 2ef0c7a: try fix publish by downgrading npm
+- 270e357: restore workspace dependency
+- Updated dependencies [6144ab6]
+- Updated dependencies [e22f031]
+- Updated dependencies [6387071]
+- Updated dependencies [211f6a3]
+- Updated dependencies [0bd9fd0]
+- Updated dependencies [2ef0c7a]
+  - @dhu/core@0.6.0
+
 ## 0.2.0-alpha.7
 
 ### Patch Changes
