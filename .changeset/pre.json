@@ -1,0 +1,18 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "@dhu/cli": "0.1.25",
+    "@dhu/core": "0.5.2",
+    "@dhu/syllabus-site": "0.0.0"
+  },
+  "changesets": [
+    "angry-guests-sniff",
+    "brave-coins-sort",
+    "chatty-snakes-provide",
+    "light-penguins-double",
+    "nice-pears-wait",
+    "warm-walls-crash",
+    "young-kids-pull"
+  ]
+}

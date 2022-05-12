@@ -1,5 +1,4 @@
 export const URL_TOP = "https://portal.dhw.ac.jp/uprx/";
-
 export const LOGIN_ID = "#loginForm\\:userId";
 export const LOGIN_PASSWORD = "#loginForm\\:password";
 export const LOGIN_SUBMIT_BUTTON = "#loginForm\\:loginButton";
@@ -42,3 +41,11 @@ export const CLASS_PROFILE_TASK = "#functionHeaderForm\\:j_idt159\\:0\\:j_idt161
 export const CLASS_PROFILE_MATERIALS = "#functionHeaderForm\\:j_idt159\\:1\\:j_idt161";
 
 export const CONFIRM_BUTTON = "button.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-icon-left";
+
+export const MOBILE_URL_TOP = "https://portal.dhw.ac.jp/uprx/up/pk/pky501/Pky50101.xhtml";
+export const MOBILE_LOGIN_ID = "#pmPage\\:loginForm\\:userId_input";
+export const MOBILE_LOGIN_PASSWORD = "input#pmPage\\:loginForm\\:password";
+export const MOBILE_LOGIN_SUBMIT_BUTTON = "#pmPage\\:loginForm\\:j_idt38";
+export const MOBILE_ATTEND_SUBMIT_BUTTON = "#pmPage\\:funcForm\\:j_idt140";
+export const MOBILE_ATTEND_CHECK_BUTTON = "#pmPage\\:funcForm\\:j_idt175\\:0\\:choice";
+export const MOBILE_ATTEND_CHECKING_LABEL = "#pmPage\\:funcForm\\:j_idt90\\:0\\:j_idt115";

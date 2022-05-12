@@ -8,7 +8,7 @@ export {
   Result,
   LoginOptions,
 } from "./login";
-
+export { attend, AttendOptions } from "./attend";
 export {
   Attendance,
   AttendanceRecord,

@@ -1,5 +1,62 @@
 # @dhu/cli
 
+## 0.2.0-alpha.7
+
+### Patch Changes
+
+- check focusId and fix result selector
+- Updated dependencies [undefined]
+  - @dhu/core@0.6.0-alpha.5
+
+## 0.2.0-alpha.6
+
+### Patch Changes
+
+- restore workspace dependency
+
+## 0.2.0-alpha.5
+
+### Patch Changes
+
+- print attend result after submit
+- Updated dependencies [undefined]
+  - @dhu/core@0.6.0-alpha.4
+
+## 0.2.0-alpha.3
+
+### Patch Changes
+
+- try publish by downgrading npm again
+- Updated dependencies [undefined]
+  - @dhu/core@0.6.0-alpha.3
+
+## 0.2.0-alpha.2
+
+### Patch Changes
+
+- try fix publish by downgrading npm
+- Updated dependencies [undefined]
+  - @dhu/core@0.6.0-alpha.2
+
+## 0.2.0-alpha.1
+
+### Patch Changes
+
+- fix publishing
+- Updated dependencies [undefined]
+  - @dhu/core@0.6.0-alpha.1
+
+## 0.2.0-alpha.0
+
+### Minor Changes
+
+- Add attend code feature
+
+### Patch Changes
+
+- Updated dependencies [undefined]
+  - @dhu/core@0.6.0-alpha.0
+
 ## 0.1.25
 
 ### Patch Changes
