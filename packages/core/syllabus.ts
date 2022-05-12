@@ -1,7 +1,7 @@
 import { Page, ElementHandle } from "playwright-chromium";
-import { sleep } from "../utils";
-import { NAV_COURSE, NAV_SYLLABUS_LINK, COURSE_ITEM_CLOSE } from "../selectors";
-import { navigate } from "../navigate";
+import { sleep } from "./utils";
+import { NAV_COURSE, NAV_SYLLABUS_LINK, COURSE_ITEM_CLOSE } from "./selectors";
+import { navigate } from "./navigate";
 
 export type Course = {
   code: string;
