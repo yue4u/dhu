@@ -267,6 +267,22 @@ async function checkVersion() {
 }
 
 async function run() {
+  console.log(
+    chalk.cyan.bold`
+ ________________________________________________
+/\\                                               \\
+\\_|  {bgYellow.black Looking for maintainers.}                    |
+  |                                              |
+  |  Author of this tool will no longer maintain |
+  |  this tool and the {bgYellow.black @dhu} name scope.          |
+  |                                              |
+  |  If you are interested in maintaining this   |
+  |  repo or the using the @dhu name scope,      |
+  |  please contact via github issues.           |
+  |   ___________________________________________|_
+   \\_/____________________________________________/`
+  );
+
   await checkVersion();
   cli.parse();
 }

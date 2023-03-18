@@ -19,7 +19,7 @@ const logo = orange(`
            ,}Z#MMMMMU:                     ${w("Have a nice day!")}
          :tkMMMMM#ZuLaokpJ/~,              
        !XMMMMMM#w!      :{wMMMM*On]i:      ${y.bold("To contribute:")}
-     -Q#MMMMM#m-         ;J#MMMMMMMMLI     ${w("@see https://github.com/rainy-me/dhu")}
+     -Q#MMMMM#m-         ;J#MMMMMMMMLI     ${w("@see https://github.com/yue4u/dhu")}
     _kMMMMMMo[,         ,|*MMMMMMMMML;     
        Itpq1,           >kMMMMMMMMMMJ,     
                        ,ZMMMMMMMMMMMz      
