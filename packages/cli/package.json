@@ -17,12 +17,12 @@
   },
   "dependencies": {
     "@dhu/core": "workspace:*",
-    "cac": "^6.7.3",
-    "chalk": "^4.1.1",
-    "immer": "^9.0.2",
-    "ink": "^3.0.8",
-    "ink-select-input": "^4.2.0",
-    "ink-spinner": "^4.0.1",
+    "cac": "^6.7.14",
+    "chalk": "^4.1.2",
+    "immer": "^9.0.21",
+    "ink": "^3.2.0",
+    "ink-select-input": "^4.2.2",
+    "ink-spinner": "^4.0.3",
     "latest-version": "^5.1.0",
     "react": "^17.0.2"
   },
@@ -31,6 +31,6 @@
     "package.json"
   ],
   "devDependencies": {
-    "@types/react": "^17.0.4"
+    "@types/react": "^17.0.64"
   }
 }
